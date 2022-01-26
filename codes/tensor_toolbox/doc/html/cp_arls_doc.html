@@ -1,0 +1,380 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Alternating randomized least squares for CP Decomposition</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-01-13"><meta name="DC.source" content="cp_arls_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Alternating randomized least squares for CP Decomposition</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="cp.html">CP Decompositions</a>
+&#62;&#62; <a href="cp_arls_doc.html">CP-ARLS</a>
+</p>
+</p><p>The function <tt>cp_arls</tt> computes an estimate of the best rank-R CP model of a tensor X using alternating <i>randomized</i> least-squares algorithm. The input X must be a (dense) <tt>tensor</tt>. The output CP model is a <tt>ktensor</tt>.  The CP-ARLS method is described in the following reference:</p><div><ul><li>C. Battaglino, G. Ballard, T. G. Kolda.   A Practical Randomized CP Tensor Decomposition.   SIAM Journal on Matrix Analysis and Applications 39(2):876-901, 2018.   <a href="https://doi.org/10.1137/17M1112303">https://doi.org/10.1137/17M1112303</a></li></ul></div><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Set up a sample problem</a></li><li><a href="#2">Running the CP-ARLS method</a></li><li><a href="#3">Speed things up by skipping the initial mixing</a></li><li><a href="#4">Comparing with CP-ALS</a></li><li><a href="#5">How well does the approximate fit do?</a></li><li><a href="#6">Varying epoch size</a></li><li><a href="#9">Set up another sample problem</a></li><li><a href="#10">Terminating once a desired fit is achieved</a></li><li><a href="#11">Changing the number of function evaluation samples</a></li><li><a href="#12">Change the number of sampled rows in least squares solve</a></li></ul></div><h2 id="1">Set up a sample problem</h2><p>We set up an especially difficult and somewhat large sample problem that has high collinearity (0.9) and 1% noise. This is an example where the randomized method will generally outperform the standard method.</p><pre class="codeinput">sz = [200 300 400];
+R = 5;
+ns = 0.01;
+coll = 0.9;
+
+info = create_problem(<span class="string">'Size'</span>, sz, <span class="string">'Num_Factors'</span>, R, <span class="string">'Noise'</span>, ns, <span class="keyword">...</span>
+    <span class="string">'Factor_Generator'</span>, @(m,n) matrandcong(m,n,coll), <span class="keyword">...</span>
+    <span class="string">'Lambda_Generator'</span>, @ones);
+
+<span class="comment">% Extract data and solution</span>
+X = info.Data;
+M_true = info.Soln;
+</pre><h2 id="2">Running the CP-ARLS method</h2><p>Running the method is essentially the same as using CP-ALS, feed the data matrix and the desired rank. Note that the iteration is of the form NxN which is the number of epochs x the number of iterations per epoch. The default number of iterations per epoch is 50. At the end of each epoch, we check the convergence criteria. Because this is a randomized method, we do not achieve strict decrease in the objective function. Instead, we look at the number of epochs without improvement (newi) and exit when this crosses the predefined tolerance (<tt>newitol</tt>), which defaults to 5. It is important to note that the fit values that are reported are approximate, so this is why it is denoted by <tt>f~</tt> rather than just <tt>f</tt>.</p><pre class="codeinput">tic
+[M1, ~, out1] = cp_arls(X,R);
+time1 = toc;
+scr1 = score(M1,M_true);
+fprintf(<span class="string">'\n*** Results for CP-ARLS (with mixing) ***\n'</span>);
+fprintf(<span class="string">'Time (secs): %.3f\n'</span>, time1)
+fprintf(<span class="string">'Score (max=1): %.3f\n'</span>, scr1);
+</pre><pre class="codeoutput">
+CP-ARLS (with mixing): 
+ Iter 10x50: f~ = 9.895982e-01 newi = 3
+ Iter 12x50: f~ = 9.895715e-01 newi = 5
+
+*** Results for CP-ARLS (with mixing) ***
+Time (secs): 7.320
+Score (max=1): 0.953
+</pre><h2 id="3">Speed things up by skipping the initial mixing</h2><p>The default behavior is to mix the data in each mode using an FFT and diagonal random +/-1 matrix. This may add substantial preprocessing time, though it helps to ensure that the method converges. Oftentimes, such as with randomly-generated data, the mixing is not necessary.</p><pre class="codeinput">tic
+[M2, ~, out2] = cp_arls(X,R,<span class="string">'mix'</span>,false);
+time2 = toc;
+scr2 = score(M2,M_true);
+
+fprintf(<span class="string">'\n*** Results for CP-ARLS (no mix) ***\n'</span>);
+fprintf(<span class="string">'Time (secs): %.3f\n'</span>, time2)
+fprintf(<span class="string">'Score (max=1): %.3f\n'</span>, scr2);
+</pre><pre class="codeoutput">
+CP_ARLS (without mixing): 
+ Iter 10x50: f~ = 9.891749e-01 newi = 0
+ Iter 20x50: f~ = 9.891475e-01 newi = 5
+
+*** Results for CP-ARLS (no mix) ***
+Time (secs): 8.054
+Score (max=1): 0.977
+</pre><h2 id="4">Comparing with CP-ALS</h2><p>CP-ALS may be somewhat faster, especially since this is a relatively small problem, but it usually will not achieve as good of an answer in terms of the score.</p><pre class="codeinput">tic;
+[M3, ~, out3] = cp_als(X,R,<span class="string">'maxiters'</span>,500,<span class="string">'printitn'</span>,10);
+time3 = toc;
+scr3 = score(M3,M_true);
+fprintf(<span class="string">'\n*** Results for CP-ALS ***\n'</span>);
+fprintf(<span class="string">'Time (secs): %.3f\n'</span>, time3)
+fprintf(<span class="string">'Score (max=1): %.3f\n'</span>, scr3);
+</pre><pre class="codeoutput">
+CP_ALS:
+ Iter 10: f = 9.623077e-01 f-delta = 2.8e-04
+ Iter 20: f = 9.643623e-01 f-delta = 1.9e-04
+ Iter 30: f = 9.661441e-01 f-delta = 1.4e-04
+ Iter 33: f = 9.664695e-01 f-delta = 9.5e-05
+ Final f = 9.664695e-01 
+
+*** Results for CP-ALS ***
+Time (secs): 2.669
+Score (max=1): 0.327
+</pre><h2 id="5">How well does the approximate fit do?</h2><p>It is possible to check the accuracy of the fit computation by having the code compute the true fit and the final solution, enabled by the <tt>truefit</tt> option.</p><pre class="codeinput">[M4,~,out4] = cp_arls(X,R,<span class="string">'truefit'</span>,true);
+</pre><pre class="codeoutput">
+CP-ARLS (with mixing): 
+ Iter 10x50: f~ = 9.896803e-01 newi = 1
+ Iter 16x50: f~ = 9.896567e-01 newi = 5
+ Final fit = 9.896384e-01 Final estimated fit = 9.896909e-01 
+</pre><h2 id="6">Varying epoch size</h2><p>It is possible to vary that number of iterations per epoch. Fewer iterations means that more time is spent checking for convergence and it may also be harder to detect as an single iteration can have some fluctuation and we are actually looking for the overall trend. In contrast, too many iterations means that the method won't realize when it has converged and may spend too much time computing.</p><pre class="codeinput">tic
+M = cp_arls(X,R,<span class="string">'epoch'</span>,1,<span class="string">'newitol'</span>,20);
+toc
+fprintf(<span class="string">'Score: %.4f\n'</span>,score(M,M_true));
+</pre><pre class="codeoutput">
+CP-ARLS (with mixing): 
+ Iter 10x1: f~ = 9.578138e-01 newi = 0
+ Iter 20x1: f~ = 9.628324e-01 newi = 0
+ Iter 30x1: f~ = 9.700016e-01 newi = 0
+ Iter 40x1: f~ = 9.725053e-01 newi = 4
+ Iter 50x1: f~ = 9.735807e-01 newi = 5
+ Iter 60x1: f~ = 9.736604e-01 newi = 2
+ Iter 70x1: f~ = 9.740389e-01 newi = 0
+ Iter 80x1: f~ = 9.742339e-01 newi = 7
+ Iter 90x1: f~ = 9.738148e-01 newi = 17
+ Iter 100x1: f~ = 9.740003e-01 newi = 9
+ Iter 110x1: f~ = 9.744334e-01 newi = 19
+ Iter 111x1: f~ = 9.741795e-01 newi = 20
+Elapsed time is 2.011118 seconds.
+Score: 0.5006
+</pre><pre class="codeinput">tic
+M = cp_arls(X,R,<span class="string">'epoch'</span>,200,<span class="string">'newitol'</span>,3,<span class="string">'printitn'</span>,2);
+toc
+fprintf(<span class="string">'Score: %.4f\n'</span>,score(M,M_true));
+</pre><pre class="codeoutput">
+CP-ARLS (with mixing): 
+ Iter  2x200: f~ = 9.893987e-01 newi = 0
+ Iter  4x200: f~ = 9.894291e-01 newi = 1
+ Iter  6x200: f~ = 9.894693e-01 newi = 1
+ Iter  8x200: f~ = 9.894298e-01 newi = 1
+ Iter 10x200: f~ = 9.894309e-01 newi = 3
+Elapsed time is 19.795041 seconds.
+Score: 0.9874
+</pre><h2 id="9">Set up another sample problem</h2><p>We set up another problem with 10% noise, but no collinearity.</p><pre class="codeinput">sz = [200 300 400];
+R = 5;
+ns = 0.10;
+
+info = create_problem(<span class="string">'Size'</span>, sz, <span class="string">'Num_Factors'</span>, R, <span class="string">'Noise'</span>, ns, <span class="keyword">...</span>
+    <span class="string">'Factor_Generator'</span>, @rand,<span class="string">'Lambda_Generator'</span>, @ones);
+
+<span class="comment">% Extract data and solution</span>
+X = info.Data;
+M_true = info.Soln;
+</pre><h2 id="10">Terminating once a desired fit is achieved</h2><p>If we know the noise level is 10%, we would expect a fit of 0.90 at best. So, we can set a threshold that is close to that and terminate as soon as we achieve that accuracy. Since detecting convergence is hard for a randomized method, this can lead to speed ups. However, if the fit is not high enough, the accuracy may suffer consequently.</p><pre class="codeinput">M = cp_arls(X,R,<span class="string">'newitol'</span>,20,<span class="string">'fitthresh'</span>,0.895,<span class="string">'truefit'</span>,true);
+fprintf(<span class="string">'Score: %.4f\n'</span>,score(M,M_true));
+</pre><pre class="codeoutput">
+CP-ARLS (with mixing): 
+ Iter  1x50: f~ = 8.977503e-01 newi = 0
+ Final fit = 8.974316e-01 Final estimated fit = 8.977503e-01 
+Score: 0.9828
+</pre><h2 id="11">Changing the number of function evaluation samples</h2><p>The function evaluation is approximate and based on sampling the number of entries specified by <tt>nsampfit</tt>. If this is too small, the samples will not be accurate enough. If this is too large, the computation will take too long. The default is <img src="cp_arls_doc_eq01467456418182866281.png" alt="$2^14$" style="width:13px;height:9px;">, which should generally be sufficient.  It may sometimes be possible to use smaller values. The same sampled entries are used for every convergence check --- we do not resample to check other entries.</p><pre class="codeinput">M = cp_arls(X,R,<span class="string">'truefit'</span>,true,<span class="string">'nsampfit'</span>,100);
+fprintf(<span class="string">'Score: %.4f\n'</span>,score(M,M_true));
+</pre><pre class="codeoutput">
+CP-ARLS (with mixing): 
+ Iter  9x50: f~ = 9.077972e-01 newi = 5
+ Final fit = 8.977454e-01 Final estimated fit = 9.143556e-01 
+Score: 0.9691
+</pre><h2 id="12">Change the number of sampled rows in least squares solve</h2><p>The default number of sampled rows for the least squares solves is <tt>ceil(10*R*log2&reg;)</tt>. This seemed to work well in most tests, but this can be varied higher or lower. For R=5, this means we sample 117 rows per solve. The rows are different for every least squares problem. Let's see what happens if we reduce this to 10.</p><pre class="codeinput">M = cp_arls(X,R,<span class="string">'truefit'</span>,true,<span class="string">'nsamplsq'</span>,10);
+fprintf(<span class="string">'Score: %.4f\n'</span>,score(M,M_true));
+</pre><pre class="codeoutput">
+CP-ARLS (with mixing): 
+ Iter 10x50: f~ = 7.111503e-01 newi = 2
+ Iter 16x50: f~ = 6.587896e-01 newi = 5
+ Final fit = 7.639470e-01 Final estimated fit = 7.608317e-01 
+Score: 0.3965
+</pre><p>What if we use 25?</p><pre class="codeinput">M = cp_arls(X,R,<span class="string">'truefit'</span>,true,<span class="string">'nsamplsq'</span>,25);
+fprintf(<span class="string">'Score: %.4f\n'</span>,score(M,M_true));
+</pre><pre class="codeoutput">
+CP-ARLS (with mixing): 
+ Iter 10x50: f~ = 8.768886e-01 newi = 4
+ Iter 11x50: f~ = 8.756291e-01 newi = 5
+ Final fit = 8.816613e-01 Final estimated fit = 8.810186e-01 
+Score: 0.8536
+</pre><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Alternating randomized least squares for CP Decomposition
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="cp.html">CP Decompositions</a> 
+% &#62;&#62; <a href="cp_arls_doc.html">CP-ARLS</a>
+% </p>
+% </html>
+%
+% The function |cp_arls| computes an estimate of the best rank-R CP model
+% of a tensor X using alternating _randomized_ least-squares algorithm.
+% The input X must be a (dense) |tensor|. The output CP model is a
+% |ktensor|.  The CP-ARLS method is described in the following reference:
+%
+% * C. Battaglino, G. Ballard, T. G. Kolda.
+%   A Practical Randomized CP Tensor Decomposition.
+%   SIAM Journal on Matrix Analysis and Applications 39(2):876-901, 2018.
+%   <https://doi.org/10.1137/17M1112303>
+%% Set up a sample problem
+% We set up an especially difficult and somewhat large sample problem that
+% has high collinearity (0.9) and 1% noise. This is an example where the
+% randomized method will generally outperform the standard method.
+sz = [200 300 400];
+R = 5;
+ns = 0.01;
+coll = 0.9;
+
+info = create_problem('Size', sz, 'Num_Factors', R, 'Noise', ns, ...
+    'Factor_Generator', @(m,n) matrandcong(m,n,coll), ...
+    'Lambda_Generator', @ones);
+
+% Extract data and solution
+X = info.Data;
+M_true = info.Soln;
+
+%% Running the CP-ARLS method
+% Running the method is essentially the same as using CP-ALS, feed the data
+% matrix and the desired rank. Note that the iteration is of the form NxN
+% which is the number of epochs x the number of iterations per epoch. The
+% default number of iterations per epoch is 50. At the end of each epoch,
+% we check the convergence criteria. Because this is a randomized method,
+% we do not achieve strict decrease in the objective function. Instead, we
+% look at the number of epochs without improvement (newi) and exit when
+% this crosses the predefined tolerance (|newitol|), which defaults to 5.
+% It is important to note that the fit values that are reported are
+% approximate, so this is why it is denoted by |f~| rather than just |f|.
+
+tic
+[M1, ~, out1] = cp_arls(X,R);
+time1 = toc;
+scr1 = score(M1,M_true);
+fprintf('\n*** Results for CP-ARLS (with mixing) ***\n');
+fprintf('Time (secs): %.3f\n', time1)
+fprintf('Score (max=1): %.3f\n', scr1);
+
+%% Speed things up by skipping the initial mixing
+% The default behavior is to mix the data in each mode using an FFT and
+% diagonal random +/-1 matrix. This may add substantial preprocessing time,
+% though it helps to ensure that the method converges. Oftentimes, such as
+% with randomly-generated data, the mixing is not necessary. 
+
+tic
+[M2, ~, out2] = cp_arls(X,R,'mix',false);
+time2 = toc;
+scr2 = score(M2,M_true);
+
+fprintf('\n*** Results for CP-ARLS (no mix) ***\n');
+fprintf('Time (secs): %.3f\n', time2)
+fprintf('Score (max=1): %.3f\n', scr2);
+
+%% Comparing with CP-ALS
+% CP-ALS may be somewhat faster, especially since this is a relatively
+% small problem, but it usually will not achieve as good of an answer in
+% terms of the score.
+
+tic; 
+[M3, ~, out3] = cp_als(X,R,'maxiters',500,'printitn',10); 
+time3 = toc;
+scr3 = score(M3,M_true);
+fprintf('\n*** Results for CP-ALS ***\n');
+fprintf('Time (secs): %.3f\n', time3)
+fprintf('Score (max=1): %.3f\n', scr3);
+
+%% How well does the approximate fit do?
+% It is possible to check the accuracy of the fit computation by having the
+% code compute the true fit and the final solution, enabled by the
+% |truefit| option.
+[M4,~,out4] = cp_arls(X,R,'truefit',true);
+
+%% Varying epoch size
+% It is possible to vary that number of iterations per epoch. Fewer
+% iterations means that more time is spent checking for convergence and it
+% may also be harder to detect as an single iteration can have some
+% fluctuation and we are actually looking for the overall trend. In
+% contrast, too many iterations means that the method won't realize when it
+% has converged and may spend too much time computing.
+
+%%
+tic
+M = cp_arls(X,R,'epoch',1,'newitol',20);
+toc
+fprintf('Score: %.4f\n',score(M,M_true));
+
+%%
+tic
+M = cp_arls(X,R,'epoch',200,'newitol',3,'printitn',2);
+toc
+fprintf('Score: %.4f\n',score(M,M_true));
+
+%% Set up another sample problem
+% We set up another problem with 10% noise, but no collinearity.
+sz = [200 300 400];
+R = 5;
+ns = 0.10;
+
+info = create_problem('Size', sz, 'Num_Factors', R, 'Noise', ns, ...
+    'Factor_Generator', @rand,'Lambda_Generator', @ones);
+
+% Extract data and solution
+X = info.Data;
+M_true = info.Soln;
+
+%% Terminating once a desired fit is achieved
+% If we know the noise level is 10%, we would expect a fit of 0.90 at best.
+% So, we can set a threshold that is close to that and terminate as soon as
+% we achieve that accuracy. Since detecting convergence is hard for a
+% randomized method, this can lead to speed ups. However, if the fit is not
+% high enough, the accuracy may suffer consequently.
+M = cp_arls(X,R,'newitol',20,'fitthresh',0.895,'truefit',true);
+fprintf('Score: %.4f\n',score(M,M_true));
+
+%% Changing the number of function evaluation samples
+% The function evaluation is approximate and based on sampling the number
+% of entries specified by |nsampfit|. If this is too small, the samples
+% will not be accurate enough. If this is too large, the computation will
+% take too long. The default is $2^14$, which should generally be
+% sufficient.  It may sometimes be possible to use smaller values. The same
+% sampled entries are used for every convergence check REPLACE_WITH_DASH_DASH- we do not
+% resample to check other entries.
+M = cp_arls(X,R,'truefit',true,'nsampfit',100);
+fprintf('Score: %.4f\n',score(M,M_true));
+
+%% Change the number of sampled rows in least squares solve
+% The default number of sampled rows for the least squares solves is
+% |ceil(10*R*log2(R))|. This seemed to work well in most tests, but this can
+% be varied higher or lower. For R=5, this means we sample 117 rows per
+% solve. The rows are different for every least squares problem. Let's see
+% what happens if we reduce this to 10.
+
+M = cp_arls(X,R,'truefit',true,'nsamplsq',10);
+fprintf('Score: %.4f\n',score(M,M_true));
+
+%%
+% What if we use 25?
+M = cp_arls(X,R,'truefit',true,'nsamplsq',25);
+fprintf('Score: %.4f\n',score(M,M_true));
+
+
+
+##### SOURCE END #####
+--></body></html>

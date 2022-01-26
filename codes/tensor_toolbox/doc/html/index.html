@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Tensor Toolbox for MATLAB</title>
+    <link rel="stylesheet" href="ttb.css">
+  </head>
+  
+  <body>
+    <div class="banner">
+      <a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></img></a>
+    </div>
+    <div class="content">
+      <h1 id="home">Tensor Toolbox for MATLAB, Version 3.2.1</h1>
+
+      <p>The Tensor Toolbox for MATLAB provides a suite of tools for
+	working with multidimensional or N-way arrays.  Tensor
+	analysis can be used for data understanding and visualization
+	as well as data compression.  Tensors are used in a variety of
+	applications including chemometrics, network analysis,
+	hyperspectral image analysis, latent topic modeling, etc.
+	This toolbox provides many standard methods for decomposing
+	tensors as well as fundamental kernels for writing new
+	methods.</p>
+
+      <h2>Downloading</h2>
+      <p>This toolbox is open source and hosted on 
+	<a href="http://gitlab.com/tensors/tensor_toolbox">GITLAB</a>.
+	See <a href="https://gitlab.com/tensors/tensor_toolbox/blob/master/LICENSE.txt"><tt>LICENSE.txt</tt></a>
+	for the terms of the license (2-clause BSD).
+      </p>
+      <ul>
+	<li><a href="https://gitlab.com/tensors/tensor_toolbox/-/releases/v3.2.1">Tensor Toolbox for MATLAB v3.2.1 (current release) </a></li>
+	<li><a href="https://gitlab.com/tensors/tensor_toolbox/-/releases/v3.1">Tensor Toolbox for MATLAB v3.1</a></li>
+	<li><a href="http://gitlab.com/tensors/tensor_toolbox">Current development version from GITLAB repository</a></li>
+      </ul>
+      
+      <p>Be advised that a recent version of MATLAB is required.
+	Once you have downloaded or cloned the Tensor Toolbox, use <tt>addpath</tt> to add the <tt>tensor_toolbox</tt> directory to your path.
+	Type <tt>help&nbsp;tensor_toolbox</tt> for a list of functions and classes provided by the toolbox.
+	Type <tt>doc&nbsp;tensor_toolbox</tt> to access this documentation.
+      For more information, see <a href="https://gitlab.com/tensors/tensor_toolbox/blob/master/README.md"><tt>README.md</tt></a>
+      
+      
+      <h2 id="functionality">Functionality</h2>      
+
+      <p>The Tensor Toolbox provides the classes and
+	functions for manipulating dense, sparse, and structured
+	tensors using MATLAB's object-oriented features.
+
+      <ul>
+	<li><a href="tensor_types.html">Tensor Types</a> - The Tensor
+	Toolbox supports multiple tensor types, including dense,
+	sparse, and symmetric tensors as well as specially structured
+	tensors, such as Tucker format (core tensor plus factor
+	matrices), Krusal format (stored as factor matrices), and sum
+	format (sum of different types of tensors such as sparse plus
+	rank-1 tensor in Kruskal format).</li>
+	<li><a href="cp.html">CP Decompositions</a> - CP methods such
+	  as alternating least squares, direct optimization, and
+	  weighted optimization (for missing data). Also alternative
+	  decompositions such as Poisson Tensor Factorization via
+	  alternating Poisson regression (APR), Generalized CP (GCP) tensor factorization,
+	  and symmetric CP tensor factorization.
+	<li><a href="tucker.html">Tucker Decomposition</a> - Tucker
+	  methods including as the higher-order SVD (HOSVD), the
+	  sequentially-truncated HOSVD (ST-HOSVD), and the
+	  higher-order orthogonal iteration (HOOI).</li>
+	<li><a href="eigen.html">Eigenproblems</a> - Methods to solve
+	the tensor eigenproblem including the shifted higher-order
+	power method (SSHOPM) and the adaptive shift version (GEAP).
+	<li><a href="working.html">Working with Tensors</a> - Creating
+	  test problems, tensor multiplication,
+	  collapsing and scaling tensors (useful in preprocessing),
+	  and more.
+      </ul>
+      
+      
+      <h2 id="how-to-cite">How to Cite</h2>
+      
+      <p>To support this toolbox and its authors,
+	please cite the appropriate works.
+	The primary references are given below.
+	Additionally, please cite the
+	specific references mentioned in the help for the functions
+	you are using.
+	Thanks very much for your support.</p>
+      
+      <ul class=citations>
+	<li><b>General software, latest release:</b>
+	  Brett W. Bader, Tamara G. Kolda and others,
+	  Tensor Toolbox for MATLAB, Version 3.2.1, 
+	  <a href="https://www.tensortoolbox.org">www.tensortoolbox.org</a>,
+	  April 5, 2021.	  
+	<li><b>General software, development version:</b>
+	  Brett W. Bader, Tamara G. Kolda and others,
+	  Tensor Toolbox for MATLAB, development version <span class="untermstring">[hash]</span>,
+	  available online at
+	  <a href="https://www.tensortoolbox.org">https://www.tensortoolbox.org</a>,
+	  <span class="untermstring">date</span>.
+	  <ul>
+	    <li><em>Replace the hash and date to match the current development version.
+	      Generate the appropriate hash via</em> <tt>git log --pretty=format:'%h' -n 1</tt>.</li>
+	  </ul>
+	<li><b>Dense tensors:</b>
+	  B. W. Bader and T. G. Kolda,
+	  Algorithm 862: MATLAB Tensor Classes for Fast Algorithm Prototyping,
+	  ACM Trans. Mathematical Software, 32(4):635-653, 2006,
+	 <a href="http://dx.doi.org/10.1145/1186785.1186794">http://dx.doi.org/10.1145/1186785.1186794</a>.
+	<li><b>Sparse, Kruskal, and Tucker tensors:</b>
+	  B. W. Bader and T. G. Kolda,
+	  Efficient MATLAB Computations with Sparse and Factored Tensors,
+	  SIAM J. Scientific Computing, 30(1):205-231, 2007,
+	  <a href="http://dx.doi.org/10.1137/060676489">http://dx.doi.org/10.1137/060676489</a>. 
+      </ul>      
+            
+      <h2 id="contribute">How to Contribute</h2>
+
+      <p>Your bug reports and code contributions are warmly welcomed.
+	This is an open-source project hosted on GITLAB at
+	<a href="http://gitlab.com/tensors/tensor_toolbox">http://gitlab.com/tensors/tensor_toolbox</a>.
+      </p>
+      <ul>
+	<li> Report issues here: <a href="https://gitlab.com/tensors/tensor_toolbox/issues">https://gitlab.com/tensors/tensor_toolbox/issues</a>
+	  <li>Please see the
+	    <a href="https://gitlab.com/tensors/tensor_toolbox/blob/master/CONTRIBUTION_GUIDE.md"
+	       ><tt>CONTRIBUTION_GUIDE.md</tt></a>
+	    for information on contributing to the project.</li>
+	  <li>Thanks to all contributors, listed in
+	    <a href="https://gitlab.com/tensors/tensor_toolbox/blob/master/CONTRIBUTORS.md"
+	       ><tt>CONTRIBUTORS.md</tt></a>.</li>
+	</ul>
+
+      <h2 id="info">More information</h2>
+       This
+	documentation is provided via the MATLAB Help interface under
+	"Supplemental Software" and online at
+	<a href="https://www.tensortoolbox.org/">www.tensortoolbox.org</a>.</p>
+      
+      <h2 id="contact">Contact</h2>
+      Please email 
+      <a href="mailto:tensortoolbox@sandia.gov">tensortoolbox@sandia.gov</a>
+      with any questions about the toolbox that cannot be resolved via issue reporting.</p>
+      <p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p>      
+    </div>
+  </body>
+</html>

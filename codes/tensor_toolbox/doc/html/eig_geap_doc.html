@@ -1,0 +1,526 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Shifted Power Method for Generalized Tensor Eigenproblem</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-01-18"><meta name="DC.source" content="eig_geap_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Shifted Power Method for Generalized Tensor Eigenproblem</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="eigen.html">Tensor Eigenproblem</a>
+&#62;&#62; <a href="sshopm_doc.html">GEAP</a>
+</p>
+</p><p>The method is described in the following paper:</p><pre class="language-matlab">* T. G. Kolda, J. R. Mayo, An <span class="string">Adaptive</span> <span class="string">Shifted</span> <span class="string">Power</span> <span class="string">Method</span> <span class="string">for</span>
+  Computing <span class="string">Generalized</span> <span class="string">Tensor</span> <span class="string">Eigenpairs</span>, SIAM <span class="string">J.</span> <span class="string">Matrix</span> <span class="string">Analysis</span> <span class="string">and</span>
+  Applications, 35:1563-1582, 2014, http://dx.doi.org/0.1137/140951758
+</pre><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#2">Data tensor for Example 5.1 in Kolda and Mayo (2014)</a></li><li><a href="#3">Create corresponding "identity" tensor</a></li><li><a href="#4">Demonstrate identity property</a></li><li><a href="#5">Call <tt>eig_geap</tt> to find eigenpair</a></li><li><a href="#6">Demonstrate generalized eigenpair property</a></li><li><a href="#7">Call <tt>eig_geap</tt> to find another eigenpair</a></li><li><a href="#9">Reproduce tensors from Example 5.3 from Kolda and Mayo (2014)</a></li><li><a href="#10">Compute an eigenpair and test it</a></li><li><a href="#12">Compute another eigenpair and test it</a></li></ul></div><pre class="codeinput">rng(<span class="string">'default'</span>); <span class="comment">%&lt;- Setup for reproducibility</span>
+</pre><h2 id="2">Data tensor for Example 5.1 in Kolda and Mayo (2014)</h2><p>Tensor taken from Example 1 in E. Kofidis and P. A. Regalia, On the best rank-1 approximation of higher-order supersymmetric tensors, SIAM J. Matrix Anal. Appl., 23:863-884, 2002, <a href="http://dx.doi.org/10.1137/S0895479801387413">http://dx.doi.org/10.1137/S0895479801387413</a>.</p><pre class="codeinput"><span class="comment">% Unique values in lexiographical order</span>
+Avals = [0.2883 -0.0031 0.1973 -0.2485 -0.2939 0.3847 0.2972 0.1862 <span class="keyword">...</span>
+    0.0919 -0.3619 0.1241 -0.3420 0.2127 0.2727 -0.3054 ];
+
+<span class="comment">% Create standard tensor object directly</span>
+<span class="comment">% because that's what EIG_GEAP expects.</span>
+A = full(symtensor(Avals, 4,3));
+
+<span class="comment">% Display the tensor as a symmetric tensor</span>
+disp(symtensor(A),<span class="string">'A'</span>)
+
+<span class="comment">% Save order and dimension</span>
+m = ndims(Asym);
+n = size(Asym,1);
+</pre><pre class="codeoutput">A is a symmetric tensor with 4 modes of dimension 3
+	(1,1,1,1)    0.2883
+	(1,1,1,2)   -0.0031
+	(1,1,1,3)    0.1973
+	(1,1,2,2)   -0.2485
+	(1,1,2,3)   -0.2939
+	(1,1,3,3)    0.3847
+	(1,2,2,2)    0.2972
+	(1,2,2,3)    0.1862
+	(1,2,3,3)    0.0919
+	(1,3,3,3)   -0.3619
+	(2,2,2,2)    0.1241
+	(2,2,2,3)   -0.3420
+	(2,2,3,3)    0.2127
+	(2,3,3,3)    0.2727
+	(3,3,3,3)   -0.3054
+</pre><h2 id="3">Create corresponding "identity" tensor</h2><p>Create an identity tensor of order m and dimension n. Here we use a somewhat convoluted construction method, but it aligns with the mathematical derivation.</p><pre class="codeinput"><span class="keyword">if</span> mod(m,2) ~= 0
+    error(<span class="string">'Identity tensor on exists for even order'</span>);
+<span class="keyword">end</span>
+Bsym = symtensor(@zeros,m,n);
+uniqidx = indices(Bsym);
+Bvals = zeros(size(uniqidx,1),1);
+<span class="keyword">for</span> i = 1:size(uniqidx,1)
+    pidx = perms(uniqidx(i,:));
+    pidxodd = pidx(:,1:2:m-1);
+    pidxeven = pidx(:,2:2:m);
+    pidxresult = pidxodd == pidxeven;
+    Bvals(i) = sum(all(pidxresult,2))/factorial(m);
+<span class="keyword">end</span>
+Bsym = symtensor(Bvals, m,n);
+B = full(Bsym);
+disp(Bsym,<span class="string">'B'</span>)
+</pre><pre class="codeoutput">B is a symmetric tensor with 4 modes of dimension 3
+	(1,1,1,1)    1.0000
+	(1,1,1,2)         0
+	(1,1,1,3)         0
+	(1,1,2,2)    0.3333
+	(1,1,2,3)         0
+	(1,1,3,3)    0.3333
+	(1,2,2,2)         0
+	(1,2,2,3)         0
+	(1,2,3,3)         0
+	(1,3,3,3)         0
+	(2,2,2,2)    1.0000
+	(2,2,2,3)         0
+	(2,2,3,3)    0.3333
+	(2,3,3,3)         0
+	(3,3,3,3)    1.0000
+</pre><h2 id="4">Demonstrate identity property</h2><p>A <i>tensor identity</i>, E,  satisfies the following mathematical property for any n-dimensional vector x.</p><p><img src="eig_geap_doc_eq10451482025693012105.png" alt="$$\|x\|^2 x = E x^{\otimes 2}$$" style="width:88px;height:17px;"></p><p>Note that it is not scale invariant. When we test this property, it should be close to machine precision.</p><pre class="codeinput"><span class="keyword">for</span> i = 1:10
+    x = rand(n,1);
+    lhs = norm(x)^(m-2) * x;
+    rhs = ttsv(B,x,-1);
+    fprintf(<span class="string">'Identity property error: %g\n'</span>, norm(lhs-rhs));
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Identity property error: 2.22045e-16
+Identity property error: 2.498e-16
+Identity property error: 5.08768e-16
+Identity property error: 4.996e-16
+Identity property error: 0
+Identity property error: 1.27192e-16
+Identity property error: 3.14018e-16
+Identity property error: 3.14018e-16
+Identity property error: 0
+Identity property error: 6.3596e-17
+</pre><h2 id="5">Call <tt>eig_geap</tt> to find eigenpair</h2><p>Default is to find a maxima, i.e., a convex solution.</p><pre class="codeinput">info = eig_geap(A, B, <span class="string">'MaxIts'</span>, 100, <span class="string">'Display'</span>,1);
+</pre><pre class="codeoutput">Generalized Adaptive Tensor Eigenpair Power Method: Convex  
+----  --------- ----- ------------ -----
+Iter  Lambda    Diff  |newx-x|     Shift
+----  --------- ----- ------------ -----
+   1  -0.410701 +e+00 2.009472e-01  3.06
+   2   0.115407 +e+00 2.554734e-01  2.62
+   3   0.333322 +e-01 2.053365e-01  1.80
+   4   0.362461 +e-02 9.743037e-02  1.03
+   5   0.363244 +e-03 1.767961e-02  0.78
+   6   0.363291 +e-04 3.655241e-03  0.79
+   7   0.363302 +e-05 1.808619e-03  0.80
+   8   0.363305 +e-06 9.127993e-04  0.81
+   9   0.363306 +e-06 4.650736e-04  0.81
+  10   0.363306 +e-07 2.380818e-04  0.81
+  11   0.363306 +e-07 1.221727e-04  0.81
+  12   0.363306 +e-08 6.277042e-05  0.81
+  13   0.363306 +e-08 3.227074e-05  0.81
+  14   0.363306 +e-09 1.659599e-05  0.81
+  15   0.363306 +e-10 8.536291e-06  0.81
+  16   0.363306 +e-10 4.391091e-06  0.81
+  17   0.363306 +e-11 2.258888e-06  0.81
+  18   0.363306 +e-11 1.162055e-06  0.81
+  19   0.363306 +e-12 5.978110e-07  0.81
+  20   0.363306 +e-12 3.075414e-07  0.81
+  21   0.363306 +e-13 1.582139e-07  0.81
+  22   0.363306 +e-14 8.139288e-08  0.81
+  23   0.363306 +e-14 4.187246e-08  0.81
+  24   0.363306 +e-15 2.154124e-08  0.81
+  25   0.363306 +e-15 1.108187e-08  0.81
+Successful Convergence
+</pre><h2 id="6">Demonstrate generalized eigenpair property</h2><p><img src="eig_geap_doc_eq05189010210422867032.png" alt="$$A x^{\otimes 2} = \lambda B x^{\otimes 2}$$" style="width:94px;height:13px;"></p><pre class="codeinput">x = info.x;
+lambda = info.lambda;
+lhs = ttsv(A,x,-1);
+rhs = lambda * ttsv(B,x,-1);
+fprintf(<span class="string">'Generalized eigenpair identity norm: %g\n'</span>, norm(lhs-rhs));
+</pre><pre class="codeoutput">Generalized eigenpair identity norm: 6.70732e-09
+</pre><h2 id="7">Call <tt>eig_geap</tt> to find another eigenpair</h2><p>Find a minima (by specifying 'Concave' = true)</p><pre class="codeinput">info = eig_geap(A, B, <span class="string">'MaxIts'</span>, 100, <span class="string">'Concave'</span>, true, <span class="string">'Display'</span>,1);
+</pre><pre class="codeoutput">Generalized Adaptive Tensor Eigenpair Power Method: Concave 
+----  --------- ----- ------------ -----
+Iter  Lambda    Diff  |newx-x|     Shift
+----  --------- ----- ------------ -----
+   1   0.375422 -e-01 1.845569e-01 -2.27
+   2   0.052994 -e+00 2.368751e-01 -1.99
+   3  -0.041959 -e-01 1.620719e-01 -1.55
+   4  -0.045031 -e-03 3.357753e-02 -1.26
+   5  -0.045085 -e-04 4.020527e-03 -1.21
+   6  -0.045091 -e-05 1.369335e-03 -1.20
+   7  -0.045092 -e-06 4.682150e-04 -1.20
+   8  -0.045092 -e-07 1.597911e-04 -1.20
+   9  -0.045092 -e-08 5.449789e-05 -1.20
+  10  -0.045092 -e-09 1.858280e-05 -1.20
+  11  -0.045092 -e-10 6.335930e-06 -1.20
+  12  -0.045092 -e-11 2.160222e-06 -1.20
+  13  -0.045092 -e-12 7.365167e-07 -1.20
+  14  -0.045092 -e-13 2.511109e-07 -1.20
+  15  -0.045092 -e-14 8.561464e-08 -1.20
+  16  -0.045092 -e-15 2.918975e-08 -1.20
+  17  -0.045092 -e-16 9.952054e-09 -1.20
+Successful Convergence
+</pre><p>Test generalized eigenvector properties</p><pre class="codeinput">x = info.x;
+lambda = info.lambda;
+lhs = ttsv(A,x,-1);
+rhs = lambda * ttsv(B,x,-1);
+fprintf(<span class="string">'Generalized eigenpair identity norm: %g\n'</span>, norm(lhs-rhs));
+</pre><pre class="codeoutput">Generalized eigenpair identity norm: 4.22637e-09
+</pre><h2 id="9">Reproduce tensors from Example 5.3 from Kolda and Mayo (2014)</h2><pre class="codeinput">Avals = [0.4982 -0.0582 -1.1719 0.2236 <span class="keyword">...</span>
+    -0.0171 0.4597 0.4880 0.1852 <span class="keyword">...</span>
+    -0.4087 0.7639 0.0000 -0.6162 <span class="keyword">...</span>
+    0.1519 0.7631 2.6311];
+
+Bvals = [3.0800 0.0614 0.2317 0.8140 <span class="keyword">...</span>
+    0.0130 2.3551 0.0486 0.0616 <span class="keyword">...</span>
+    0.0482 0.5288 1.9321 0.0236 <span class="keyword">...</span>
+    1.8563 0.0681 16.0480];
+
+
+A = full(symtensor(Avals, 4,3));
+B = full(symtensor(Bvals, 4,3));
+</pre><h2 id="10">Compute an eigenpair and test it</h2><pre class="codeinput">info = eig_geap(A, B, <span class="string">'MaxIts'</span>, 100, <span class="string">'Display'</span>,1);
+</pre><pre class="codeoutput">Generalized Adaptive Tensor Eigenpair Power Method: Convex  
+----  --------- ----- ------------ -----
+Iter  Lambda    Diff  |newx-x|     Shift
+----  --------- ----- ------------ -----
+   1   0.202754 +e-02 1.169885e-01  0.09
+   2   0.203746 +e-03 2.568496e-02  0.14
+   3   0.205219 +e-03 3.063915e-02  0.15
+   4   0.207435 +e-03 3.717155e-02  0.15
+   5   0.210711 +e-02 4.467892e-02  0.16
+   6   0.215404 +e-02 5.282495e-02  0.17
+   7   0.221730 +e-02 6.069324e-02  0.18
+   8   0.229403 +e-02 6.641258e-02  0.20
+   9   0.237235 +e-02 6.704464e-02  0.21
+  10   0.243478 +e-02 5.985900e-02  0.23
+  11   0.247275 +e-02 4.601160e-02  0.27
+  12   0.249217 +e-03 3.184013e-02  0.31
+  13   0.250186 +e-03 2.171951e-02  0.34
+  14   0.250689 +e-03 1.523781e-02  0.37
+  15   0.250963 +e-04 1.102013e-02  0.39
+  16   0.251118 +e-04 8.165653e-03  0.41
+  17   0.251208 +e-04 6.163198e-03  0.42
+  18   0.251262 +e-04 4.717275e-03  0.43
+  19   0.251294 +e-04 3.649284e-03  0.43
+  20   0.251314 +e-05 2.846352e-03  0.44
+  21   0.251327 +e-05 2.234267e-03  0.44
+  22   0.251334 +e-05 1.762551e-03  0.45
+  23   0.251339 +e-05 1.395871e-03  0.45
+  24   0.251342 +e-06 1.108889e-03  0.45
+  25   0.251344 +e-06 8.830627e-04  0.45
+  26   0.251346 +e-06 7.045917e-04  0.45
+  27   0.251346 +e-06 5.630598e-04  0.45
+  28   0.251347 +e-06 4.505125e-04  0.45
+  29   0.251347 +e-06 3.608169e-04  0.46
+  30   0.251347 +e-07 2.892073e-04  0.46
+  31   0.251348 +e-07 2.319560e-04  0.46
+  32   0.251348 +e-07 1.861323e-04  0.46
+  33   0.251348 +e-07 1.494218e-04  0.46
+  34   0.251348 +e-07 1.199907e-04  0.46
+  35   0.251348 +e-08 9.638168e-05  0.46
+  36   0.251348 +e-08 7.743418e-05  0.46
+  37   0.251348 +e-08 6.222201e-05  0.46
+  38   0.251348 +e-08 5.000509e-05  0.46
+  39   0.251348 +e-08 4.019126e-05  0.46
+  40   0.251348 +e-09 3.230629e-05  0.46
+  41   0.251348 +e-09 2.597006e-05  0.46
+  42   0.251348 +e-09 2.087774e-05  0.46
+  43   0.251348 +e-09 1.678470e-05  0.46
+  44   0.251348 +e-09 1.349459e-05  0.46
+  45   0.251348 +e-10 1.084972e-05  0.46
+  46   0.251348 +e-10 8.723432e-06  0.46
+  47   0.251348 +e-10 7.013982e-06  0.46
+  48   0.251348 +e-10 5.639603e-06  0.46
+  49   0.251348 +e-10 4.534587e-06  0.46
+  50   0.251348 +e-10 3.646122e-06  0.46
+  51   0.251348 +e-11 2.931758e-06  0.46
+  52   0.251348 +e-11 2.357371e-06  0.46
+  53   0.251348 +e-11 1.895526e-06  0.46
+  54   0.251348 +e-11 1.524170e-06  0.46
+  55   0.251348 +e-11 1.225571e-06  0.46
+  56   0.251348 +e-12 9.854735e-07  0.46
+  57   0.251348 +e-12 7.924141e-07  0.46
+  58   0.251348 +e-12 6.371771e-07  0.46
+  59   0.251348 +e-12 5.123524e-07  0.46
+  60   0.251348 +e-12 4.119816e-07  0.46
+  61   0.251348 +e-13 3.312740e-07  0.46
+  62   0.251348 +e-13 2.663772e-07  0.46
+  63   0.251348 +e-13 2.141939e-07  0.46
+  64   0.251348 +e-13 1.722334e-07  0.46
+  65   0.251348 +e-13 1.384930e-07  0.46
+  66   0.251348 +e-13 1.113623e-07  0.46
+  67   0.251348 +e-14 8.954655e-08  0.46
+  68   0.251348 +e-14 7.200449e-08  0.46
+  69   0.251348 +e-14 5.789891e-08  0.46
+  70   0.251348 +e-14 4.655659e-08  0.46
+  71   0.251348 +e-14 3.743623e-08  0.46
+  72   0.251348 +e-15 3.010253e-08  0.46
+  73   0.251348 +e-15 2.420549e-08  0.46
+  74   0.251348 +e-15 1.946368e-08  0.46
+Successful Convergence
+</pre><p>Test generalized eigenvector properties</p><pre class="codeinput">x = info.x;
+lambda = info.lambda;
+lhs = ttsv(A,x,-1);
+rhs = lambda * ttsv(B,x,-1);
+fprintf(<span class="string">'Generalized eigenpair identity norm: %g\n'</span>, norm(lhs-rhs));
+</pre><pre class="codeoutput">Generalized eigenpair identity norm: 4.69887e-08
+</pre><h2 id="12">Compute another eigenpair and test it</h2><pre class="codeinput">info = eig_geap(A, B, <span class="string">'MaxIts'</span>, 100, <span class="string">'Display'</span>,1);
+</pre><pre class="codeoutput">Generalized Adaptive Tensor Eigenpair Power Method: Convex  
+----  --------- ----- ------------ -----
+Iter  Lambda    Diff  |newx-x|     Shift
+----  --------- ----- ------------ -----
+   1   0.311558 +e+00 3.548427e-01  0.38
+   2   0.471060 +e-01 2.202178e-01  1.16
+   3   0.488515 +e-02 5.394642e-02  1.07
+   4   0.503547 +e-02 5.040663e-02  1.06
+   5   0.515362 +e-02 4.543136e-02  1.04
+   6   0.523706 +e-02 3.881159e-02  1.01
+   7   0.529043 +e-02 3.152998e-02  0.99
+   8   0.532173 +e-03 2.448560e-02  0.97
+   9   0.533881 +e-03 1.829630e-02  0.95
+  10   0.534759 +e-03 1.324809e-02  0.94
+  11   0.535192 +e-03 9.359745e-03  0.92
+  12   0.535397 +e-04 6.491499e-03  0.92
+  13   0.535493 +e-04 4.442031e-03  0.91
+  14   0.535537 +e-04 3.010740e-03  0.91
+  15   0.535557 +e-05 2.027133e-03  0.90
+  16   0.535565 +e-05 1.358672e-03  0.90
+  17   0.535569 +e-05 9.078326e-04  0.90
+  18   0.535571 +e-06 6.053311e-04  0.90
+  19   0.535572 +e-06 4.030639e-04  0.90
+  20   0.535572 +e-06 2.681327e-04  0.90
+  21   0.535572 +e-07 1.782605e-04  0.90
+  22   0.535572 +e-07 1.184625e-04  0.90
+  23   0.535572 +e-08 7.870213e-05  0.90
+  24   0.535572 +e-08 5.227724e-05  0.90
+  25   0.535572 +e-08 3.472049e-05  0.90
+  26   0.535572 +e-09 2.305812e-05  0.90
+  27   0.535572 +e-09 1.531224e-05  0.90
+  28   0.535572 +e-09 1.016806e-05  0.90
+  29   0.535572 +e-10 6.751913e-06  0.90
+  30   0.535572 +e-10 4.483415e-06  0.90
+  31   0.535572 +e-10 2.977052e-06  0.90
+  32   0.535572 +e-11 1.976792e-06  0.90
+  33   0.535572 +e-11 1.312603e-06  0.90
+  34   0.535572 +e-11 8.715749e-07  0.90
+  35   0.535572 +e-12 5.787287e-07  0.90
+  36   0.535572 +e-12 3.842773e-07  0.90
+  37   0.535572 +e-13 2.551609e-07  0.90
+  38   0.535572 +e-13 1.694272e-07  0.90
+  39   0.535572 +e-13 1.124999e-07  0.90
+  40   0.535572 +e-14 7.470004e-08  0.90
+  41   0.535572 +e-14 4.960090e-08  0.90
+  42   0.535572 +e-14 3.293504e-08  0.90
+  43   0.535572 +e-15 2.186889e-08  0.90
+  44   0.535572 +e-15 1.452096e-08  0.90
+Successful Convergence
+</pre><p>Test generalized eigenvector properties</p><pre class="codeinput">x = info.x;
+lambda = info.lambda;
+lhs = ttsv(A,x,-1);
+rhs = lambda * ttsv(B,x,-1);
+fprintf(<span class="string">'Generalized eigenpair identity norm: %g\n'</span>, norm(lhs-rhs));
+</pre><pre class="codeoutput">Generalized eigenpair identity norm: 5.15774e-08
+</pre><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Shifted Power Method for Generalized Tensor Eigenproblem
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="eigen.html">Tensor Eigenproblem</a> 
+% &#62;&#62; <a href="sshopm_doc.html">GEAP</a>
+% </p>
+% </html>
+%
+% The method is described in the following paper:
+%
+%   * T. G. Kolda, J. R. Mayo, An Adaptive Shifted Power Method for
+%     Computing Generalized Tensor Eigenpairs, SIAM J. Matrix Analysis and
+%     Applications, 35:1563-1582, 2014, http://dx.doi.org/0.1137/140951758    
+%
+
+%%
+rng('default'); %<- Setup for reproducibility
+
+%% Data tensor for Example 5.1 in Kolda and Mayo (2014)
+% Tensor taken from Example 1 in E. Kofidis and P. A. Regalia, On the best
+% rank-1 approximation of higher-order supersymmetric tensors, SIAM J.
+% Matrix Anal. Appl., 23:863-884, 2002,
+% http://dx.doi.org/10.1137/S0895479801387413. 
+
+% Unique values in lexiographical order
+Avals = [0.2883 -0.0031 0.1973 -0.2485 -0.2939 0.3847 0.2972 0.1862 ...
+    0.0919 -0.3619 0.1241 -0.3420 0.2127 0.2727 -0.3054 ];
+
+% Create standard tensor object directly
+% because that's what EIG_GEAP expects.
+A = full(symtensor(Avals, 4,3)); 
+
+% Display the tensor as a symmetric tensor
+disp(symtensor(A),'A')
+
+% Save order and dimension
+m = ndims(Asym); 
+n = size(Asym,1); 
+
+%% Create corresponding "identity" tensor 
+% Create an identity tensor of order m and dimension n.
+% Here we use a somewhat convoluted construction method, but it aligns with
+% the mathematical derivation.
+if mod(m,2) ~= 0
+    error('Identity tensor on exists for even order');
+end
+Bsym = symtensor(@zeros,m,n);
+uniqidx = indices(Bsym);
+Bvals = zeros(size(uniqidx,1),1);
+for i = 1:size(uniqidx,1)
+    pidx = perms(uniqidx(i,:));
+    pidxodd = pidx(:,1:2:m-1);
+    pidxeven = pidx(:,2:2:m);
+    pidxresult = pidxodd == pidxeven;
+    Bvals(i) = sum(all(pidxresult,2))/factorial(m);
+end
+Bsym = symtensor(Bvals, m,n);
+B = full(Bsym);
+disp(Bsym,'B')
+
+%% Demonstrate identity property
+% A _tensor identity_, E,  satisfies the following mathematical property for any
+% n-dimensional vector x. 
+% 
+% $$\|x\|^2 x = E x^{\otimes 2}$$
+%
+% Note that it is not scale invariant. When we test this property, it
+% should be close to machine precision.
+% 
+
+for i = 1:10
+    x = rand(n,1);
+    lhs = norm(x)^(m-2) * x;
+    rhs = ttsv(B,x,-1);
+    fprintf('Identity property error: %g\n', norm(lhs-rhs));
+end
+
+%% Call |eig_geap| to find eigenpair
+% Default is to find a maxima, i.e., a convex solution.
+info = eig_geap(A, B, 'MaxIts', 100, 'Display',1);
+
+%% Demonstrate generalized eigenpair property
+% 
+% $$A x^{\otimes 2} = \lambda B x^{\otimes 2}$$
+% 
+
+x = info.x;
+lambda = info.lambda;
+lhs = ttsv(A,x,-1);
+rhs = lambda * ttsv(B,x,-1);
+fprintf('Generalized eigenpair identity norm: %g\n', norm(lhs-rhs));
+
+%% Call |eig_geap| to find another eigenpair
+% Find a minima (by specifying 'Concave' = true)
+info = eig_geap(A, B, 'MaxIts', 100, 'Concave', true, 'Display',1);
+
+%% 
+% Test generalized eigenvector properties
+x = info.x;
+lambda = info.lambda;
+lhs = ttsv(A,x,-1);
+rhs = lambda * ttsv(B,x,-1);
+fprintf('Generalized eigenpair identity norm: %g\n', norm(lhs-rhs));
+
+%% Reproduce tensors from Example 5.3 from Kolda and Mayo (2014)
+
+Avals = [0.4982 -0.0582 -1.1719 0.2236 ...
+    -0.0171 0.4597 0.4880 0.1852 ...
+    -0.4087 0.7639 0.0000 -0.6162 ...
+    0.1519 0.7631 2.6311];
+
+Bvals = [3.0800 0.0614 0.2317 0.8140 ...
+    0.0130 2.3551 0.0486 0.0616 ...
+    0.0482 0.5288 1.9321 0.0236 ...
+    1.8563 0.0681 16.0480];
+
+
+A = full(symtensor(Avals, 4,3));
+B = full(symtensor(Bvals, 4,3));
+
+%% Compute an eigenpair and test it
+info = eig_geap(A, B, 'MaxIts', 100, 'Display',1);
+
+%% 
+% Test generalized eigenvector properties
+x = info.x;
+lambda = info.lambda;
+lhs = ttsv(A,x,-1);
+rhs = lambda * ttsv(B,x,-1);
+fprintf('Generalized eigenpair identity norm: %g\n', norm(lhs-rhs));
+
+%% Compute another eigenpair and test it
+info = eig_geap(A, B, 'MaxIts', 100, 'Display',1);
+%% 
+% Test generalized eigenvector properties
+x = info.x;
+lambda = info.lambda;
+lhs = ttsv(A,x,-1);
+rhs = lambda * ttsv(B,x,-1);
+fprintf('Generalized eigenpair identity norm: %g\n', norm(lhs-rhs));
+
+##### SOURCE END #####
+--></body></html>

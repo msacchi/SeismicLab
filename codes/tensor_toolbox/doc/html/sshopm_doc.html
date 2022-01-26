@@ -1,0 +1,372 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Shifted Symmetric Higher-order Power Method</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-01-13"><meta name="DC.source" content="sshopm_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Shifted Symmetric Higher-order Power Method</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="eigen.html">Tensor Eigenproblem</a>
+&#62;&#62; <a href="sshopm_doc.html">SSHOPM</a>
+</p>
+</p><p>The methods are described in the following paper:</p><pre class="language-matlab">* T. G. Kolda, J. R. Mayo, Shifted <span class="string">Power</span> <span class="string">Method</span> <span class="string">for</span> <span class="string">Computing</span> <span class="string">Tensor</span>
+  Eigenpairs, SIAM <span class="string">J.</span> <span class="string">Matrix</span> <span class="string">Analysis</span> <span class="string">and</span> <span class="string">Applications</span>, 32:1095-1124,
+  2011, http://dx.doi/org/10.1137/100801482
+* T. G. Kolda, J. R. Mayo, An <span class="string">Adaptive</span> <span class="string">Shifted</span> <span class="string">Power</span> <span class="string">Method</span> <span class="string">for</span>
+  Computing <span class="string">Generalized</span> <span class="string">Tensor</span> <span class="string">Eigenpairs</span>, SIAM <span class="string">J.</span> <span class="string">Matrix</span> <span class="string">Analysis</span> <span class="string">and</span>
+  Applications, 35:1563-1582, 2014, http://dx.doi.org/0.1137/140951758
+</pre><p>Note that there is also a method for finding complex eigenpairs: <tt>eig_sshopmc</tt>.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Data tensor</a></li><li><a href="#3">Call <tt>eig_sshopm</tt> with no shift (fails to converge)</a></li><li><a href="#4">Call <tt>eig_sshopm</tt> with automatic shift</a></li><li><a href="#5">Call <tt>eig_sshopm</tt> with fixed shift</a></li><li><a href="#6">Convert to <tt>symtensor</tt> object</a></li></ul></div><h2 id="1">Data tensor</h2><p>From Example 1 in E. Kofidis and P. A. Regalia, On the best rank-1 approximation of higher-order supersymmetric tensors, SIAM J. Matrix Anal. Appl., 23:863-884, 2002, <a href="http://dx.doi.org/10.1137/S0895479801387413">http://dx.doi.org/10.1137/S0895479801387413</a>.</p><pre class="codeinput">A = tenzeros([3 3 3 3]);
+A(perms([1 1 1 1])) = 0.2883;
+A(perms([1 1 1 2])) = -0.0031;
+A(perms([1 1 1 3])) = 0.1973;
+A(perms([1 1 2 2])) = -0.2485;
+A(perms([1 1 2 3])) = -0.2939;
+A(perms([1 1 3 3])) = 0.3847;
+A(perms([1 2 2 2])) = 0.2972;
+A(perms([1 2 2 3])) = 0.1862;
+A(perms([1 2 3 3])) = 0.0919;
+A(perms([1 3 3 3])) = -0.3619;
+A(perms([2 2 2 2])) = 0.1241;
+A(perms([2 2 2 3])) = -0.3420;
+A(perms([2 2 3 3])) = 0.2127;
+A(perms([2 3 3 3])) = 0.2727;
+A(perms([3 3 3 3])) = -0.3054;
+</pre><p>Check symmetry of result</p><pre class="codeinput">issymmetric(A)
+</pre><pre class="codeoutput">ans =
+  logical
+   1
+</pre><h2 id="3">Call <tt>eig_sshopm</tt> with no shift (fails to converge)</h2><pre class="codeinput">rng(<span class="string">'default'</span>)
+[lambda, x, flag, it] = eig_sshopm(A, <span class="string">'MaxIts'</span>, 100, <span class="string">'Shift'</span>, 0,<span class="string">'Display'</span>,1);
+</pre><pre class="codeoutput">TENSOR SHIFTED POWER METHOD: Convex  
+----  --------- ----- ------------ -----
+Iter  Lambda    Diff  |newx-x|     Shift
+----  --------- ----- ------------ -----
+   1   0.769251 +e-01 1.194530e-01  0.00
+   2   0.844221 +e-01 1.558777e-01  0.00
+   3   0.885811 +e-01 1.321090e-01  0.00
+   4   0.888915 +e-03 4.493074e-02  0.00
+   5   0.888881 -e-04 2.144396e-02  0.00
+   6   0.888803 -e-04 2.279028e-02  0.00
+   7   0.888732 -e-04 2.448830e-02  0.00
+   8   0.888627 -e-04 2.636268e-02  0.00
+   9   0.888534 -e-04 2.832105e-02  0.00
+  10   0.888392 -e-04 3.049190e-02  0.00
+  11   0.888270 -e-04 3.274949e-02  0.00
+  12   0.888076 -e-04 3.526359e-02  0.00
+  13   0.887919 -e-04 3.786403e-02  0.00
+  14   0.887654 -e-04 4.077529e-02  0.00
+  15   0.887452 -e-04 4.376760e-02  0.00
+  16   0.887089 -e-03 4.713794e-02  0.00
+  17   0.886831 -e-04 5.057678e-02  0.00
+  18   0.886334 -e-03 5.447704e-02  0.00
+  19   0.886008 -e-03 5.842263e-02  0.00
+  20   0.885326 -e-03 6.293327e-02  0.00
+  21   0.884921 -e-03 6.745095e-02  0.00
+  22   0.883983 -e-03 7.266252e-02  0.00
+  23   0.883489 -e-03 7.782162e-02  0.00
+  24   0.882197 -e-03 8.383460e-02  0.00
+  25   0.881611 -e-03 8.970635e-02  0.00
+  26   0.879832 -e-03 9.663003e-02  0.00
+  27   0.879163 -e-03 1.032840e-01  0.00
+  28   0.876712 -e-03 1.112336e-01  0.00
+  29   0.875995 -e-03 1.187320e-01  0.00
+  30   0.872625 -e-02 1.278234e-01  0.00
+  31   0.871935 -e-03 1.362130e-01  0.00
+  32   0.867313 -e-02 1.465532e-01  0.00
+  33   0.866794 -e-03 1.558537e-01  0.00
+  34   0.860491 -e-02 1.675265e-01  0.00
+  35   0.860389 -e-04 1.777155e-01  0.00
+  36   0.851861 -e-02 1.907598e-01  0.00
+  37   0.852568 +e-03 2.017545e-01  0.00
+  38   0.841157 -e-02 2.161357e-01  0.00
+  39   0.843259 +e-03 2.277741e-01  0.00
+  40   0.828220 -e-02 2.433491e-01  0.00
+  41   0.832528 +e-02 2.553751e-01  0.00
+  42   0.813083 -e-02 2.718576e-01  0.00
+  43   0.820630 +e-02 2.839183e-01  0.00
+  44   0.796075 -e-02 3.008560e-01  0.00
+  45   0.808044 +e-02 3.125212e-01  0.00
+  46   0.777872 -e-02 3.293036e-01  0.00
+  47   0.795433 +e-02 3.401148e-01  0.00
+  48   0.759463 -e-01 3.560319e-01  0.00
+  49   0.783544 +e-02 3.655777e-01  0.00
+  50   0.741986 -e-01 3.799332e-01  0.00
+  51   0.773039 +e-02 3.879318e-01  0.00
+  52   0.726469 -e-01 4.001861e-01  0.00
+  53   0.764342 +e-01 4.065402e-01  0.00
+  54   0.713583 -e-01 4.164268e-01  0.00
+  55   0.757568 +e-01 4.212247e-01  0.00
+  56   0.703529 -e-01 4.287819e-01  0.00
+  57   0.752568 +e-01 4.322459e-01  0.00
+  58   0.696100 -e-01 4.377523e-01  0.00
+  59   0.749034 +e-01 4.401626e-01  0.00
+  60   0.690846 -e-01 4.440194e-01  0.00
+  61   0.746618 +e-01 4.456495e-01  0.00
+  62   0.687255 -e-01 4.482700e-01  0.00
+  63   0.745007 +e-01 4.493498e-01  0.00
+  64   0.684859 -e-01 4.510910e-01  0.00
+  65   0.743950 +e-01 4.517960e-01  0.00
+  66   0.683287 -e-01 4.529351e-01  0.00
+  67   0.743265 +e-01 4.533909e-01  0.00
+  68   0.682268 -e-01 4.541284e-01  0.00
+  69   0.742824 +e-01 4.544212e-01  0.00
+  70   0.681612 -e-01 4.548953e-01  0.00
+  71   0.742541 +e-01 4.550825e-01  0.00
+  72   0.681192 -e-01 4.553859e-01  0.00
+  73   0.742361 +e-01 4.555053e-01  0.00
+  74   0.680924 -e-01 4.556989e-01  0.00
+  75   0.742246 +e-01 4.557750e-01  0.00
+  76   0.680753 -e-01 4.558983e-01  0.00
+  77   0.742173 +e-01 4.559466e-01  0.00
+  78   0.680645 -e-01 4.560250e-01  0.00
+  79   0.742127 +e-01 4.560558e-01  0.00
+  80   0.680575 -e-01 4.561056e-01  0.00
+  81   0.742097 +e-01 4.561252e-01  0.00
+  82   0.680532 -e-01 4.561568e-01  0.00
+  83   0.742078 +e-01 4.561692e-01  0.00
+  84   0.680504 -e-01 4.561893e-01  0.00
+  85   0.742066 +e-01 4.561972e-01  0.00
+  86   0.680486 -e-01 4.562100e-01  0.00
+  87   0.742059 +e-01 4.562150e-01  0.00
+  88   0.680475 -e-01 4.562231e-01  0.00
+  89   0.742054 +e-01 4.562263e-01  0.00
+  90   0.680468 -e-01 4.562314e-01  0.00
+  91   0.742051 +e-01 4.562334e-01  0.00
+  92   0.680463 -e-01 4.562367e-01  0.00
+  93   0.742049 +e-01 4.562380e-01  0.00
+  94   0.680460 -e-01 4.562400e-01  0.00
+  95   0.742048 +e-01 4.562408e-01  0.00
+  96   0.680458 -e-01 4.562422e-01  0.00
+  97   0.742047 +e-01 4.562427e-01  0.00
+  98   0.680457 -e-01 4.562435e-01  0.00
+  99   0.742047 +e-01 4.562438e-01  0.00
+ 100   0.680456 -e-01 4.562444e-01  0.00
+Exceeded Maximum Iterations
+</pre><h2 id="4">Call <tt>eig_sshopm</tt> with automatic shift</h2><pre class="codeinput">rng(<span class="string">'default'</span>)
+[lambda, x, flag, it] = eig_sshopm(A, <span class="string">'MaxIts'</span>, 100,<span class="string">'Display'</span>,1);
+</pre><pre class="codeoutput">TENSOR SHIFTED POWER METHOD: Convex  
+----  --------- ----- ------------ -----
+Iter  Lambda    Diff  |newx-x|     Shift
+----  --------- ----- ------------ -----
+   1   0.738214 +e-02 5.006731e-02  1.00
+   2   0.764192 +e-02 5.838125e-02  1.03
+   3   0.796553 +e-01 6.580180e-02  1.03
+   4   0.830661 +e-01 6.895887e-02  1.02
+   5   0.859046 +e-02 6.486086e-02  1.00
+   6   0.876754 +e-02 5.301590e-02  0.97
+   7   0.884985 +e-02 3.718601e-02  0.95
+   8   0.887995 +e-03 2.287376e-02  0.95
+   9   0.888941 +e-03 1.292084e-02  0.95
+  10   0.889216 +e-04 6.985091e-03  0.95
+  11   0.889293 +e-04 3.700305e-03  0.95
+  12   0.889314 +e-05 1.942018e-03  0.95
+  13   0.889320 +e-05 1.014717e-03  0.96
+  14   0.889321 +e-06 5.290422e-04  0.96
+  15   0.889322 +e-06 2.755237e-04  0.96
+  16   0.889322 +e-07 1.434115e-04  0.96
+  17   0.889322 +e-08 7.462484e-05  0.96
+  18   0.889322 +e-08 3.882557e-05  0.96
+  19   0.889322 +e-09 2.019847e-05  0.96
+  20   0.889322 +e-09 1.050755e-05  0.96
+  21   0.889322 +e-10 5.466075e-06  0.96
+  22   0.889322 +e-10 2.843445e-06  0.96
+  23   0.889322 +e-11 1.479148e-06  0.96
+  24   0.889322 +e-11 7.694444e-07  0.96
+  25   0.889322 +e-12 4.002600e-07  0.96
+  26   0.889322 +e-13 2.082124e-07  0.96
+  27   0.889322 +e-13 1.083106e-07  0.96
+  28   0.889322 +e-14 5.634239e-08  0.96
+  29   0.889322 +e-14 2.930890e-08  0.96
+  30   0.889322 +e-15 1.524627e-08  0.96
+  31   0.889322 +e-15 7.930998e-09  0.96
+Successful Convergence
+</pre><h2 id="5">Call <tt>eig_sshopm</tt> with fixed shift</h2><pre class="codeinput">rng(<span class="string">'default'</span>)
+[lambda, x, flag, it] = eig_sshopm(A, <span class="string">'MaxIts'</span>, 100, <span class="string">'Shift'</span>, 1,<span class="string">'Display'</span>,1);
+</pre><pre class="codeoutput">TENSOR SHIFTED POWER METHOD: Convex  
+----  --------- ----- ------------ -----
+Iter  Lambda    Diff  |newx-x|     Shift
+----  --------- ----- ------------ -----
+   1   0.738266 +e-02 5.019497e-02  1.00
+   2   0.764665 +e-02 5.925302e-02  1.00
+   3   0.797664 +e-01 6.701300e-02  1.00
+   4   0.832095 +e-01 6.977158e-02  1.00
+   5   0.860063 +e-02 6.447001e-02  1.00
+   6   0.877080 +e-02 5.159030e-02  1.00
+   7   0.884961 +e-02 3.583905e-02  1.00
+   8   0.887924 +e-03 2.226877e-02  1.00
+   9   0.888900 +e-03 1.287839e-02  1.00
+  10   0.889198 +e-04 7.154172e-03  1.00
+  11   0.889286 +e-04 3.890684e-03  1.00
+  12   0.889312 +e-05 2.092504e-03  1.00
+  13   0.889319 +e-05 1.118858e-03  1.00
+  14   0.889321 +e-06 5.964163e-04  1.00
+  15   0.889322 +e-06 3.174084e-04  1.00
+  16   0.889322 +e-07 1.687770e-04  1.00
+  17   0.889322 +e-07 8.970364e-05  1.00
+  18   0.889322 +e-08 4.766521e-05  1.00
+  19   0.889322 +e-08 2.532428e-05  1.00
+  20   0.889322 +e-09 1.345373e-05  1.00
+  21   0.889322 +e-10 7.147151e-06  1.00
+  22   0.889322 +e-10 3.796773e-06  1.00
+  23   0.889322 +e-11 2.016935e-06  1.00
+  24   0.889322 +e-11 1.071437e-06  1.00
+  25   0.889322 +e-12 5.691679e-07  1.00
+  26   0.889322 +e-12 3.023523e-07  1.00
+  27   0.889322 +e-13 1.606149e-07  1.00
+  28   0.889322 +e-13 8.532147e-08  1.00
+  29   0.889322 +e-14 4.532425e-08  1.00
+  30   0.889322 +e-14 2.407703e-08  1.00
+  31   0.889322 +e-15 1.279014e-08  1.00
+  32   0.889322 +e-15 6.794342e-09  1.00
+Successful Convergence
+</pre><h2 id="6">Convert to <tt>symtensor</tt> object</h2><p>Note that the <tt>eig_sshopm</tt> method actually expects a standard <tt>tensor</tt> object, but we just display the symmetric tensor here.</p><pre class="codeinput">Asym = symtensor(A)
+</pre><pre class="codeoutput">Asym is a symmetric tensor with 4 modes of dimension 3
+	(1,1,1,1)    0.2883
+	(1,1,1,2)   -0.0031
+	(1,1,1,3)    0.1973
+	(1,1,2,2)   -0.2485
+	(1,1,2,3)   -0.2939
+	(1,1,3,3)    0.3847
+	(1,2,2,2)    0.2972
+	(1,2,2,3)    0.1862
+	(1,2,3,3)    0.0919
+	(1,3,3,3)   -0.3619
+	(2,2,2,2)    0.1241
+	(2,2,2,3)   -0.3420
+	(2,2,3,3)    0.2127
+	(2,3,3,3)    0.2727
+	(3,3,3,3)   -0.3054
+</pre><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Shifted Symmetric Higher-order Power Method
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="eigen.html">Tensor Eigenproblem</a> 
+% &#62;&#62; <a href="sshopm_doc.html">SSHOPM</a>
+% </p>
+% </html>
+%
+% The methods are described in the following paper:
+%
+%   * T. G. Kolda, J. R. Mayo, Shifted Power Method for Computing Tensor
+%     Eigenpairs, SIAM J. Matrix Analysis and Applications, 32:1095-1124,
+%     2011, http://dx.doi/org/10.1137/100801482 
+%   * T. G. Kolda, J. R. Mayo, An Adaptive Shifted Power Method for
+%     Computing Generalized Tensor Eigenpairs, SIAM J. Matrix Analysis and
+%     Applications, 35:1563-1582, 2014, http://dx.doi.org/0.1137/140951758    
+%
+%
+% Note that there is also a method for finding complex eigenpairs: |eig_sshopmc|.
+
+%% Data tensor 
+% From Example 1 in E. Kofidis and P. A. Regalia, On the best rank-1
+% approximation of higher-order supersymmetric tensors, SIAM J. Matrix
+% Anal. Appl., 23:863-884, 2002, http://dx.doi.org/10.1137/S0895479801387413.
+A = tenzeros([3 3 3 3]);
+A(perms([1 1 1 1])) = 0.2883;
+A(perms([1 1 1 2])) = -0.0031;
+A(perms([1 1 1 3])) = 0.1973;
+A(perms([1 1 2 2])) = -0.2485;
+A(perms([1 1 2 3])) = -0.2939;
+A(perms([1 1 3 3])) = 0.3847;
+A(perms([1 2 2 2])) = 0.2972;
+A(perms([1 2 2 3])) = 0.1862;
+A(perms([1 2 3 3])) = 0.0919;
+A(perms([1 3 3 3])) = -0.3619;
+A(perms([2 2 2 2])) = 0.1241;
+A(perms([2 2 2 3])) = -0.3420;
+A(perms([2 2 3 3])) = 0.2127;
+A(perms([2 3 3 3])) = 0.2727;
+A(perms([3 3 3 3])) = -0.3054;
+
+
+%% 
+% Check symmetry of result
+issymmetric(A)
+
+%% Call |eig_sshopm| with no shift (fails to converge)
+rng('default')
+[lambda, x, flag, it] = eig_sshopm(A, 'MaxIts', 100, 'Shift', 0,'Display',1);
+
+%% Call |eig_sshopm| with automatic shift
+rng('default')
+[lambda, x, flag, it] = eig_sshopm(A, 'MaxIts', 100,'Display',1);
+
+%% Call |eig_sshopm| with fixed shift 
+rng('default')
+[lambda, x, flag, it] = eig_sshopm(A, 'MaxIts', 100, 'Shift', 1,'Display',1);
+
+%% Convert to |symtensor| object 
+% Note that the |eig_sshopm| method actually expects a standard |tensor|
+% object, but we just display the symmetric tensor here.
+Asym = symtensor(A)
+
+##### SOURCE END #####
+--></body></html>

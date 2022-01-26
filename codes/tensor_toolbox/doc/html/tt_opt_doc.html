@@ -1,0 +1,590 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Developer Information for Optimization Methods in Tensor Toolbox</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-01-13"><meta name="DC.source" content="tt_opt_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Developer Information for Optimization Methods in Tensor Toolbox</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="opt_options_doc.html">Optimization Methods</a>
+&#62;&#62; <a href="tt_opt_doc.html">Developer Information</a>
+</p>
+</p><p>This page contains information for developers who want to use the optimization method interfaces contained in Tensor Toolbox. These interfaces are meant to standardize across packages with very different ways of calling the functions, different parameter names, etc. For optimzation algorithm installation instructions and parameter options, see <a href="opt_options_doc.html">Documentation for Tensor Toolbox Optimization Methods</a>.</p><p>The above-referenced document is for general users. The information below is for developers of Tensor Toolbox methods that want to use these standardized optimization algorithms.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Test optimization problem</a></li><li><a href="#4">Sandia Poblano Toolbox L-BFGS</a></li><li><a href="#8">Stephen Becker L-BFGS-B</a></li><li><a href="#12">MATLAB Optimization Toolbox <tt>fminunc</tt> (Quasi-Newton Method)</a></li><li><a href="#16">Adam (internal to Tensor Toolbox)</a></li></ul></div><h2 id="1">Test optimization problem</h2><p>We use a simple but notoriously difficult test function to demonstrate the optimization methods, a variation on Rosenbrock:</p><p><img src="tt_opt_doc_eq15475690191391708038.png" alt="$$f(x) = (x_1 - 1)^2 + 4 \sum_{i=2}^n (x_i - x_{i-1}^2)^2$$" style="width:225px;height:41px;"></p><p>This function is implemented in <tt>optfunc</tt> which takes <tt>true</tt> as a second argument to return only the gradient. The number of parameters (n) is automatically determined by the method. The optimum is the all-ones vector. The code for the function is as follows:</p><pre class="language-matlab">
+<span class="keyword">function</span> [f,g] = optfunc(x,gradonly)
+<span class="comment">%OPTFUNC Example function for testing optimization software.</span>
+
+n = length(x);
+g = zeros(n,1);
+
+f   = .25*(x(1)-1.0)^2;
+<span class="keyword">for</span> i = 2:n
+    f = f + ( x(i) - (x(i-1))^2 )^2;
+<span class="keyword">end</span>
+f = 4*f;
+
+t1      = x(2) - (x(1)^2);
+g(1)    = 2.0*( x(1) - 1.0 ) - 16*x(1)*t1;
+<span class="keyword">for</span> i = 2:(n-1)
+    t2 = t1;
+    t1 = x(i+1) - (x(i))^2;
+    g(i) = 8*t2 - 16*x(i)*t1;
+<span class="keyword">end</span>
+g(n)  = 8*t1;
+
+<span class="keyword">if</span> exist(<span class="string">'gradonly'</span>,<span class="string">'var'</span>)
+    <span class="keyword">if</span> gradonly == true
+        f = g;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+</pre><p>We create function handles to use the optimization solvers.</p><pre class="codeinput"><span class="comment">% Create a function handle to evaluate both f and g</span>
+fgh = @optfunc;
+<span class="comment">% Create a function handle to evaluate just f</span>
+fh = @optfunc;
+<span class="comment">% Create a function handle to evaluate just g</span>
+gh = @(x) optfunc(x,true);
+</pre><p>Set up initial guess and optimum</p><pre class="codeinput">n = 10;
+xinit = [2; ones(n-1,1)];
+xopt = ones(n,1);
+
+<span class="comment">% Initial function value</span>
+finit = fh(xinit);
+fprintf(<span class="string">'Function value at xinit = %g\n'</span>, finit);
+
+<span class="comment">% Optimal function value</span>
+fopt = fh(xopt);
+fprintf(<span class="string">'Function value at xopt = %g\n'</span>, fopt);
+</pre><pre class="codeoutput">Function value at xinit = 37
+Function value at xopt = 0
+</pre><h2 id="4">Sandia Poblano Toolbox L-BFGS</h2><p><a href="https://software.sandia.gov/trac/poblano"><b>POBLANO</b> Version 1.1 by Evrim Acar, Daniel Dunlavy, and Tamara Kolda</a></p><pre class="codeinput">[x,f,info] = tt_opt_lbfgs(xinit, fgh);
+</pre><pre class="codeoutput">
+Poblano L-BFGS Optimization
+Number of Variables: 10
+Parameters: m=5, ftol=1e-10, gtol=1e-05, maxiters = 1000, maxsubiters=10000
+
+Begin Main Loop
+ Iter  FuncEvals       F(X)          ||G(X)||/N        
+------ --------- ---------------- ----------------
+     0         1      37.00000000      10.08959860
+     1         8       0.91828104       0.92158834
+     2        10       0.16611190       0.32713416
+     3        12       0.03552274       0.15994623
+     4        14       0.00563181       0.05761539
+     5        16       0.00135701       0.02431580
+     6        18       0.00039065       0.01439439
+     7        20       0.00007552       0.00602386
+     8        22       0.00002250       0.00320035
+     9        24       0.00000020       0.00041099
+    10        26       0.00000004       0.00015232
+    11        28       0.00000001       0.00004888
+    12        30       0.00000000       0.00001906
+    13        32       0.00000000       0.00000505
+End Main Loop
+
+Final f: 4.2823e-11
+Setup time: 0.0037 seconds
+Optimization time: 0.034 seconds
+Iterations: 13
+Total iterations: 32
+Exit condition: Successful termination based on StopTol
+</pre><p>Check how close to optimal</p><pre class="codeinput">fprintf(<span class="string">'||x-xopt||/||xopt|| = %e\n'</span>, norm(x-xopt)/norm(xopt));
+</pre><pre class="codeoutput">||x-xopt||/||xopt|| = 2.255973e-04
+</pre><p>Tighten it up a bit by changing the tolerances. ALso note that we changed the printing frequency to once every <b>5</b> iterations rather than every iteration as above.</p><pre class="codeinput">[x,f,info] = tt_opt_lbfgs(xinit, fgh, <span class="string">'printitn'</span>, 5, <span class="string">'gtol'</span>, 1e-20, <span class="string">'ftol'</span>, 1e-25);
+</pre><pre class="codeoutput">
+Poblano L-BFGS Optimization
+Number of Variables: 10
+Parameters: m=5, ftol=1e-25, gtol=1e-20, maxiters = 1000, maxsubiters=10000
+
+Begin Main Loop
+ Iter  FuncEvals       F(X)          ||G(X)||/N        
+------ --------- ---------------- ----------------
+     0         1      37.00000000      10.08959860
+     5        16       0.00135701       0.02431580
+    10        26       0.00000004       0.00015232
+    15        36       0.00000000       0.00000057
+    20        46       0.00000000       0.00000000
+    25        57       0.00000000       0.00000000
+    30        72       0.00000000       0.00000036
+    35        82       0.00000000       0.00000001
+    40        92       0.00000000       0.00000000
+    45       102       0.00000000       0.00000000
+    50       112       0.00000000       0.00000000
+    55       123       0.00000000       0.00000000
+    59       131       0.00000000       0.00000000
+End Main Loop
+
+Final f: 3.6076e-27
+Setup time: 0.0099 seconds
+Optimization time: 0.067 seconds
+Iterations: 59
+Total iterations: 131
+Exit condition: Relative change in F &lt; RelFuncTol
+</pre><p>With tighter tolerances, we get closer to optimal</p><pre class="codeinput">fprintf(<span class="string">'||x-xopt||/||xopt|| = %e\n'</span>, norm(x-xopt)/norm(xopt));
+</pre><pre class="codeoutput">||x-xopt||/||xopt|| = 6.559331e-12
+</pre><h2 id="8">Stephen Becker L-BFGS-B</h2><p><a href="https://github.com/stephenbeckr/L-BFGS-B-C"><b>L-BFGS-B</b> by Stephen Becker</a>.</p><pre class="codeinput">[x,f,info] = tt_opt_lbfgsb(xinit, fgh);
+</pre><pre class="codeoutput">
+L-BFGS-B Optimization (https://github.com/stephenbeckr/L-BFGS-B-C)
+Number of Variables: 10
+Lower bound: -Inf, Upper bound: Inf
+Parameters: m=5, ftol=1e-10, gtol=1e-05, maxiters = 1000, subiters = 10
+
+Begin Main Loop
+Iter     1, f(x) = 1.263359e+00, ||grad||_infty = 1.20e+01, 1.15e-03
+Iter     2, f(x) = 2.814196e-01, ||grad||_infty = 4.85e+00, 1.27e-03
+Iter     3, f(x) = 6.099619e-02, ||grad||_infty = 1.11e+00, 1.59e-03
+Iter     4, f(x) = 2.574744e-02, ||grad||_infty = 7.85e-01, 1.83e-03
+Iter     5, f(x) = 5.050682e-03, ||grad||_infty = 4.27e-01, 2.04e-03
+Iter     6, f(x) = 1.585758e-03, ||grad||_infty = 2.84e-01, 2.31e-03
+Iter     7, f(x) = 1.701942e-04, ||grad||_infty = 6.15e-02, 2.54e-03
+Iter     8, f(x) = 5.353674e-05, ||grad||_infty = 1.69e-02, 2.76e-03
+Iter     9, f(x) = 2.318400e-05, ||grad||_infty = 1.39e-02, 2.97e-03
+Iter    10, f(x) = 2.569928e-06, ||grad||_infty = 9.27e-03, 3.18e-03
+Iter    11, f(x) = 3.586768e-07, ||grad||_infty = 3.46e-03, 3.71e-03
+Iter    12, f(x) = 2.598817e-08, ||grad||_infty = 7.97e-04, 3.84e-03
+Iter    13, f(x) = 2.466644e-09, ||grad||_infty = 2.50e-04, 4.04e-03
+Iter    14, f(x) = 5.126655e-10, ||grad||_infty = 7.74e-05, 4.23e-03
+Iter    15, f(x) = 8.969330e-11, ||grad||_infty = 7.19e-05, 4.41e-03
+Iter    16, f(x) = 9.642045e-12, ||grad||_infty = 1.23e-05, 4.61e-03
+End Main Loop
+
+Final f: 9.6420e-12
+Setup time: 0.0014 seconds
+Optimization time: 0.005 seconds
+Iterations: 16
+Total iterations: 35
+Exit condition: CONVERGENCE: REL_REDUCTION_OF_F_&lt;=_FACTR*EPSMCH.
+</pre><p>Check how close to optimal</p><pre class="codeinput">fprintf(<span class="string">'||x-xopt||/||xopt|| = %e\n'</span>, norm(x-xopt)/norm(xopt));
+</pre><pre class="codeoutput">||x-xopt||/||xopt|| = 2.224764e-04
+</pre><p>Tighten it up a bit as before</p><pre class="codeinput">[x,f,info] = tt_opt_lbfgsb(xinit, fgh, <span class="string">'printitn'</span>, 5, <span class="string">'gtol'</span>, 1e-12, <span class="string">'ftol'</span>, 1e-24);
+</pre><pre class="codeoutput">
+L-BFGS-B Optimization (https://github.com/stephenbeckr/L-BFGS-B-C)
+Number of Variables: 10
+Lower bound: -Inf, Upper bound: Inf
+Parameters: m=5, ftol=1e-24, gtol=1e-12, maxiters = 1000, subiters = 10
+
+Begin Main Loop
+Iter     5, f(x) = 5.050682e-03, ||grad||_infty = 4.27e-01, 1.41e-03
+Iter    10, f(x) = 2.569928e-06, ||grad||_infty = 9.27e-03, 1.98e-03
+Iter    15, f(x) = 8.969330e-11, ||grad||_infty = 7.19e-05, 2.75e-03
+Iter    20, f(x) = 1.343287e-12, ||grad||_infty = 9.30e-07, 3.35e-03
+Iter    25, f(x) = 1.306474e-12, ||grad||_infty = 3.38e-09, 4.05e-03
+Iter    30, f(x) = 1.306458e-12, ||grad||_infty = 1.11e-08, 4.65e-03
+Iter    35, f(x) = 1.304805e-12, ||grad||_infty = 1.56e-07, 5.31e-03
+Iter    40, f(x) = 1.037402e-12, ||grad||_infty = 1.33e-06, 5.93e-03
+Iter    45, f(x) = 6.552398e-16, ||grad||_infty = 1.06e-07, 6.58e-03
+Iter    50, f(x) = 1.720279e-19, ||grad||_infty = 2.17e-09, 7.09e-03
+Iter    55, f(x) = 2.298904e-21, ||grad||_infty = 1.61e-11, 7.61e-03
+Iter    60, f(x) = 1.714203e-21, ||grad||_infty = 7.02e-11, 8.28e-03
+Iter    65, f(x) = 7.255157e-24, ||grad||_infty = 1.64e-11, 9.30e-03
+Iter    67, f(x) = 2.032944e-26, ||grad||_infty = 4.58e-13, 9.63e-03
+End Main Loop
+
+Final f: 2.0329e-26
+Setup time: 0.0013 seconds
+Optimization time: 0.01 seconds
+Iterations: 67
+Total iterations: 140
+Exit condition: CONVERGENCE: NORM_OF_PROJECTED_GRADIENT_&lt;=_PGTOL.
+</pre><p>With tigher tolerances, we again get closer to optimal</p><pre class="codeinput">fprintf(<span class="string">'||x-xopt||/||xopt|| = %e\n'</span>, norm(x-xopt)/norm(xopt));
+</pre><pre class="codeoutput">||x-xopt||/||xopt|| = 3.479939e-14
+</pre><h2 id="12">MATLAB Optimization Toolbox <tt>fminunc</tt> (Quasi-Newton Method)</h2><p>Distributed with the MATLAB Optimization Toolbox.</p><pre class="codeinput">[x,f,info] = tt_opt_fminunc(xinit, fgh);
+</pre><pre class="codeoutput">
+Quasi-Newton Optimization (via Optimization Toolbox)
+Number of Variables: 10
+Parameters: gtol=1e-05, maxiters = 1000, maxsubiters=10000
+
+Begin Main Loop
+                                                        First-order 
+ Iteration  Func-count       f(x)        Step-size       optimality
+     0           1               37                            98
+     1           2          1.44889      0.0102041           12.9  
+     2           3         0.288722              1           5.05  
+     3           4        0.0604657              1           1.17  
+     4           5         0.032238              1          0.793  
+     5           6        0.0130798              1          0.564  
+     6           7       0.00500013              1          0.368  
+     7           8       0.00196856              1          0.256  
+     8           9      0.000983737              1          0.126  
+     9          10      0.000489883              1         0.0917  
+    10          11      0.000215431              1         0.0573  
+    11          12      8.95808e-05              1         0.0457  
+    12          13      4.14183e-05              1         0.0258  
+    13          14      2.05777e-05              1         0.0191  
+    14          15      9.29022e-06              1         0.0104  
+    15          16      3.31583e-06              1        0.00825  
+    16          17      9.13586e-07              1         0.0046  
+    17          18      2.13163e-07              1        0.00199  
+    18          19      4.55807e-08              1        0.00121  
+    19          20      8.72743e-09              1       0.000601  
+
+Local minimum found.
+
+Optimization completed because the size of the gradient is less than
+the selected value of the optimality tolerance.
+
+
+
+End Main Loop
+
+Final f: 8.7274e-09
+Setup time: 0.014 seconds
+Optimization time: 0.065 seconds
+Iterations: 19
+Total iterations: 20
+Exit condition: Gradient norm smaller than tolerance
+</pre><p>Check how close to optimal</p><pre class="codeinput">fprintf(<span class="string">'||x-xopt||/||xopt|| = %e\n'</span>, norm(x-xopt)/norm(xopt));
+</pre><pre class="codeoutput">||x-xopt||/||xopt|| = 2.046793e-04
+</pre><p>Tighten it up a bit as before. We don't have control over the print frequency with this one, nor the change in function tolerance. But we can pass through the `StepTolerance`.</p><pre class="codeinput">[x,f,info] = tt_opt_fminunc(xinit, fgh, <span class="string">'gtol'</span>, 1e-12, <span class="string">'StepTolerance'</span>,1e-14);
+</pre><pre class="codeoutput">
+Quasi-Newton Optimization (via Optimization Toolbox)
+Number of Variables: 10
+Parameters: gtol=1e-12, maxiters = 1000, maxsubiters=10000
+
+Begin Main Loop
+                                                        First-order 
+ Iteration  Func-count       f(x)        Step-size       optimality
+     0           1               37                            98
+     1           2          1.44889      0.0102041           12.9  
+     2           3         0.288722              1           5.05  
+     3           4        0.0604657              1           1.17  
+     4           5         0.032238              1          0.793  
+     5           6        0.0130798              1          0.564  
+     6           7       0.00500013              1          0.368  
+     7           8       0.00196856              1          0.256  
+     8           9      0.000983737              1          0.126  
+     9          10      0.000489883              1         0.0917  
+    10          11      0.000215431              1         0.0573  
+    11          12      8.95808e-05              1         0.0457  
+    12          13      4.14183e-05              1         0.0258  
+    13          14      2.05777e-05              1         0.0191  
+    14          15      9.29022e-06              1         0.0104  
+    15          16      3.31583e-06              1        0.00825  
+    16          17      9.13586e-07              1         0.0046  
+    17          18      2.13163e-07              1        0.00199  
+    18          19      4.55807e-08              1        0.00121  
+    19          20      8.72743e-09              1       0.000601  
+                                                        First-order 
+ Iteration  Func-count       f(x)        Step-size       optimality
+    20          21      1.56598e-09              1       0.000224  
+    21          22      2.81917e-10              1        9.2e-05  
+    22          23      4.32264e-11              1       3.11e-05  
+    23          24      5.20858e-12              1       1.08e-05  
+    24          25      1.36374e-12              1       2.87e-06  
+    25          26      1.11805e-12              1       7.95e-07  
+    26          27      1.10532e-12              1        1.7e-07  
+    27          28      1.10468e-12              1       3.72e-08  
+    28          29      1.10465e-12              1       5.02e-09  
+    29          30      1.10465e-12              1       2.99e-09  
+    30          31      1.10465e-12              1        2.9e-09  
+    31          32      1.10465e-12              1        2.7e-09  
+    32          33      1.10465e-12              1       4.78e-09  
+    33          34      1.10464e-12              1       9.07e-09  
+    34          35      1.10464e-12              1       1.58e-08  
+    35          36      1.10462e-12              1        2.7e-08  
+    36          37      1.10457e-12              1       4.52e-08  
+    37          38      1.10443e-12              1       7.47e-08  
+    38          39      1.10408e-12              1       1.22e-07  
+    39          40      1.10315e-12              1          2e-07  
+                                                        First-order 
+ Iteration  Func-count       f(x)        Step-size       optimality
+    40          41      1.10074e-12              1       3.24e-07  
+    41          42      1.09444e-12              1       5.24e-07  
+    42          43      1.07818e-12              1        8.4e-07  
+    43          44      1.03705e-12              1       1.32e-06  
+    44          45      9.38556e-13              1       1.99e-06  
+    45          46      7.32415e-13              1       2.68e-06  
+    46          47      4.12062e-13              1        2.8e-06  
+    47          48      1.21521e-13              1        1.8e-06  
+    48          49      1.11669e-14              1        4.9e-07  
+    49          50      5.69645e-16              1       6.41e-08  
+    50          51      1.47514e-17              1       1.64e-08  
+    51          52      7.76625e-20              1       1.58e-09  
+    52          53      1.61414e-21              1       2.67e-10  
+    53          54      8.82525e-23              1       5.86e-11  
+
+Local minimum found.
+
+Optimization completed because the size of the gradient is less than
+the selected value of the optimality tolerance.
+
+
+
+End Main Loop
+
+Final f: 8.8253e-23
+Setup time: 0.041 seconds
+Optimization time: 0.074 seconds
+Iterations: 53
+Total iterations: 54
+Exit condition: Gradient norm smaller than tolerance
+</pre><p>With tigher tolerances, we again get closer to optimal</p><pre class="codeinput">fprintf(<span class="string">'||x-xopt||/||xopt|| = %e\n'</span>, norm(x-xopt)/norm(xopt));
+</pre><pre class="codeoutput">||x-xopt||/||xopt|| = 2.531186e-10
+</pre><h2 id="16">Adam (internal to Tensor Toolbox)</h2><p>Adam is a stochastic optimization method, so it's not especially fair to compare it to the other methods. But we do it anyways.</p><pre class="codeinput">rng(<span class="string">'default'</span>)
+[x,f,info] = tt_opt_adam(xinit, fh, gh,<span class="string">'subiters'</span>,500,<span class="string">'maxfails'</span>,2,<span class="string">'maxiters'</span>,20000,<span class="string">'printitn'</span>,500,<span class="string">'fdesc'</span>,<span class="string">'Function: exact'</span>,<span class="string">'gdesc'</span>,<span class="string">'Gradient: exact'</span>);
+</pre><pre class="codeoutput">
+Adam Stochastic Optimization
+Number of Variables: 10
+Function: exact
+Gradient: exact
+Max iterations (epochs): 20000
+Iterations per epoch: 500
+Learning rate / decay / maxfails: 0.01 0.1 2
+Backup to best known solution after epoch fail? true
+beta1 / beta2 / epsilon: 0.9 0.999 1e-08
+
+Begin Main Loop
+Epoch  0: f = 3.700000e+01
+Epoch  3: f = 4.895148e-06, step = 0.01, nfails = 1 (resetting to solution from last epoch)
+Epoch 14: f = 4.624758e-06, step = 0.001, nfails = 2 (resetting to solution from last epoch)
+Epoch 32: f = 1.787285e-06, step = 0.0001, nfails = 3 (resetting to solution from last epoch)
+End Main Loop
+
+Final f: 1.7803e-06
+Setup time: 0.01 seconds
+Optimization time: 0.29 seconds
+Number of epochs: 32
+Total iterations: 16000
+Exit condition: Number of failed epochs &gt; 2
+</pre><p>Check how close to optimal</p><pre class="codeinput">fprintf(<span class="string">'||x-xopt||/||xopt|| = %e\n'</span>, norm(x-xopt)/norm(xopt));
+</pre><pre class="codeoutput">||x-xopt||/||xopt|| = 3.608177e-01
+</pre><p>Let's tighten the convergence tolerance.</p><pre class="codeinput">rng(1)
+[x,f,info] = tt_opt_adam(xinit, fh, gh,<span class="string">'subiters'</span>,500,<span class="string">'maxfails'</span>,6,<span class="string">'maxiters'</span>,20000,<span class="string">'printitn'</span>,500,<span class="string">'fdesc'</span>,<span class="string">'Function: exact'</span>,<span class="string">'gdesc'</span>,<span class="string">'Gradient: exact'</span>);
+</pre><pre class="codeoutput">
+Adam Stochastic Optimization
+Number of Variables: 10
+Function: exact
+Gradient: exact
+Max iterations (epochs): 20000
+Iterations per epoch: 500
+Learning rate / decay / maxfails: 0.01 0.1 6
+Backup to best known solution after epoch fail? true
+beta1 / beta2 / epsilon: 0.9 0.999 1e-08
+
+Begin Main Loop
+Epoch  0: f = 3.700000e+01
+Epoch  3: f = 4.895148e-06, step = 0.01, nfails = 1 (resetting to solution from last epoch)
+Epoch 14: f = 4.624758e-06, step = 0.001, nfails = 2 (resetting to solution from last epoch)
+Epoch 32: f = 1.787285e-06, step = 0.0001, nfails = 3 (resetting to solution from last epoch)
+Epoch 500: f = 8.408196e-07, step = 1e-05
+Epoch 1000: f = 2.292266e-07, step = 1e-05
+Epoch 1011: f = 2.220675e-07, step = 1e-05, nfails = 4 (resetting to solution from last epoch)
+Epoch 1500: f = 4.355436e-08, step = 1e-06
+Epoch 2000: f = 4.495148e-09, step = 1e-06
+Epoch 2234: f = 1.418108e-09, step = 1e-06, nfails = 5 (resetting to solution from last epoch)
+Epoch 2500: f = 4.538938e-10, step = 1e-07
+Epoch 3000: f = 3.828861e-11, step = 1e-07
+Epoch 3188: f = 1.485887e-11, step = 1e-07, nfails = 6 (resetting to solution from last epoch)
+Epoch 3500: f = 6.286379e-12, step = 1e-08
+Epoch 4000: f = 1.176231e-12, step = 1e-08
+Epoch 4500: f = 1.811833e-13, step = 1e-08
+Epoch 4838: f = 4.966636e-14, step = 1e-08, nfails = 7 (resetting to solution from last epoch)
+End Main Loop
+
+Final f: 4.9634e-14
+Setup time: 0.00 seconds
+Optimization time: 38.99 seconds
+Number of epochs: 4838
+Total iterations: 2419000
+Exit condition: Number of failed epochs &gt; 6
+</pre><p>Check how close to optimal</p><pre class="codeinput">fprintf(<span class="string">'||x-xopt||/||xopt|| = %e\n'</span>, norm(x-xopt)/norm(xopt));
+</pre><pre class="codeoutput">||x-xopt||/||xopt|| = 4.335430e-05
+</pre><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Developer Information for Optimization Methods in Tensor Toolbox
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="opt_options_doc.html">Optimization Methods</a> 
+% &#62;&#62; <a href="tt_opt_doc.html">Developer Information</a> 
+% </p>
+% </html>
+%
+% This page contains information for developers who want to use the
+% optimization method interfaces contained in Tensor Toolbox. These
+% interfaces are meant to standardize across packages with very different
+% ways of calling the functions, different parameter names, etc.
+% For optimzation algorithm installation instructions and parameter
+% options, see <opt_options_doc.html 
+% Documentation for Tensor Toolbox Optimization Methods>.
+%
+% The above-referenced document is for general users. The information below
+% is for developers of Tensor Toolbox methods that want to use these
+% standardized optimization algorithms.
+
+%% Test optimization problem 
+% We use a simple but notoriously difficult test function to demonstrate
+% the optimization methods, a variation on Rosenbrock:
+%
+% $$f(x) = (x_1 - 1)^2 + 4 \sum_{i=2}^n (x_i - x_{i-1}^2)^2$$
+%
+% This function is implemented in |optfunc| which takes |true| as a second
+% argument to return only the gradient. The number of parameters (n) is
+% automatically determined by the method. The optimum is the all-ones 
+% vector. The code for the function is as follows:
+%
+% <include>optfunc.m</include>
+%
+
+%% 
+% We create function handles to use the optimization solvers.
+
+% Create a function handle to evaluate both f and g
+fgh = @optfunc;
+% Create a function handle to evaluate just f
+fh = @optfunc;
+% Create a function handle to evaluate just g
+gh = @(x) optfunc(x,true);
+
+%%
+% Set up initial guess and optimum
+n = 10;
+xinit = [2; ones(n-1,1)];
+xopt = ones(n,1);
+
+% Initial function value
+finit = fh(xinit);
+fprintf('Function value at xinit = %g\n', finit);
+
+% Optimal function value
+fopt = fh(xopt);
+fprintf('Function value at xopt = %g\n', fopt);
+
+%% Sandia Poblano Toolbox L-BFGS 
+% <https://software.sandia.gov/trac/poblano *POBLANO* Version 1.1 by
+% Evrim Acar, Daniel Dunlavy, and Tamara Kolda>
+[x,f,info] = tt_opt_lbfgs(xinit, fgh);
+
+%%
+% Check how close to optimal
+fprintf('||x-xopt||/||xopt|| = %e\n', norm(x-xopt)/norm(xopt));
+%%
+% Tighten it up a bit by changing the tolerances. ALso note that we changed
+% the printing frequency to once every *5* iterations rather than every
+% iteration as above.
+[x,f,info] = tt_opt_lbfgs(xinit, fgh, 'printitn', 5, 'gtol', 1e-20, 'ftol', 1e-25);
+
+%%
+% With tighter tolerances, we get closer to optimal
+fprintf('||x-xopt||/||xopt|| = %e\n', norm(x-xopt)/norm(xopt));
+
+%% Stephen Becker L-BFGS-B 
+% <https://github.com/stephenbeckr/L-BFGS-B-C *L-BFGS-B* by Stephen Becker>.  
+[x,f,info] = tt_opt_lbfgsb(xinit, fgh);
+
+%%
+% Check how close to optimal
+fprintf('||x-xopt||/||xopt|| = %e\n', norm(x-xopt)/norm(xopt));
+
+
+%% 
+% Tighten it up a bit as before
+[x,f,info] = tt_opt_lbfgsb(xinit, fgh, 'printitn', 5, 'gtol', 1e-12, 'ftol', 1e-24);
+
+%%
+% With tigher tolerances, we again get closer to optimal
+fprintf('||x-xopt||/||xopt|| = %e\n', norm(x-xopt)/norm(xopt));
+
+%% MATLAB Optimization Toolbox |fminunc| (Quasi-Newton Method)
+% Distributed with the MATLAB Optimization Toolbox.
+[x,f,info] = tt_opt_fminunc(xinit, fgh);
+
+%%
+% Check how close to optimal
+fprintf('||x-xopt||/||xopt|| = %e\n', norm(x-xopt)/norm(xopt));
+
+%% 
+% Tighten it up a bit as before. We don't have control over the print
+% frequency with this one, nor the change in function tolerance. But we can
+% pass through the `StepTolerance`.
+[x,f,info] = tt_opt_fminunc(xinit, fgh, 'gtol', 1e-12, 'StepTolerance',1e-14);
+
+%%
+% With tigher tolerances, we again get closer to optimal
+fprintf('||x-xopt||/||xopt|| = %e\n', norm(x-xopt)/norm(xopt));
+
+%% Adam (internal to Tensor Toolbox)
+% Adam is a stochastic optimization method, so it's not especially fair to
+% compare it to the other methods. But we do it anyways.
+rng('default')
+[x,f,info] = tt_opt_adam(xinit, fh, gh,'subiters',500,'maxfails',2,'maxiters',20000,'printitn',500,'fdesc','Function: exact','gdesc','Gradient: exact');
+%%
+% Check how close to optimal
+fprintf('||x-xopt||/||xopt|| = %e\n', norm(x-xopt)/norm(xopt));
+
+%%
+% Let's tighten the convergence tolerance.
+rng(1)
+[x,f,info] = tt_opt_adam(xinit, fh, gh,'subiters',500,'maxfails',6,'maxiters',20000,'printitn',500,'fdesc','Function: exact','gdesc','Gradient: exact');
+%%
+% Check how close to optimal
+fprintf('||x-xopt||/||xopt|| = %e\n', norm(x-xopt)/norm(xopt));
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,807 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Generalized CP (GCP) Tensor Decomposition</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-01-13"><meta name="DC.source" content="gcp_opt_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Generalized CP (GCP) Tensor Decomposition</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="cp.html">CP Decompositions</a>
+&#62;&#62; <a href="gcp_opt_doc.html">GCP-OPT</a>
+</p>
+</p><p>This document outlines usage and examples for the generalized CP (GCP) tensor decomposition implmented in <tt>gcp_opt</tt>. GCP allows alternate objective functions besides sum of squared errors, which is the standard for CP. The code support both dense and sparse input tensors, but the sparse input tensors require randomized optimization methods. For some examples, see also <a href="gcp_opt_amino_doc.html">GCP-OPT and Amino Acids Dataset</a>.</p><p>GCP is described in greater detail in the manuscripts:</p><div><ul><li>D. Hong, T. G. Kolda, J. A. Duersch, Generalized Canonical   Polyadic Tensor Decomposition, SIAM Review, 62:133-163, 2020,   <a href="https://doi.org/10.1137/18M1203626">https://doi.org/10.1137/18M1203626</a></li><li>T. G. Kolda, D. Hong, Stochastic Gradients for Large-Scale Tensor   Decomposition. SIAM J. Mathematics of Data Science, 2:1066-1095,   2020, <a href="https://doi.org/10.1137/19m1266265">https://doi.org/10.1137/19m1266265</a></li></ul></div><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Basic Usage</a></li><li><a href="#2">Manually specifying the loss function</a></li><li><a href="#3">Choice of Optimzation Method</a></li><li><a href="#4">Specifying Missing or Incomplete Data Using the Mask Option</a></li><li><a href="#5">Other Options</a></li><li><a href="#6">Specifying L-BFGS-B Parameters</a></li><li><a href="#7">Specifying SGD and ADAM Parameters</a></li><li><a href="#8">Example on Gaussian distributed</a></li><li><a href="#12">Create an example Rayleigh tensor model and data instance.</a></li><li><a href="#18">Boolean tensor.</a></li><li><a href="#24">Create and test a Poisson count tensor.</a></li><li><a href="#25">Loss function for Poisson negative log likelihood with identity link.</a></li></ul></div><h2 id="1">Basic Usage</h2><p>The idea of GCP is to use alternative objective functions. As such, the most important thing to specify is the objective function.</p><p>The command <tt>M = gcp_opt(X,R,'type',type)</tt> computes an estimate of the best rank-|R| generalized CP (GCP) decomposition of the tensor <tt>X</tt> for the specified generalized loss function specified by <tt>type</tt>. The input <tt>X</tt> can be a tensor or sparse tensor. The result <tt>M</tt> is a Kruskal tensor. Some options for the objective function are:</p><div><ul><li><tt>'binary'</tt> - Bernoulli distribution for binary data</li><li><tt>'count'</tt>  - Poisson distribution for count data (see also <a href="cp_apr_doc.html"><tt>cp_apr</tt></a>)</li><li><tt>'normal'</tt> - Gaussian distribution (see also <a href="cp_als_doc.html"><tt>cp_als</tt></a> and <a href="cp_opt_doc.html"><tt>cp_opt</tt></a>)</li><li><tt>'huber (0.25)'</tt> - Similar to Gaussian but robust to outliers</li><li><tt>'rayleigh'</tt> - Rayleigh distribution for nonnegative data</li><li><tt>'gamma'</tt>  - Gamma distribution for nonnegative data</li></ul></div><p>See <a href="gcp_opt_fg_options_doc.html">Function Types for GCP</a> for a complete list of options.</p><h2 id="2">Manually specifying the loss function</h2><p>Rather than specifying a type, the user has the option to explicitly specify the objection function, gradient, and lower bounds using the following options:</p><div><ul><li><tt>'func'</tt> - Objective function handle, e.g., <tt>@(x,m) (m-x).^2</tt></li><li><tt>'grad'</tt> - Gradient function handle, e.g., <tt>@(x,m) 2.*(m-x)</tt></li><li><tt>'lower'</tt> - Lower bound, e.g., 0 or <tt>-Inf</tt></li></ul></div><p>Note that the function must be able to work on vectors of x and m values.</p><h2 id="3">Choice of Optimzation Method</h2><p>The default optimization method is L-BFGS-B (bound-constrained limited-memory BFGS). To use this, install the third-party software:</p><div><ul><li><a href="https://github.com/stephenbeckr/L-BFGS-B-C"><b>L-BFGS-B</b> by Stephen Becker</a></li></ul></div><p>The L-BFGS-B software can only be used for dense tensors. The other choice is to use a stochastic optimization method, either stochastic gradient descent (SGD) or ADAM. This can be used for dense or sparse tensors.</p><p>The command <tt>M = gcp_opt(X,R,...,'opt',opt)</tt> specifies the optimization method where <tt>opt</tt> is one of the following strings:</p><div><ul><li><tt>'lbfgsb'</tt> - Bound-constrained limited-memory BFGS</li><li><tt>'sgd'</tt> - Stochastic gradient descent (SGD)</li><li><tt>'adam'</tt> - Momentum-based SGD method</li></ul></div><p>Each methods has parameters, which are described below.</p><h2 id="4">Specifying Missing or Incomplete Data Using the Mask Option</h2><p>If some entries of the tensor are unknown, the method can mask off that data during the fitting process. To do so, specify a <b>mask</b> tensor <tt>W</tt> that is the same size as the data tensor <tt>X</tt>. The mask tensor should be 1 if the entry in <tt>X</tt> is known and 0 otherwise. The call is <tt>M = gcp_opt(X,R,'type',type','mask',W)</tt>.</p><h2 id="5">Other Options</h2><p>A few common options are as follows:</p><div><ul><li><tt>'maxiters'</tt> - Maximum number of outer iterations {1000}</li><li><tt>'init'</tt> - Initialization for factor matrices {|'rand'|}</li><li><tt>'printitn'</tt> - Print every n iterations; 0 for no printing {1}</li><li><tt>'state'</tt> - Random state, to re-create the same outcome {[]}</li></ul></div><h2 id="6">Specifying L-BFGS-B Parameters</h2><p>In addition to the options above, there are two options used to modify the L-BFGS-B behavior.</p><div><ul><li><tt>'factr'</tt> - Tolerance on the change on the objective value. Defaults to 1e7, which is multiplied by machine epsilon.</li><li><tt>'pgtol'</tt> - Projected gradient tolerance, defaults to 1e-5.</li></ul></div><p>It can sometimes be useful to increase or decrease <tt>pgtol</tt> depending on the objective function and size of the tensor.</p><h2 id="7">Specifying SGD and ADAM Parameters</h2><p>There are a number of parameters that can be adjusted for SGD and ADAM.</p><p><b>Stochastic Gradient.</b> There are three different sampling methods for computing the stochastic gradient:</p><div><ul><li><i>Uniform</i> - Entries are selected uniformly at random. Default for dense tensors.</li><li><i>Stratified</i> - Zeros and nonzeros are sampled separately, which is recommended for sparse tensors. Default for sparse tensors.</li><li><i>Semi-Stratified</i> - Modification to stratified sampling that avoids rejection sampling for better efficiency at the cost of potentially higher variance.</li></ul></div><p>The options corresponding to these are as follows.</p><div><ul><li><tt>'sampler'</tt> - Type of sampling to use for stochastic gradient. Defaults to <tt>'uniform'</tt> for dense and <tt>'stratified'</tt> for sparse. The third options is <tt>'semi-stratified'</tt>.</li><li><tt>'gsamp'</tt> - Number of samples for stochastic gradient. This should generally be O(sum(sz)*r). For the stratified or semi-stratified sampler, this can be two numbers. The first is the number of nonzero samples and the second is the number of zero samples. If only one number is specified, then this is used as the number for both nonzeros and zeros, and the total number of samples is 2x what is specified.</li></ul></div><p><b>Estimating the Function.</b> We also use sampling to estimate the function value.</p><div><ul><li><tt>'fsampler'</tt> - This can be <tt>'uniform'</tt> (default for dense) or <tt>'stratified'</tt> (default for sparse) or a custom function handle. The custom function handleis primarily useful in reusing the same sampled elements across different tests. For instance, we might create such a sampler by calling the hidden sampling function and saving its outputs:</li></ul></div><pre>[xsubs, xvals, wghts] = tt_sample_uniform(X, 10000);
+fsampler = @() deal(xsubs, xvals, wghts);'</pre><div><ul><li><tt>'fsamp'</tt> - Number of samples to estimate function. This should generally be somewhat large since we want this sample to generate a reliable estimate of the true function value.</li></ul></div><p>The <tt>'stratified'</tt> sampler has an extra option: * <tt>'oversample'</tt> - Factor to oversample when implicitly sampling zeros in the sparse case. Defaults to 1.1. Only adjust for very small tensors.</p><p>There are some other options that are needed for SGD, the learning rate and a decrease schedule. Our schedule is very simple - we decrease the rate if there is no improvement in the approximate function value after an epoch. After a specified number of decreases (<tt>'maxfails'</tt>), we quit.</p><div><ul><li><tt>'rate'</tt> - Initial learning rate. Defaults to 1e-3.</li><li><tt>'decay'</tt> - How much to decrease the learning rate once progress stagnates, i.e., no decrease in objective function between epochs. Default to 0.1.</li><li><tt>'maxfails'</tt> - How many times to decrease the learning rate. Can be zero. Defaults to 1.</li><li><tt>'epciters'</tt> - Iterations per epoch. Defaults to 1000.</li><li><tt>'festtol'</tt> - Quit if the function estimate goes below this level. Defaults to <tt>-Inf</tt>.</li></ul></div><p>There are some options that are specific to ADAM and generally needn't change:</p><div><ul><li><tt>'beta1'</tt> - Default to 0.9</li><li><tt>'beta2'</tt> - Defaults to 0.999</li><li><tt>'epsilon'</tt> - Defaults to 1e-8</li></ul></div><h2 id="8">Example on Gaussian distributed</h2><p>We set up the example with known low-rank structure. Here <tt>nc</tt> is the rank and <tt>sz</tt> is the size.</p><pre class="codeinput">clear
+rng(<span class="string">'default'</span>)
+nc = 2;
+sz = [50 60 70];
+info = create_problem(<span class="string">'Size'</span>,sz,<span class="string">'Num_Factors'</span>,nc);
+X = info.Data;
+M_true = info.Soln;
+whos
+</pre><pre class="codeoutput">  Name         Size                 Bytes  Class      Attributes
+
+  M_true      50x60x70               3584  ktensor              
+  X           50x60x70            1680376  tensor               
+  info         1x1                1684312  struct               
+  nc           1x1                      8  double               
+  sz           1x3                     24  double               
+
+</pre><p>Run GCP-OPT</p><pre class="codeinput">tic, [M1,M0,out] = gcp_opt(X,nc,<span class="string">'type'</span>,<span class="string">'normal'</span>,<span class="string">'printitn'</span>,10); toc
+fprintf(<span class="string">'Final fit: %e (for comparison to f in CP-ALS)\n'</span>,1 - norm(X-full(M1))/norm(X));
+fprintf(<span class="string">'Score: %f\n'</span>,score(M1,M_true));
+</pre><pre class="codeoutput">
+GCP-OPT-LBFGSB (Generalized CP Tensor Decomposition)
+
+Tensor size: 50 x 60 x 70 (210000 total entries)
+Generalized function Type: normal
+Objective function: @(x,m)(m-x).^2
+Gradient function: @(x,m)2.*(m-x)
+Lower bound of factor matrices: -Inf
+Optimization method: lbfgsb
+Max iterations: 1000
+Projected gradient tolerance: 21
+
+Begin Main loop
+Iter    10, f(x) = 6.435693e+04, ||grad||_infty = 2.48e+03, 7.73e-01
+Iter    20, f(x) = 9.151275e+02, ||grad||_infty = 1.88e+01, 1.39e+00
+End Main Loop
+
+Final objective: 9.1513e+02
+Setup time: 0.06 seconds
+Main loop time: 1.39 seconds
+Outer iterations: 20
+Total iterations: 50
+L-BFGS-B Exit message: CONVERGENCE: NORM_OF_PROJECTED_GRADIENT_&lt;=_PGTOL.
+Elapsed time is 1.467649 seconds.
+Final fit: 9.004887e-01 (for comparison to f in CP-ALS)
+Score: 0.999247
+</pre><p>Compare to CP-ALS, which should usually be faster</p><pre class="codeinput">tic, M2 = cp_als(X,nc,<span class="string">'init'</span>,tocell(M0),<span class="string">'printitn'</span>,1); toc
+fprintf(<span class="string">'Objective function: %e (for comparison to f(x) in GCP-OPT)\n'</span>, norm(X-full(M2))^2/prod(size(X)));
+fprintf(<span class="string">'Score: %f\n'</span>,score(M2,M_true));
+</pre><pre class="codeoutput">
+CP_ALS:
+ Iter  1: f = 3.345448e-01 f-delta = 3.3e-01
+ Iter  2: f = 5.734164e-01 f-delta = 2.4e-01
+ Iter  3: f = 6.242275e-01 f-delta = 5.1e-02
+ Iter  4: f = 7.508386e-01 f-delta = 1.3e-01
+ Iter  5: f = 8.939489e-01 f-delta = 1.4e-01
+ Iter  6: f = 9.005545e-01 f-delta = 6.6e-03
+ Iter  7: f = 9.005707e-01 f-delta = 1.6e-05
+ Final f = 9.005707e-01 
+Elapsed time is 0.068067 seconds.
+Objective function: 4.350572e-03 (for comparison to f(x) in GCP-OPT)
+Score: 0.999932
+</pre><p>Now let's try is with the ADAM functionality</p><pre class="codeinput">tic, [M3,~,out] = gcp_opt(X,nc,<span class="string">'type'</span>,<span class="string">'normal'</span>,<span class="string">'opt'</span>,<span class="string">'adam'</span>,<span class="string">'init'</span>,M0,<span class="string">'printitn'</span>,1); toc
+fprintf(<span class="string">'Final fit: %e (for comparison to f in CP-ALS)\n'</span>,1 - norm(X-full(M1))/norm(X));
+fprintf(<span class="string">'Score: %f\n'</span>,score(M3,M_true));
+</pre><pre class="codeoutput">
+GCP-OPT-ADAM (Generalized CP Tensor Decomposition)
+
+Tensor size: 50 x 60 x 70 (210000 total entries)
+Generalized function Type: normal
+Objective function: @(x,m)(m-x).^2
+Gradient function: @(x,m)2.*(m-x)
+Lower bound of factor matrices: -Inf
+Optimization method: adam
+Max iterations (epochs): 1000
+Iterations per epoch: 1000
+Learning rate / decay / maxfails: 0.001 0.1 1
+Function Sampler: uniform with 210000 samples
+Gradient Sampler: uniform with 2100 samples
+
+Begin Main loop
+Initial f-est: 1.867360e+05
+Epoch  1: f-est = 9.595092e+04, step = 0.001
+Epoch  2: f-est = 9.371435e+04, step = 0.001
+Epoch  3: f-est = 8.795032e+04, step = 0.001
+Epoch  4: f-est = 3.244018e+04, step = 0.001
+Epoch  5: f-est = 1.251749e+03, step = 0.001
+Epoch  6: f-est = 9.170513e+02, step = 0.001
+Epoch  7: f-est = 9.149259e+02, step = 0.001
+Epoch  8: f-est = 9.162387e+02, step = 0.001, nfails = 1 (resetting to solution from last epoch)
+Epoch  9: f-est = 9.130911e+02, step = 0.0001
+Epoch 10: f-est = 9.130145e+02, step = 0.0001
+Epoch 11: f-est = 9.131056e+02, step = 0.0001, nfails = 2 (resetting to solution from last epoch)
+End Main Loop
+
+Final f-est: 9.1301e+02
+Setup time: 0.12 seconds
+Main loop time: 24.71 seconds
+Total iterations: 11000
+Elapsed time is 24.847523 seconds.
+Final fit: 9.004887e-01 (for comparison to f in CP-ALS)
+Score: 0.999870
+</pre><h2 id="12">Create an example Rayleigh tensor model and data instance.</h2><p>Consider a tensor that is Rayleigh-distribued. This means its entries are all nonnegative. First, we generate such a tensor with low-rank structure.</p><pre class="codeinput">clear
+rng(65)
+nc = 3;
+sz = [50 60 70];
+nd = length(sz);
+
+<span class="comment">% Create factor matrices that correspond to smooth sinusidal factors</span>
+U=cell(1,nd);
+<span class="keyword">for</span> k=1:nd
+    V = 1.1 + cos(bsxfun(@times, 2*pi/sz(k)*(0:sz(k)-1)', 1:nc));
+    U{k} = V(:,randperm(nc));
+<span class="keyword">end</span>
+M_true = normalize(ktensor(U));
+X = tenfun(@raylrnd, full(M_true));
+</pre><p>Visualize the true solution</p><pre class="codeinput">viz(M_true, <span class="string">'Figure'</span>, 1)
+</pre><pre class="codeoutput">ktensor/viz: Normalizing factors and sorting components according to the 2-norm.
+ans = 
+  struct with fields:
+
+              height: 0.2933
+               width: [3&times;1 double]
+          GlobalAxis: [1&times;1 Axes]
+          FactorAxes: [3&times;3 Axes]
+    ModeTitleHandles: [3&times;1 Text]
+    CompTitleHandles: [3&times;1 Text]
+         PlotHandles: {3&times;3 cell}
+</pre><img vspace="5" hspace="5" src="gcp_opt_doc_01.png" alt=""> <p>Run GCP-OPT</p><pre class="codeinput">tic, [M1,~,out] = gcp_opt(X,nc,<span class="string">'type'</span>,<span class="string">'rayleigh'</span>,<span class="string">'printitn'</span>,10); toc
+fprintf(<span class="string">'Score: %f\n'</span>,score(M1,M_true));
+</pre><pre class="codeoutput">
+GCP-OPT-LBFGSB (Generalized CP Tensor Decomposition)
+
+Tensor size: 50 x 60 x 70 (210000 total entries)
+Generalized function Type: rayleigh
+Objective function: @(x,m)2*log(m+1e-10)+(pi/4)*(x./(m+1e-10)).^2
+Gradient function: @(x,m)2./(m+1e-10)-(pi/2)*x.^2./(m+1e-10).^3
+Lower bound of factor matrices: 0
+Optimization method: lbfgsb
+Max iterations: 1000
+Projected gradient tolerance: 21
+
+Begin Main loop
+Iter    10, f(x) = 9.142571e+05, ||grad||_infty = 1.41e+03, 8.46e-01
+Positive dir derivative in projection 
+Using the backtracking step
+Iter    20, f(x) = 8.450604e+05, ||grad||_infty = 1.89e+03, 1.52e+00
+Iter    30, f(x) = 7.770233e+05, ||grad||_infty = 1.41e+03, 2.17e+00
+Iter    40, f(x) = 7.632798e+05, ||grad||_infty = 1.80e+03, 2.66e+00
+Iter    50, f(x) = 7.580042e+05, ||grad||_infty = 1.10e+03, 3.03e+00
+Iter    60, f(x) = 7.573270e+05, ||grad||_infty = 2.52e+02, 3.32e+00
+Iter    70, f(x) = 7.572930e+05, ||grad||_infty = 7.99e+01, 3.60e+00
+End Main Loop
+
+Final objective: 7.5729e+05
+Setup time: 0.01 seconds
+Main loop time: 3.61 seconds
+Outer iterations: 70
+Total iterations: 165
+L-BFGS-B Exit message: CONVERGENCE: NORM_OF_PROJECTED_GRADIENT_&lt;=_PGTOL.
+Elapsed time is 3.617957 seconds.
+Score: 0.795733
+</pre><p>Visualize the solution from GCP-OPT</p><pre class="codeinput">viz(M1, <span class="string">'Figure'</span>, 2)
+</pre><pre class="codeoutput">ktensor/viz: Normalizing factors and sorting components according to the 2-norm.
+ans = 
+  struct with fields:
+
+              height: 0.2933
+               width: [3&times;1 double]
+          GlobalAxis: [1&times;1 Axes]
+          FactorAxes: [3&times;3 Axes]
+    ModeTitleHandles: [3&times;1 Text]
+    CompTitleHandles: [3&times;1 Text]
+         PlotHandles: {3&times;3 cell}
+</pre><img vspace="5" hspace="5" src="gcp_opt_doc_02.png" alt=""> <p>Now let's try is with the scarce functionality - this leaves out all but 10% of the data!</p><pre class="codeinput">tic, [M2,~,out] = gcp_opt(X,nc,<span class="string">'type'</span>,<span class="string">'rayleigh'</span>,<span class="string">'opt'</span>,<span class="string">'adam'</span>); toc
+fprintf(<span class="string">'Final fit: %e (for comparison to f in CP-ALS)\n'</span>,1 - norm(X-full(M1))/norm(X));
+fprintf(<span class="string">'Score: %f\n'</span>,score(M2,M_true));
+</pre><pre class="codeoutput">
+GCP-OPT-ADAM (Generalized CP Tensor Decomposition)
+
+Tensor size: 50 x 60 x 70 (210000 total entries)
+Generalized function Type: rayleigh
+Objective function: @(x,m)2*log(m+1e-10)+(pi/4)*(x./(m+1e-10)).^2
+Gradient function: @(x,m)2./(m+1e-10)-(pi/2)*x.^2./(m+1e-10).^3
+Lower bound of factor matrices: 0
+Optimization method: adam
+Max iterations (epochs): 1000
+Iterations per epoch: 1000
+Learning rate / decay / maxfails: 0.001 0.1 1
+Function Sampler: uniform with 210000 samples
+Gradient Sampler: uniform with 2100 samples
+
+Begin Main loop
+Initial f-est: 2.715221e+06
+Epoch  1: f-est = 1.017441e+06, step = 0.001
+Epoch  2: f-est = 9.204216e+05, step = 0.001
+Epoch  3: f-est = 8.791755e+05, step = 0.001
+Epoch  4: f-est = 8.496629e+05, step = 0.001
+Epoch  5: f-est = 8.276276e+05, step = 0.001
+Epoch  6: f-est = 8.053227e+05, step = 0.001
+Epoch  7: f-est = 7.839439e+05, step = 0.001
+Epoch  8: f-est = 7.710536e+05, step = 0.001
+Epoch  9: f-est = 7.653168e+05, step = 0.001
+Epoch 10: f-est = 7.619699e+05, step = 0.001
+Epoch 11: f-est = 7.600227e+05, step = 0.001
+Epoch 12: f-est = 7.590060e+05, step = 0.001
+Epoch 13: f-est = 7.585602e+05, step = 0.001
+Epoch 14: f-est = 7.583133e+05, step = 0.001
+Epoch 15: f-est = 7.582559e+05, step = 0.001
+Epoch 16: f-est = 7.582295e+05, step = 0.001
+Epoch 17: f-est = 7.582587e+05, step = 0.001, nfails = 1 (resetting to solution from last epoch)
+Epoch 18: f-est = 7.581745e+05, step = 0.0001
+Epoch 19: f-est = 7.581687e+05, step = 0.0001
+Epoch 20: f-est = 7.581605e+05, step = 0.0001
+Epoch 21: f-est = 7.581473e+05, step = 0.0001
+Epoch 22: f-est = 7.581537e+05, step = 0.0001, nfails = 2 (resetting to solution from last epoch)
+End Main Loop
+
+Final f-est: 7.5815e+05
+Setup time: 0.27 seconds
+Main loop time: 51.49 seconds
+Total iterations: 22000
+Elapsed time is 51.764673 seconds.
+Final fit: 5.380785e-01 (for comparison to f in CP-ALS)
+Score: 0.797088
+</pre><p>Visualize the solution with scarce</p><pre class="codeinput">viz(M2, <span class="string">'Figure'</span>, 3)
+</pre><pre class="codeoutput">ktensor/viz: Normalizing factors and sorting components according to the 2-norm.
+ans = 
+  struct with fields:
+
+              height: 0.2933
+               width: [3&times;1 double]
+          GlobalAxis: [1&times;1 Axes]
+          FactorAxes: [3&times;3 Axes]
+    ModeTitleHandles: [3&times;1 Text]
+    CompTitleHandles: [3&times;1 Text]
+         PlotHandles: {3&times;3 cell}
+</pre><img vspace="5" hspace="5" src="gcp_opt_doc_03.png" alt=""> <h2 id="18">Boolean tensor.</h2><p>The model will predict the odds of observing a 1. Recall that the odds related to the probability as follows. If <img src="gcp_opt_doc_eq09941021013676836398.png" alt="$p$" style="width:5px;height:7px;"> is the probability adn <img src="gcp_opt_doc_eq04958265083611378313.png" alt="$r$" style="width:5px;height:5px;"> is the odds, then <img src="gcp_opt_doc_eq15893363356306913220.png" alt="$r = p / (1-p)$" style="width:56px;height:10px;">. Higher odds indicates a higher probability of observing a one.</p><pre class="codeinput">clear
+rng(7639)
+nc = 3; <span class="comment">% Number of components</span>
+sz = [50 60 70]; <span class="comment">% Tensor size</span>
+nd = length(sz); <span class="comment">% Number of dimensions</span>
+</pre><p>We assume that the underlying model tensor has factor matrices with only a few "large" entries in each column. The small entries should correspond to a low but nonzero entry of observing a 1, while the largest entries, if multiplied together, should correspond to a very high likelihood of observing a 1.</p><pre class="codeinput">probrange = [0.01 0.99]; <span class="comment">% Absolute min and max of probabilities</span>
+oddsrange = probrange ./ (1 - probrange);
+smallval = nthroot(min(oddsrange)/nc,nd);
+largeval = nthroot(max(oddsrange)/nc,nd);
+
+A = cell(nd,1);
+<span class="keyword">for</span> k = 1:nd
+    A{k} = smallval * ones(sz(k), nc);
+    nbig = 5;
+    <span class="keyword">for</span> j = 1:nc
+        p = randperm(sz(k));
+        A{k}(p(1:nbig),j) = largeval;
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+M_true = ktensor(A);
+</pre><p>Convert K-tensor to an observed tensor Get the model values, which correspond to odds of observing a 1</p><pre class="codeinput">Mfull = full(M_true);
+<span class="comment">% Convert odds to probabilities</span>
+Mprobs = Mfull ./ (1 + Mfull);
+<span class="comment">% Flip a coin for each entry, with the probability of observing a one</span>
+<span class="comment">% dictated by Mprobs</span>
+Xfull = 1.0*(tensor(@rand, sz) &lt; Mprobs);
+<span class="comment">% Convert to sparse tensor, real-valued 0/1 tensor since it was constructed</span>
+<span class="comment">% to be sparse</span>
+X = sptensor(Xfull);
+fprintf(<span class="string">'Proportion of nonzeros in X is %.2f%%\n'</span>, 100*nnz(X) / prod(sz));
+</pre><pre class="codeoutput">Proportion of nonzeros in X is 8.42%
+</pre><p>Just for fun, let's visualize the distribution of the probabilities in the model tensor.</p><pre class="codeinput">histogram(Mprobs(:))
+</pre><img vspace="5" hspace="5" src="gcp_opt_doc_04.png" alt=""> <p>Call GCP_OPT on the full tensor</p><pre class="codeinput">[M1,~,out] = gcp_opt(Xfull, nc, <span class="string">'type'</span>, <span class="string">'binary'</span>,<span class="string">'printitn'</span>,25);
+fprintf(<span class="string">'Final score: %f\n'</span>, score(M1,M_true));
+</pre><pre class="codeoutput">
+GCP-OPT-LBFGSB (Generalized CP Tensor Decomposition)
+
+Tensor size: 50 x 60 x 70 (210000 total entries)
+Generalized function Type: binary
+Objective function: @(x,m)log(m+1)-x.*log(m+1e-10)
+Gradient function: @(x,m)1./(m+1)-x./(m+1e-10)
+Lower bound of factor matrices: 0
+Optimization method: lbfgsb
+Max iterations: 1000
+Projected gradient tolerance: 21
+
+Begin Main loop
+Iter    25, f(x) = 4.498422e+04, ||grad||_infty = 7.66e+01, 7.94e-01
+Iter    50, f(x) = 4.323442e+04, ||grad||_infty = 1.27e+02, 1.39e+00
+Iter    62, f(x) = 4.309850e+04, ||grad||_infty = 1.95e+01, 1.65e+00
+End Main Loop
+
+Final objective: 4.3098e+04
+Setup time: 0.06 seconds
+Main loop time: 1.65 seconds
+Outer iterations: 62
+Total iterations: 140
+L-BFGS-B Exit message: CONVERGENCE: NORM_OF_PROJECTED_GRADIENT_&lt;=_PGTOL.
+Final score: 0.739944
+</pre><p>GCP-OPT as sparse tensor</p><pre class="codeinput">[M2,~,out] = gcp_opt(X, nc, <span class="string">'type'</span>, <span class="string">'binary'</span>);
+fprintf(<span class="string">'Final score: %f\n'</span>, score(M2,M_true));
+</pre><pre class="codeoutput">
+GCP-OPT-ADAM (Generalized CP Tensor Decomposition)
+
+Tensor size: 50 x 60 x 70 (210000 total entries)
+Sparse tensor: 17690 (8.4%) Nonzeros and 192310 (91.58%) Zeros
+Generalized function Type: binary
+Objective function: @(x,m)log(m+1)-x.*log(m+1e-10)
+Gradient function: @(x,m)1./(m+1)-x./(m+1e-10)
+Lower bound of factor matrices: 0
+Optimization method: adam
+Max iterations (epochs): 1000
+Iterations per epoch: 1000
+Learning rate / decay / maxfails: 0.001 0.1 1
+Function Sampler: stratified with 17690 nonzero and 17690 zero samples
+Gradient Sampler: stratified with 1000 nonzero and 1000 zero samples
+
+Begin Main loop
+Initial f-est: 7.428218e+04
+Epoch  1: f-est = 4.717953e+04, step = 0.001
+Epoch  2: f-est = 4.654388e+04, step = 0.001
+Epoch  3: f-est = 4.622779e+04, step = 0.001
+Epoch  4: f-est = 4.556995e+04, step = 0.001
+Epoch  5: f-est = 4.513884e+04, step = 0.001
+Epoch  6: f-est = 4.497412e+04, step = 0.001
+Epoch  7: f-est = 4.478373e+04, step = 0.001
+Epoch  8: f-est = 4.417746e+04, step = 0.001
+Epoch  9: f-est = 4.361799e+04, step = 0.001
+Epoch 10: f-est = 4.347086e+04, step = 0.001
+Epoch 11: f-est = 4.341842e+04, step = 0.001
+Epoch 12: f-est = 4.338054e+04, step = 0.001
+Epoch 13: f-est = 4.341225e+04, step = 0.001, nfails = 1 (resetting to solution from last epoch)
+Epoch 14: f-est = 4.336923e+04, step = 0.0001
+Epoch 15: f-est = 4.336528e+04, step = 0.0001
+Epoch 16: f-est = 4.335960e+04, step = 0.0001
+Epoch 17: f-est = 4.336279e+04, step = 0.0001, nfails = 2 (resetting to solution from last epoch)
+End Main Loop
+
+Final f-est: 4.3360e+04
+Setup time: 0.03 seconds
+Main loop time: 51.44 seconds
+Total iterations: 17000
+Final score: 0.836891
+</pre><h2 id="24">Create and test a Poisson count tensor.</h2><pre class="codeinput">nc = 3;
+sz = [80 90 100];
+nd = length(sz);
+paramRange = [0.5 60];
+factorRange = paramRange.^(1/nd);
+minFactorRatio = 95/100;
+lambdaDamping = 0.8;
+rng(21);
+info = create_problem(<span class="string">'Size'</span>, sz, <span class="keyword">...</span>
+    <span class="string">'Num_Factors'</span>, nc, <span class="keyword">...</span>
+    <span class="string">'Factor_Generator'</span>, @(m,n)factorRange(1)+(rand(m,n)&gt;minFactorRatio)*(factorRange(2)-factorRange(1)), <span class="keyword">...</span>
+    <span class="string">'Lambda_Generator'</span>, @(m,n)ones(m,1)*(lambdaDamping.^(0:n-1)'), <span class="keyword">...</span>
+    <span class="string">'Sparse_Generation'</span>, 0.2);
+
+M_true = normalize(arrange(info.Soln));
+X = info.Data;
+viz(M_true, <span class="string">'Figure'</span>,3);
+</pre><pre class="codeoutput">ktensor/viz: Normalizing factors and sorting components according to the 2-norm.
+</pre><img vspace="5" hspace="5" src="gcp_opt_doc_05.png" alt=""> <h2 id="25">Loss function for Poisson negative log likelihood with identity link.</h2><pre class="codeinput"><span class="comment">% Call GCP_OPT on sparse tensor</span>
+[M1,M0,out] = gcp_opt(X, nc, <span class="string">'type'</span>, <span class="string">'count'</span>,<span class="string">'printitn'</span>,25);
+fprintf(<span class="string">'Final score: %f\n'</span>, score(M1,M_true));
+</pre><pre class="codeoutput">
+GCP-OPT-ADAM (Generalized CP Tensor Decomposition)
+
+Tensor size: 80 x 90 x 100 (720000 total entries)
+Sparse tensor: 123856 (17%) Nonzeros and 596144 (82.80%) Zeros
+Generalized function Type: count
+Objective function: @(x,m)m-x.*log(m+1e-10)
+Gradient function: @(x,m)1-x./(m+1e-10)
+Lower bound of factor matrices: 0
+Optimization method: adam
+Max iterations (epochs): 1000
+Iterations per epoch: 1000
+Learning rate / decay / maxfails: 0.001 0.1 1
+Function Sampler: stratified with 100000 nonzero and 100000 zero samples
+Gradient Sampler: stratified with 1000 nonzero and 1000 zero samples
+
+Begin Main loop
+Initial f-est: 4.721309e+05
+Epoch 14: f-est = 3.448798e+05, step = 0.001, nfails = 1 (resetting to solution from last epoch)
+Epoch 18: f-est = 3.447516e+05, step = 0.0001, nfails = 2 (resetting to solution from last epoch)
+End Main Loop
+
+Final f-est: 3.4475e+05
+Setup time: 0.18 seconds
+Main loop time: 65.86 seconds
+Total iterations: 18000
+Final score: 0.954415
+</pre><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Generalized CP (GCP) Tensor Decomposition
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="cp.html">CP Decompositions</a> 
+% &#62;&#62; <a href="gcp_opt_doc.html">GCP-OPT</a>
+% </p>
+% </html>
+%
+% This document outlines usage and examples for the generalized CP (GCP)
+% tensor decomposition implmented in |gcp_opt|. 
+% GCP allows alternate objective functions besides sum of squared errors,
+% which is the standard for CP.
+% The code support both dense and sparse input tensors, but the sparse
+% input tensors require randomized optimization methods. For some examples,
+% see also <gcp_opt_amino_doc.html GCP-OPT and Amino Acids
+% Dataset>.
+%
+% GCP is described in greater detail in the manuscripts: 
+%
+% * D. Hong, T. G. Kolda, J. A. Duersch, Generalized Canonical
+%   Polyadic Tensor Decomposition, SIAM Review, 62:133-163, 2020,
+%   <https://doi.org/10.1137/18M1203626>
+% * T. G. Kolda, D. Hong, Stochastic Gradients for Large-Scale Tensor
+%   Decomposition. SIAM J. Mathematics of Data Science, 2:1066-1095,
+%   2020, <https://doi.org/10.1137/19m1266265>
+%
+%% Basic Usage
+% The idea of GCP is to use alternative objective functions. As such, the
+% most important thing to specify is the objective function. 
+%
+% The command |M = gcp_opt(X,R,'type',type)| 
+% computes an estimate of the best rank-|R|
+% generalized CP (GCP) decomposition of the tensor |X| for the specified
+% generalized loss function specified by |type|. The input |X| can be a
+% tensor or sparse tensor. The result |M| is a Kruskal tensor. 
+% Some options for the objective function are:
+%
+% * |'binary'| - Bernoulli distribution for binary data
+% * |'count'|  - Poisson distribution for count data (see also <cp_apr_doc.html |cp_apr|>)
+% * |'normal'| - Gaussian distribution (see also <cp_als_doc.html |cp_als|> and <cp_opt_doc.html |cp_opt|>)
+% * |'huber (0.25)'| - Similar to Gaussian but robust to outliers
+% * |'rayleigh'| - Rayleigh distribution for nonnegative data
+% * |'gamma'|  - Gamma distribution for nonnegative data 
+%
+% See <gcp_opt_fg_options_doc.html Function Types for GCP>
+% for a complete list of options.
+
+%% Manually specifying the loss function
+% Rather than specifying a type, the user has the option to explicitly
+% specify the objection function, gradient, and lower bounds using the
+% following options:
+%
+% * |'func'| - Objective function handle, e.g., |@(x,m) (m-x).^2|
+% * |'grad'| - Gradient function handle, e.g., |@(x,m) 2.*(m-x)|
+% * |'lower'| - Lower bound, e.g., 0 or |-Inf|
+%
+% Note that the function must be able to work on vectors of x and m values.
+
+%% Choice of Optimzation Method
+% The default optimization method is L-BFGS-B (bound-constrained
+% limited-memory BFGS). To use this, install the third-party software:
+%
+% * <https://github.com/stephenbeckr/L-BFGS-B-C *L-BFGS-B* by Stephen Becker> 
+%
+% The L-BFGS-B software can only be used for dense tensors.
+% The other choice is to use a stochastic optimization method, either
+% stochastic gradient descent (SGD) or ADAM. This can be used for
+% dense or sparse tensors.
+%
+% The command |M = gcp_opt(X,R,...,'opt',opt)| specifies the optimization
+% method where |opt| is one of the following strings:
+%
+% * |'lbfgsb'| - Bound-constrained limited-memory BFGS
+% * |'sgd'| - Stochastic gradient descent (SGD)
+% * |'adam'| - Momentum-based SGD method
+%
+% Each methods has parameters, which are described below.
+
+%% Specifying Missing or Incomplete Data Using the Mask Option
+% If some entries of the tensor are unknown, the method can mask off that
+% data during the fitting process. To do so, specify a *mask* tensor |W|
+% that is the same size as the data tensor |X|.  
+% The mask tensor should be 1 if the entry in |X| is known and 0 otherwise.
+% The call is |M = gcp_opt(X,R,'type',type','mask',W)|.
+
+%% Other Options
+% A few common options are as follows:
+%
+% * |'maxiters'| - Maximum number of outer iterations {1000}
+% * |'init'| - Initialization for factor matrices {|'rand'|}
+% * |'printitn'| - Print every n iterations; 0 for no printing {1}
+% * |'state'| - Random state, to re-create the same outcome {[]}
+
+%% Specifying L-BFGS-B Parameters
+% In addition to the options above, there are two options used to modify
+% the L-BFGS-B behavior. 
+%
+% * |'factr'| - Tolerance on the change on the objective value. Defaults to
+% 1e7, which is multiplied by machine epsilon.
+% * |'pgtol'| - Projected gradient tolerance, defaults to 1e-5.
+%
+% It can sometimes be useful to increase or decrease |pgtol| depending on
+% the objective function and size of the tensor.
+
+
+%% Specifying SGD and ADAM Parameters
+% There are a number of parameters that can be adjusted for SGD and ADAM.
+%
+% *Stochastic Gradient.* There are three different sampling methods for
+% computing the stochastic gradient:
+%
+% * _Uniform_ - Entries are selected uniformly at random. Default for dense
+% tensors.
+% * _Stratified_ - Zeros and nonzeros are sampled separately, which is
+% recommended for sparse tensors. Default for sparse tensors.
+% * _Semi-Stratified_ - Modification to stratified sampling that avoids
+% rejection sampling for better efficiency at the cost of potentially
+% higher variance.
+%
+% The options corresponding to these are as follows.
+%
+% * |'sampler'| - Type of sampling to use for stochastic gradient. Defaults
+% to |'uniform'| for dense and |'stratified'| for sparse. The third options
+% is |'semi-stratified'|.
+% * |'gsamp'| - Number of samples for stochastic gradient. This should
+% generally be O(sum(sz)*r). For the stratified or semi-stratified sampler,
+% this can be two numbers. The first 
+% is the number of nonzero samples and the second is the number of zero
+% samples. If only one number is specified, then this is used as the number
+% for both nonzeros and zeros, and the total number of samples is 2x what is
+% specified.
+%
+% *Estimating the Function.* We also use sampling to estimate the function
+% value. 
+%
+% * |'fsampler'| - This can be |'uniform'| (default for dense) or
+% |'stratified'| (default for sparse) or a custom function handle.
+% The custom function handleis primarily useful 
+% in reusing the same sampled elements across different tests. For
+% instance, we might create such a sampler by calling the hidden sampling
+% function and saving its outputs:
+%
+%  [xsubs, xvals, wghts] = tt_sample_uniform(X, 10000);
+%  fsampler = @() deal(xsubs, xvals, wghts);'
+%
+% * |'fsamp'| - Number of samples to estimate function.
+% This should generally be somewhat large since we want this sample to
+% generate a reliable estimate of the true function value. 
+%
+% The |'stratified'| sampler has an extra option: 
+% * |'oversample'| - Factor to oversample when implicitly sampling zeros in
+% the sparse case. Defaults to 1.1. Only adjust for very small tensors.
+%
+% There are some other options that are needed for SGD, the learning rate
+% and a decrease schedule. Our schedule is very simple - we decrease the
+% rate if there is no improvement in the approximate function value after
+% an epoch. After a specified number of decreases (|'maxfails'|), we quit.
+% 
+% * |'rate'| - Initial learning rate. Defaults to 1e-3.
+% * |'decay'| - How much to decrease the learning rate once progress
+% stagnates, i.e., no decrease in objective function between epochs.
+% Default to 0.1.
+% * |'maxfails'| - How many times to decrease the learning rate. Can be
+% zero. Defaults to 1.
+% * |'epciters'| - Iterations per epoch. Defaults to 1000.
+% * |'festtol'| - Quit if the function estimate goes below this level. Defaults to |-Inf|.
+%
+% There are some options that are specific to ADAM and generally needn't
+% change:
+%
+% * |'beta1'| - Default to 0.9
+% * |'beta2'| - Defaults to 0.999
+% * |'epsilon'| - Defaults to 1e-8
+% 
+
+%% Example on Gaussian distributed 
+% We set up the example with known low-rank structure. Here |nc| is the
+% rank and |sz| is the size.
+clear
+rng('default')
+nc = 2; 
+sz = [50 60 70]; 
+info = create_problem('Size',sz,'Num_Factors',nc);
+X = info.Data;
+M_true = info.Soln;
+whos
+%%
+% Run GCP-OPT
+tic, [M1,M0,out] = gcp_opt(X,nc,'type','normal','printitn',10); toc
+fprintf('Final fit: %e (for comparison to f in CP-ALS)\n',1 - norm(X-full(M1))/norm(X));
+fprintf('Score: %f\n',score(M1,M_true));
+
+%%
+% Compare to CP-ALS, which should usually be faster
+tic, M2 = cp_als(X,nc,'init',tocell(M0),'printitn',1); toc
+fprintf('Objective function: %e (for comparison to f(x) in GCP-OPT)\n', norm(X-full(M2))^2/prod(size(X)));
+fprintf('Score: %f\n',score(M2,M_true));
+
+%%
+% Now let's try is with the ADAM functionality
+tic, [M3,~,out] = gcp_opt(X,nc,'type','normal','opt','adam','init',M0,'printitn',1); toc
+fprintf('Final fit: %e (for comparison to f in CP-ALS)\n',1 - norm(X-full(M1))/norm(X));
+fprintf('Score: %f\n',score(M3,M_true));
+
+%% Create an example Rayleigh tensor model and data instance.
+% Consider a tensor that is Rayleigh-distribued. This means its entries are
+% all nonnegative. First, we generate such a tensor with low-rank
+% structure.
+clear
+rng(65)
+nc = 3;
+sz = [50 60 70];
+nd = length(sz);
+
+% Create factor matrices that correspond to smooth sinusidal factors
+U=cell(1,nd);
+for k=1:nd
+    V = 1.1 + cos(bsxfun(@times, 2*pi/sz(k)*(0:sz(k)-1)', 1:nc));
+    U{k} = V(:,randperm(nc));
+end
+M_true = normalize(ktensor(U));
+X = tenfun(@raylrnd, full(M_true));
+%%
+% Visualize the true solution
+viz(M_true, 'Figure', 1)
+
+%%
+% Run GCP-OPT
+tic, [M1,~,out] = gcp_opt(X,nc,'type','rayleigh','printitn',10); toc
+fprintf('Score: %f\n',score(M1,M_true));
+
+%%
+% Visualize the solution from GCP-OPT
+viz(M1, 'Figure', 2)
+
+%%
+% Now let's try is with the scarce functionality - this leaves out all but
+% 10% of the data!
+tic, [M2,~,out] = gcp_opt(X,nc,'type','rayleigh','opt','adam'); toc
+fprintf('Final fit: %e (for comparison to f in CP-ALS)\n',1 - norm(X-full(M1))/norm(X));
+fprintf('Score: %f\n',score(M2,M_true));
+
+%%
+% Visualize the solution with scarce
+viz(M2, 'Figure', 3)
+
+%% Boolean tensor. 
+% The model will predict the odds of observing a 1. Recall that the odds
+% related to the probability as follows. If $p$ is the probability adn $r$
+% is the odds, then $r = p / (1-p)$. Higher odds indicates a higher
+% probability of observing a one. 
+clear
+rng(7639)
+nc = 3; % Number of components
+sz = [50 60 70]; % Tensor size
+nd = length(sz); % Number of dimensions
+
+%%
+% We assume that the underlying model tensor has factor matrices with only
+% a few "large" entries in each column. The small entries should correspond
+% to a low but nonzero entry of observing a 1, while the largest entries,
+% if multiplied together, should correspond to a very high likelihood of
+% observing a 1.
+probrange = [0.01 0.99]; % Absolute min and max of probabilities
+oddsrange = probrange ./ (1 - probrange);
+smallval = nthroot(min(oddsrange)/nc,nd);
+largeval = nthroot(max(oddsrange)/nc,nd);
+
+A = cell(nd,1);
+for k = 1:nd
+    A{k} = smallval * ones(sz(k), nc);
+    nbig = 5;
+    for j = 1:nc
+        p = randperm(sz(k));
+        A{k}(p(1:nbig),j) = largeval;
+    end
+end
+M_true = ktensor(A);
+
+%%
+% Convert K-tensor to an observed tensor
+% Get the model values, which correspond to odds of observing a 1
+Mfull = full(M_true); 
+% Convert odds to probabilities
+Mprobs = Mfull ./ (1 + Mfull); 
+% Flip a coin for each entry, with the probability of observing a one
+% dictated by Mprobs 
+Xfull = 1.0*(tensor(@rand, sz) < Mprobs); 
+% Convert to sparse tensor, real-valued 0/1 tensor since it was constructed
+% to be sparse
+X = sptensor(Xfull); 
+fprintf('Proportion of nonzeros in X is %.2f%%\n', 100*nnz(X) / prod(sz));
+
+%%
+% Just for fun, let's visualize the distribution of the probabilities in
+% the model tensor. 
+histogram(Mprobs(:))
+
+%%
+% Call GCP_OPT on the full tensor
+[M1,~,out] = gcp_opt(Xfull, nc, 'type', 'binary','printitn',25);
+fprintf('Final score: %f\n', score(M1,M_true));
+
+%%
+% GCP-OPT as sparse tensor
+
+[M2,~,out] = gcp_opt(X, nc, 'type', 'binary');
+fprintf('Final score: %f\n', score(M2,M_true));
+
+
+%% Create and test a Poisson count tensor.
+nc = 3;
+sz = [80 90 100];
+nd = length(sz);
+paramRange = [0.5 60];
+factorRange = paramRange.^(1/nd);
+minFactorRatio = 95/100;
+lambdaDamping = 0.8;
+rng(21);
+info = create_problem('Size', sz, ...
+    'Num_Factors', nc, ...
+    'Factor_Generator', @(m,n)factorRange(1)+(rand(m,n)>minFactorRatio)*(factorRange(2)-factorRange(1)), ...
+    'Lambda_Generator', @(m,n)ones(m,1)*(lambdaDamping.^(0:n-1)'), ...
+    'Sparse_Generation', 0.2);
+
+M_true = normalize(arrange(info.Soln));
+X = info.Data;
+viz(M_true, 'Figure',3);
+
+%% Loss function for Poisson negative log likelihood with identity link.
+
+% Call GCP_OPT on sparse tensor
+[M1,M0,out] = gcp_opt(X, nc, 'type', 'count','printitn',25);
+fprintf('Final score: %f\n', score(M1,M_true));
+
+
+
+##### SOURCE END #####
+--></body></html>

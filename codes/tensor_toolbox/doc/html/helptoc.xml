@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='ISO-8859-1' ?>
+<!-- $Revision: 1.1 $ $Date: 2006/08/30 23:22:37 $ -->
+
+<toc version="3.2.1">
+
+<tocitem target="index.html" >Tensor Toolbox
+
+<tocitem  target="tensor_types.html" >Tensor Types
+    <tocitem target="tensor_doc.html">Dense Tensors</tocitem>
+    <tocitem target="sptensor_doc.html">Sparse Tensors</tocitem>
+    <tocitem target="symtensor_doc.html">Symmetric Tensors</tocitem>
+    <tocitem target="ttensor_doc.html">Tucker Tensors</tocitem>
+    <tocitem target="ktensor_doc.html">Kruskal Tensors</tocitem>
+    <tocitem target="symktensor_doc.html">Symmetric Kruskal Tensors</tocitem>
+    <tocitem target="sumtensor_doc.html">Sum of Structured Tensors</tocitem>
+</tocitem>
+<tocitem target="cp.html">CP Decompositions
+    <tocitem target="cp_als_doc.html">Alternating Least Squares (CP-ALS)</tocitem>
+    <tocitem target="cp_arls_doc.html">Alternating Randomized Least Squares (CP-ARLS)</tocitem>
+    <tocitem target="cp_opt_doc.html">All-at-once Optimization (CP-OPT)</tocitem>
+    <tocitem target="cp_wopt_doc.html">Incomplete Data (CP-WOPT)</tocitem>
+    <tocitem target="cp_apr_doc.html">Alternating Poisson Regression (APR)</tocitem>
+    <tocitem target="gcp_opt_doc.html">Generalized CP (GCP-OPT)
+    <tocitem target="gcp_opt_amino_doc.html">GCP-OPT and Amino Acids Dataset</tocitem>
+    <tocitem target="gcp_opt_fg_options_doc.html">Function Types for GCP</tocitem>
+    </tocitem>    
+    <tocitem target="cp_sym_doc.html">Symmetric (CP-SYM)</tocitem>
+    <tocitem target="cp_isym_doc.html">Implicit Symmetric (CP-ISYM)</tocitem>
+</tocitem>
+<tocitem target="tucker.html">Tucker Decompositions
+    <tocitem target="hosvd_doc.html">Higher-order SVD (HOSVD)</tocitem>
+    <tocitem target="tucker_als_doc.html">Alternating Least Squares (ALS)</tocitem>
+</tocitem>
+<tocitem target="eigen.html">Tensor Eigenproblem
+    <tocitem target="sshopm_doc.html">Shifted Symmetric Higher-order Power Method</tocitem>
+    <tocitem target="eig_geap_doc.html">Shifted Power Method for Generalized Eigenproblem</tocitem>
+</tocitem>
+<tocitem target="working.html">Working with Tensors
+    <tocitem target="multiply_doc.html">Multiplying Tensors</tocitem>
+    <tocitem target="nvecs_doc.html">Mode-n Vectors</tocitem>
+    <tocitem target="collapse_scale_doc.html">Collapsing and Scaling Tensors</tocitem>
+    <tocitem target="converting.html">Converting Between Tensors and Matrices
+    <tocitem target="tenmat_doc.html">Dense Case</tocitem>
+    <tocitem target="sptenmat_doc.html">Sparse Case</tocitem>
+    </tocitem>
+    <tocitem target="test_problems_doc.html">Creating Test Problems</tocitem>
+    <tocitem target="identities_doc.html">Identities</tocitem>
+    <tocitem target="import_export_doc.html">Importing and Exporting Tensor Data</tocitem>
+</tocitem>
+<tocitem target="opt_options_doc.html">Optimization Methods
+    <tocitem target="tt_opt_doc.html">Developer Information for Optimization Methods</tocitem>
+</tocitem>
+</tocitem>
+</toc>

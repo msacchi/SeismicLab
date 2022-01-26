@@ -1,0 +1,403 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Alternating least squares for CANDECOMP/PARAFAC (CP) Decomposition</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-01-13"><meta name="DC.source" content="cp_als_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Alternating least squares for CANDECOMP/PARAFAC (CP) Decomposition</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="cp.html">CP Decompositions</a>
+&#62;&#62; <a href="cp_als_doc.html">CP-ALS</a>
+</p>
+</p><p>The function <tt>cp_als</tt> computes an estimate of the best rank-R CP model of a tensor X using the well-known alternating least-squares algorithm (see, e.g., Kolda and Bader, SIAM Review, 2009, for more information).  The input X can be almost any type of tensor inclusing a <tt>tensor</tt>, <tt>sptensor</tt>, <tt>ktensor</tt>, or <tt>ttensor</tt>. The output CP model is a <tt>ktensor</tt>.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Load some data</a></li><li><a href="#2">Basic call to the method, specifying the data tensor and its rank</a></li><li><a href="#4">Visualize the results</a></li><li><a href="#5">Run again with a different initial guess, output the initial guess.</a></li><li><a href="#6">Increase the maximium number of iterations</a></li><li><a href="#8">Compare the two solutions</a></li><li><a href="#9">Rerun with same initial guess</a></li><li><a href="#10">Changing the output frequency</a></li><li><a href="#11">Suppress all output</a></li><li><a href="#12">Use HOSVD initial guess</a></li><li><a href="#14">Change the order of the dimensions in CP</a></li><li><a href="#16">Change the tolerance</a></li><li><a href="#17">Control sign ambiguity of factor matrices</a></li><li><a href="#18">Recommendations</a></li></ul></div><h2 id="1">Load some data</h2><p>We use the well-known <i>amino acids data set</i> from Andersson and Bro. It contains fluorescence measurements of 5 samples containing 3 amino acids: Tryptophan, Tyrosine, and Phenylalanine.Each amino acid corresponds to a rank-one component. The tensor is of size 5 x 51 x 201 from  5 samples, 51 excitations, and 201 emissions. Further details can be found here: <a href="http://www.models.life.ku.dk/Amino_Acid_fluo">http://www.models.life.ku.dk/Amino_Acid_fluo</a>. Please cite the following paper for this data: Rasmus Bro, PARAFAC: Tutorial and applications, Chemometrics and Intelligent Laboratory Systems, 1997, 38, 149-171. This dataset can be found in the <tt>doc</tt> directory.</p><pre class="codeinput">load <span class="string">aminoacids</span>
+</pre><h2 id="2">Basic call to the method, specifying the data tensor and its rank</h2><p>This uses a <i>random</i> initial guess. At each iteration, it reports the 'fit' which is defined as <tt>1-(norm(X-M)/norm(X))</tt> and is loosely the proportion of the data described by the CP model, i.e., a fit of 1 is perfect.</p><pre class="codeinput">rng(<span class="string">'default'</span>) <span class="comment">%&lt;- Setting random seed for reproducibility of this script</span>
+M1 = cp_als(X,3); <span class="comment">%&lt;- Call the method</span>
+</pre><pre class="codeoutput">
+CP_ALS:
+ Iter  1: f = 5.757392e-01 f-delta = 5.8e-01
+ Iter  2: f = 6.397722e-01 f-delta = 6.4e-02
+ Iter  3: f = 6.475932e-01 f-delta = 7.8e-03
+ Iter  4: f = 6.569483e-01 f-delta = 9.4e-03
+ Iter  5: f = 6.784483e-01 f-delta = 2.1e-02
+ Iter  6: f = 7.272329e-01 f-delta = 4.9e-02
+ Iter  7: f = 7.743007e-01 f-delta = 4.7e-02
+ Iter  8: f = 8.109037e-01 f-delta = 3.7e-02
+ Iter  9: f = 8.574394e-01 f-delta = 4.7e-02
+ Iter 10: f = 9.072207e-01 f-delta = 5.0e-02
+ Iter 11: f = 9.370083e-01 f-delta = 3.0e-02
+ Iter 12: f = 9.516441e-01 f-delta = 1.5e-02
+ Iter 13: f = 9.595934e-01 f-delta = 7.9e-03
+ Iter 14: f = 9.640126e-01 f-delta = 4.4e-03
+ Iter 15: f = 9.665412e-01 f-delta = 2.5e-03
+ Iter 16: f = 9.681171e-01 f-delta = 1.6e-03
+ Iter 17: f = 9.692201e-01 f-delta = 1.1e-03
+ Iter 18: f = 9.700730e-01 f-delta = 8.5e-04
+ Iter 19: f = 9.707752e-01 f-delta = 7.0e-04
+ Iter 20: f = 9.713716e-01 f-delta = 6.0e-04
+ Iter 21: f = 9.718846e-01 f-delta = 5.1e-04
+ Iter 22: f = 9.723272e-01 f-delta = 4.4e-04
+ Iter 23: f = 9.727090e-01 f-delta = 3.8e-04
+ Iter 24: f = 9.730376e-01 f-delta = 3.3e-04
+ Iter 25: f = 9.733198e-01 f-delta = 2.8e-04
+ Iter 26: f = 9.735616e-01 f-delta = 2.4e-04
+ Iter 27: f = 9.737684e-01 f-delta = 2.1e-04
+ Iter 28: f = 9.739449e-01 f-delta = 1.8e-04
+ Iter 29: f = 9.740954e-01 f-delta = 1.5e-04
+ Iter 30: f = 9.742235e-01 f-delta = 1.3e-04
+ Iter 31: f = 9.743326e-01 f-delta = 1.1e-04
+ Iter 32: f = 9.744253e-01 f-delta = 9.3e-05
+ Final f = 9.744253e-01 
+</pre><p>We typically can achieve a final fit of f = 0.97. The method stops when the change in the fit becomes less than the specified tolerance, which defaults to 1-e4.</p><h2 id="4">Visualize the results</h2><p>Use the <tt>ktensor/viz</tt> function to visualize the results.</p><pre class="codeinput">vizopts = {<span class="string">'PlotCommands'</span>,{<span class="string">'bar'</span>,<span class="string">'line'</span>,<span class="string">'line'</span>},<span class="keyword">...</span>
+    <span class="string">'ModeTitles'</span>,{<span class="string">'Concentration'</span>,<span class="string">'Emission'</span>,<span class="string">'Excitation'</span>},<span class="keyword">...</span>
+    <span class="string">'BottomSpace'</span>,0.10,<span class="string">'HorzSpace'</span>,0.04,<span class="string">'Normalize'</span>,0};
+info1 = viz(M1,<span class="string">'Figure'</span>,1,vizopts{:});
+</pre><img vspace="5" hspace="5" src="cp_als_doc_01.png" alt=""> <h2 id="5">Run again with a different initial guess, output the initial guess.</h2><p>This time we have two outputs. The first output is the solution as a ktensor. The second output is a cell array containing the initial guess. Since the first mode is not needed, it is omitted from the cell array.</p><pre class="codeinput">[M2bad,U2] = cp_als(X,3);
+</pre><pre class="codeoutput">
+CP_ALS:
+ Iter  1: f = 5.372277e-01 f-delta = 5.4e-01
+ Iter  2: f = 6.706563e-01 f-delta = 1.3e-01
+ Iter  3: f = 7.479181e-01 f-delta = 7.7e-02
+ Iter  4: f = 7.936023e-01 f-delta = 4.6e-02
+ Iter  5: f = 8.182495e-01 f-delta = 2.5e-02
+ Iter  6: f = 8.513821e-01 f-delta = 3.3e-02
+ Iter  7: f = 9.025108e-01 f-delta = 5.1e-02
+ Iter  8: f = 9.523589e-01 f-delta = 5.0e-02
+ Iter  9: f = 9.686955e-01 f-delta = 1.6e-02
+ Iter 10: f = 9.716873e-01 f-delta = 3.0e-03
+ Iter 11: f = 9.725830e-01 f-delta = 9.0e-04
+ Iter 12: f = 9.730243e-01 f-delta = 4.4e-04
+ Iter 13: f = 9.733194e-01 f-delta = 3.0e-04
+ Iter 14: f = 9.735495e-01 f-delta = 2.3e-04
+ Iter 15: f = 9.737412e-01 f-delta = 1.9e-04
+ Iter 16: f = 9.739052e-01 f-delta = 1.6e-04
+ Iter 17: f = 9.740470e-01 f-delta = 1.4e-04
+ Iter 18: f = 9.741698e-01 f-delta = 1.2e-04
+ Iter 19: f = 9.742764e-01 f-delta = 1.1e-04
+ Iter 20: f = 9.743687e-01 f-delta = 9.2e-05
+ Final f = 9.743687e-01 
+</pre><h2 id="6">Increase the maximium number of iterations</h2><p>Note that the previous run kicked out at only 50 iterations before reaching the specified convegence tolerance. Let's increate the maximum number of iterations and try again, using the same initial guess.</p><pre class="codeinput">M2 = cp_als(X,3,<span class="string">'maxiters'</span>,100,<span class="string">'init'</span>,U2);
+</pre><pre class="codeoutput">
+CP_ALS:
+ Iter  1: f = 5.372277e-01 f-delta = 5.4e-01
+ Iter  2: f = 6.706563e-01 f-delta = 1.3e-01
+ Iter  3: f = 7.479181e-01 f-delta = 7.7e-02
+ Iter  4: f = 7.936023e-01 f-delta = 4.6e-02
+ Iter  5: f = 8.182495e-01 f-delta = 2.5e-02
+ Iter  6: f = 8.513821e-01 f-delta = 3.3e-02
+ Iter  7: f = 9.025108e-01 f-delta = 5.1e-02
+ Iter  8: f = 9.523589e-01 f-delta = 5.0e-02
+ Iter  9: f = 9.686955e-01 f-delta = 1.6e-02
+ Iter 10: f = 9.716873e-01 f-delta = 3.0e-03
+ Iter 11: f = 9.725830e-01 f-delta = 9.0e-04
+ Iter 12: f = 9.730243e-01 f-delta = 4.4e-04
+ Iter 13: f = 9.733194e-01 f-delta = 3.0e-04
+ Iter 14: f = 9.735495e-01 f-delta = 2.3e-04
+ Iter 15: f = 9.737412e-01 f-delta = 1.9e-04
+ Iter 16: f = 9.739052e-01 f-delta = 1.6e-04
+ Iter 17: f = 9.740470e-01 f-delta = 1.4e-04
+ Iter 18: f = 9.741698e-01 f-delta = 1.2e-04
+ Iter 19: f = 9.742764e-01 f-delta = 1.1e-04
+ Iter 20: f = 9.743687e-01 f-delta = 9.2e-05
+ Final f = 9.743687e-01 
+</pre><p>This solution looks more or less the same as the previous one.</p><pre class="codeinput">info2 = viz(M2,<span class="string">'Figure'</span>,2,vizopts{:});
+</pre><img vspace="5" hspace="5" src="cp_als_doc_02.png" alt=""> <h2 id="8">Compare the two solutions</h2><p>Use the <tt>ktensor/score</tt> function to compare the two solutions. A score of 1 indicates a perfect match. These are not exactly the same, but they are pretty close.</p><pre class="codeinput">score(M1,M2)
+</pre><pre class="codeoutput">ans =
+    0.9976
+</pre><h2 id="9">Rerun with same initial guess</h2><p>Using the same initial guess (and all other parameters) gives the exact same solution.</p><pre class="codeinput">M2alt = cp_als(X,3,<span class="string">'maxiters'</span>,100,<span class="string">'init'</span>,U2);
+score(M2, M2alt) <span class="comment">%&lt;- Score of 1 indicates the same solution</span>
+</pre><pre class="codeoutput">
+CP_ALS:
+ Iter  1: f = 5.372277e-01 f-delta = 5.4e-01
+ Iter  2: f = 6.706563e-01 f-delta = 1.3e-01
+ Iter  3: f = 7.479181e-01 f-delta = 7.7e-02
+ Iter  4: f = 7.936023e-01 f-delta = 4.6e-02
+ Iter  5: f = 8.182495e-01 f-delta = 2.5e-02
+ Iter  6: f = 8.513821e-01 f-delta = 3.3e-02
+ Iter  7: f = 9.025108e-01 f-delta = 5.1e-02
+ Iter  8: f = 9.523589e-01 f-delta = 5.0e-02
+ Iter  9: f = 9.686955e-01 f-delta = 1.6e-02
+ Iter 10: f = 9.716873e-01 f-delta = 3.0e-03
+ Iter 11: f = 9.725830e-01 f-delta = 9.0e-04
+ Iter 12: f = 9.730243e-01 f-delta = 4.4e-04
+ Iter 13: f = 9.733194e-01 f-delta = 3.0e-04
+ Iter 14: f = 9.735495e-01 f-delta = 2.3e-04
+ Iter 15: f = 9.737412e-01 f-delta = 1.9e-04
+ Iter 16: f = 9.739052e-01 f-delta = 1.6e-04
+ Iter 17: f = 9.740470e-01 f-delta = 1.4e-04
+ Iter 18: f = 9.741698e-01 f-delta = 1.2e-04
+ Iter 19: f = 9.742764e-01 f-delta = 1.1e-04
+ Iter 20: f = 9.743687e-01 f-delta = 9.2e-05
+ Final f = 9.743687e-01 
+ans =
+     1
+</pre><h2 id="10">Changing the output frequency</h2><p>Using the <tt>'printitn'</tt> option to change the output frequency.</p><pre class="codeinput">M2alt2 = cp_als(X,3,<span class="string">'maxiters'</span>,100,<span class="string">'init'</span>,U2,<span class="string">'printitn'</span>,10);
+</pre><pre class="codeoutput">
+CP_ALS:
+ Iter 10: f = 9.716873e-01 f-delta = 3.0e-03
+ Iter 20: f = 9.743687e-01 f-delta = 9.2e-05
+ Final f = 9.743687e-01 
+</pre><h2 id="11">Suppress all output</h2><p>Set <tt>'printitn'</tt> to zero to suppress all output.</p><pre class="codeinput">M2alt3 = cp_als(X,3,<span class="string">'maxiters'</span>,100,<span class="string">'init'</span>,U2,<span class="string">'printitn'</span>,0); <span class="comment">% &lt;-No output</span>
+</pre><h2 id="12">Use HOSVD initial guess</h2><p>Use the <tt>'nvecs'</tt> option to use the leading mode-n singular vectors as the initial guess.</p><pre class="codeinput">M3 = cp_als(X,3,<span class="string">'init'</span>,<span class="string">'nvecs'</span>,<span class="string">'printitn'</span>,10);
+</pre><pre class="codeoutput">
+CP_ALS:
+ Iter 10: f = 9.334888e-01 f-delta = 3.5e-03
+ Iter 20: f = 9.604549e-01 f-delta = 1.9e-03
+ Iter 30: f = 9.712518e-01 f-delta = 5.8e-04
+ Iter 40: f = 9.741285e-01 f-delta = 1.4e-04
+ Iter 43: f = 9.744312e-01 f-delta = 8.6e-05
+ Final f = 9.744312e-01 
+</pre><p>Compare to the first solution using score, and see they are nearly the same because the score is close to 1.</p><pre class="codeinput">score(M1,M3)
+</pre><pre class="codeoutput">ans =
+    0.9859
+</pre><h2 id="14">Change the order of the dimensions in CP</h2><pre class="codeinput">[M4,~,info] = cp_als(X,3,<span class="string">'dimorder'</span>,[2 3 1],<span class="string">'init'</span>,<span class="string">'nvecs'</span>,<span class="string">'printitn'</span>,10);
+score(M1,M4)
+</pre><pre class="codeoutput">
+CP_ALS:
+ Iter 10: f = 9.449957e-01 f-delta = 3.1e-03
+ Iter 20: f = 9.657394e-01 f-delta = 1.3e-03
+ Iter 30: f = 9.727566e-01 f-delta = 3.5e-04
+ Iter 39: f = 9.743928e-01 f-delta = 9.2e-05
+ Final f = 9.743928e-01 
+ans =
+    0.9855
+</pre><p>In the last example, we also collected the third output argument which has some extra information in it. The field <tt>info.iters</tt> has the total number of iterations. The field <tt>info.params</tt> has the information used to run the method. Unless the initialization method is 'random', passing the parameters back to the method will yield the exact same results.</p><pre class="codeinput">M4alt = cp_als(X,3,info.params);
+score(M4,M4alt)
+</pre><pre class="codeoutput">
+CP_ALS:
+ Iter 10: f = 9.449957e-01 f-delta = 3.1e-03
+ Iter 20: f = 9.657394e-01 f-delta = 1.3e-03
+ Iter 30: f = 9.727566e-01 f-delta = 3.5e-04
+ Iter 39: f = 9.743928e-01 f-delta = 9.2e-05
+ Final f = 9.743928e-01 
+ans =
+     1
+</pre><h2 id="16">Change the tolerance</h2><p>It's also possible to loosen or tighten the tolerance on the change in the fit. You may need to increase the number of iterations for it to converge.</p><pre class="codeinput">M5 = cp_als(X,3,<span class="string">'init'</span>,<span class="string">'nvecs'</span>,<span class="string">'tol'</span>,1e-6,<span class="string">'maxiters'</span>,1000,<span class="string">'printitn'</span>,10);
+</pre><pre class="codeoutput">
+CP_ALS:
+ Iter 10: f = 9.334888e-01 f-delta = 3.5e-03
+ Iter 20: f = 9.604549e-01 f-delta = 1.9e-03
+ Iter 30: f = 9.712518e-01 f-delta = 5.8e-04
+ Iter 40: f = 9.741285e-01 f-delta = 1.4e-04
+ Iter 50: f = 9.747733e-01 f-delta = 2.9e-05
+ Iter 60: f = 9.749128e-01 f-delta = 6.4e-06
+ Iter 70: f = 9.749430e-01 f-delta = 1.4e-06
+ Iter 73: f = 9.749461e-01 f-delta = 8.8e-07
+ Final f = 9.749461e-01 
+</pre><h2 id="17">Control sign ambiguity of factor matrices</h2><p>The default behavior of <tt>cp_als</tt> is to make a call to <tt>fixsigns</tt> to fix the sign ambiguity of the factor matrices. You can turn off this behavior by passing the <tt>'fixsigns'</tt> parameter value of <tt>false</tt> when calling <tt>cp_als</tt>.</p><pre class="codeinput">X = ktensor([1;1], {[1, 1; 1, -10],[1, 1; 1, -10]});
+M = cp_als(X, 2, <span class="string">'printitn'</span>, 0, <span class="string">'init'</span>, X.U) <span class="comment">% &lt;-default behavior, fixsigns called</span>
+M = cp_als(X, 2, <span class="string">'printitn'</span>, 0, <span class="string">'init'</span>, X.U, <span class="string">'fixsigns'</span>, false) <span class="comment">% &lt;-fixsigns not called</span>
+</pre><pre class="codeoutput">M is a ktensor of size 2 x 2
+	M.lambda = 
+		  101.0000    2.0000
+	M.U{1} = 
+		   -0.0995    0.7071
+		    0.9950    0.7071
+	M.U{2} = 
+		   -0.0995    0.7071
+		    0.9950    0.7071
+M is a ktensor of size 2 x 2
+	M.lambda = 
+		  101.0000    2.0000
+	M.U{1} = 
+		    0.0995    0.7071
+		   -0.9950    0.7071
+	M.U{2} = 
+		    0.0995    0.7071
+		   -0.9950    0.7071
+</pre><h2 id="18">Recommendations</h2><div><ul><li>Run multiple times with different guesses and select the solution with the best fit.</li><li>Try different ranks and choose the solution that is the best descriptor for your data based on the combination of the fit and the interpretaton of the factors, e.g., by visualizing the results.</li></ul></div><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Alternating least squares for CANDECOMP/PARAFAC (CP) Decomposition
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="cp.html">CP Decompositions</a> 
+% &#62;&#62; <a href="cp_als_doc.html">CP-ALS</a>
+% </p>
+% </html>
+%
+% The function |cp_als| computes an estimate of the best rank-R
+% CP model of a tensor X using the well-known alternating least-squares
+% algorithm (see, e.g., Kolda and Bader, SIAM Review, 2009, for more
+% information).  The input X can be almost any type of tensor inclusing a 
+% |tensor|, |sptensor|, |ktensor|, or |ttensor|. The output CP model is a
+% |ktensor|. 
+
+%% Load some data 
+% We use the well-known _amino acids data set_ from Andersson and Bro.
+% It contains fluorescence measurements of 5 samples containing 3 amino
+% acids: Tryptophan, Tyrosine, and Phenylalanine.Each amino acid
+% corresponds to a rank-one component. The tensor is of size 5 x 51 x 201
+% from  5 samples, 51 excitations, and 201 emissions. 
+% Further details can be found here: 
+% <http://www.models.life.ku.dk/Amino_Acid_fluo>.
+% Please cite the following paper for this data: 
+% Rasmus Bro, PARAFAC: Tutorial and applications, Chemometrics and 
+% Intelligent Laboratory Systems, 1997, 38, 149-171.  
+% This dataset can be found in the |doc| directory.
+load aminoacids
+%% Basic call to the method, specifying the data tensor and its rank
+% This uses a _random_ initial guess. At each iteration, it reports the 'fit'
+% which is defined as |1-(norm(X-M)/norm(X))| and is loosely the proportion
+% of the data described by the CP model, i.e., a fit of 1 is perfect.
+rng('default') %<- Setting random seed for reproducibility of this script
+M1 = cp_als(X,3); %<- Call the method
+%%
+% We typically can achieve a final fit of f = 0.97. The method stops when
+% the change in the fit becomes less than the specified
+% tolerance, which defaults to 1-e4. 
+
+%% Visualize the results
+% Use the |ktensor/viz| function to visualize the results.
+vizopts = {'PlotCommands',{'bar','line','line'},...
+    'ModeTitles',{'Concentration','Emission','Excitation'},...
+    'BottomSpace',0.10,'HorzSpace',0.04,'Normalize',0};
+info1 = viz(M1,'Figure',1,vizopts{:});
+
+%% Run again with a different initial guess, output the initial guess.
+% This time we have two outputs. The first output is the solution as a
+% ktensor. The second output is a cell array containing the initial guess.
+% Since the first mode is not needed, it is omitted from the cell array.
+[M2bad,U2] = cp_als(X,3);
+
+%% Increase the maximium number of iterations
+% Note that the previous run kicked out at only 50 iterations before
+% reaching the specified convegence tolerance. Let's increate the maximum
+% number of iterations and try again, using the same initial guess.
+M2 = cp_als(X,3,'maxiters',100,'init',U2);
+
+%%
+% This solution looks more or less the same as the previous one.
+info2 = viz(M2,'Figure',2,vizopts{:});
+
+%% Compare the two solutions 
+% Use the |ktensor/score| function to compare the two solutions. A score of
+% 1 indicates a perfect match. These are not exactly the same, but they are
+% pretty close.
+score(M1,M2)
+
+%% Rerun with same initial guess
+% Using the same initial guess (and all other parameters) gives the exact
+% same solution. 
+M2alt = cp_als(X,3,'maxiters',100,'init',U2);
+score(M2, M2alt) %<- Score of 1 indicates the same solution
+
+%% Changing the output frequency
+% Using the |'printitn'| option to change the output frequency.
+M2alt2 = cp_als(X,3,'maxiters',100,'init',U2,'printitn',10); 
+
+%% Suppress all output
+% Set |'printitn'| to zero to suppress all output.
+M2alt3 = cp_als(X,3,'maxiters',100,'init',U2,'printitn',0); % <-No output
+
+%% Use HOSVD initial guess
+% Use the |'nvecs'| option to use the leading mode-n singular vectors as
+% the initial guess.
+M3 = cp_als(X,3,'init','nvecs','printitn',10);
+
+%%
+% Compare to the first solution using score, and see they are nearly the
+% same because the score is close to 1.
+score(M1,M3)
+
+%% Change the order of the dimensions in CP
+[M4,~,info] = cp_als(X,3,'dimorder',[2 3 1],'init','nvecs','printitn',10);
+score(M1,M4)
+
+%%
+% In the last example, we also collected the third output argument which
+% has some extra information in it. The field |info.iters| has the total
+% number of iterations. The field |info.params| has the information used to
+% run the method. Unless the initialization method is 'random', passing the
+% parameters back to the method will yield the exact same results.
+M4alt = cp_als(X,3,info.params);
+score(M4,M4alt)
+
+%% Change the tolerance
+% It's also possible to loosen or tighten the tolerance on the change in
+% the fit. You may need to increase the number of iterations for it to
+% converge.
+M5 = cp_als(X,3,'init','nvecs','tol',1e-6,'maxiters',1000,'printitn',10);
+
+%% Control sign ambiguity of factor matrices
+% The default behavior of |cp_als| is to make a call to |fixsigns| to fix
+% the sign ambiguity of the factor matrices. You can turn off this behavior
+% by passing the |'fixsigns'| parameter value of |false| when calling |cp_als|.
+X = ktensor([1;1], {[1, 1; 1, -10],[1, 1; 1, -10]});
+M = cp_als(X, 2, 'printitn', 0, 'init', X.U) % <-default behavior, fixsigns called
+M = cp_als(X, 2, 'printitn', 0, 'init', X.U, 'fixsigns', false) % <-fixsigns not called
+
+%% Recommendations
+% * Run multiple times with different guesses and select the solution with
+% the best fit. 
+% * Try different ranks and choose the solution that is the best descriptor
+% for your data based on the combination of the fit and the interpretaton
+% of the factors, e.g., by visualizing the results.
+
+##### SOURCE END #####
+--></body></html>

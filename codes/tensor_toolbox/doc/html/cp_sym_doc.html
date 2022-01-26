@@ -1,0 +1,312 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Symmetric CP Decomposition for Symmetric Tensors</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-01-13"><meta name="DC.source" content="cp_sym_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Symmetric CP Decomposition for Symmetric Tensors</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="cp.html">CP Decompositions</a>
+&#62;&#62; <a href="cp_sym_doc.html">CP-SYM</a>
+</p>
+</p><p>The function <tt>cp_sym</tt> computes the symmetric CP decomposition of a symmetric tensor. A <b>symmetric</b> tensor is invariant under any permutation of the indices. For a general dense <tt>tensor</tt>, we can verify its symmetry via the <tt>issymmetric</tt> function. An arbitrary dense tensor can be symmetrized by the <tt>symmetrize</tt> function. A symmetric tensor can also be stored as a <tt>symtensor</tt>. The <b>symmetric CP decomposition</b> needs only a <i>single</i> factor matrix (which is reused in every mode) and a weight/sign vector.  This can be stored as a <tt>symktensor</tt> object. The symmetric CP decompsition is described in the following reference:</p><div><ul><li>T. G. Kolda, Numerical Optimization for Symmetric Tensor Decomposition, Mathematical Programming B, 151:225-248, 2015, <a href="https://doi.org/10.1007/s10107-015-0895-0">https://doi.org/10.1007/s10107-015-0895-0</a></li></ul></div><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Requirements</a></li><li><a href="#2">Create a sample problem</a></li><li><a href="#5">Run CP-SYM using L-BFGS from Poblano Toolbox</a></li><li><a href="#6">Run CP-SYM using FMINCON from Optimization Toolbox</a></li></ul></div><h2 id="1">Requirements</h2><p>Some of these codes requires an optimizaton solver to use. We recommend installing at least one of the following:</p><div><ul><li><a href="https://github.com/sandialabs/poblano_toolbox"><b>Poblano</b> Toolbox, Version 1.1</a></li></ul></div><h2 id="2">Create a sample problem</h2><pre class="codeinput">d = 3; <span class="comment">% order</span>
+n = 10; <span class="comment">% size</span>
+r = 2; <span class="comment">% true rank</span>
+
+rng(5); <span class="comment">% Set random number generator state for consistent results</span>
+
+info = create_problem(<span class="string">'Size'</span>, n*ones(d,1), <span class="string">'Num_Factors'</span>, r, <span class="keyword">...</span>
+    <span class="string">'Symmetric'</span>, 1:d, <span class="string">'Factor_Generator'</span>, @rand, <span class="string">'Lambda_Generator'</span>, @rand, <span class="string">'Noise'</span>, 0.1);
+
+X = info.Data;
+M_true = info.Soln;
+S_true = symktensor(M_true); <span class="comment">% Convert from ktensor to symktensor</span>
+</pre><p>Check that the tensor is symmetric</p><pre class="codeinput">issymmetric(X)
+</pre><pre class="codeoutput">ans =
+  logical
+   1
+</pre><p>With even a small amount of noise, the gradient at the ideal solution can actually be large. This should be kept in mind when setting optimization termination conditions.</p><pre class="codeinput">[f,g] = fg_explicit(S_true, X, norm(X)^2);
+fprintf(<span class="string">'Relative error || full(S_true) - X || / || X ||: %g\n'</span>, norm(full(M_true)-X)/norm(X));
+fprintf(<span class="string">'Function value at true solution: %g\n'</span>, f);
+fprintf(<span class="string">'Gradient norm at true solution: %g\n'</span>, norm(g));
+</pre><pre class="codeoutput">Relative error || full(S_true) - X || / || X ||: 0.0997308
+Function value at true solution: 0.379907
+Gradient norm at true solution: 1.06846
+</pre><h2 id="5">Run CP-SYM using L-BFGS from Poblano Toolbox</h2><p>The default <tt>cp_sym</tt> uses a special objective function where each unique entry is only counted once in the sum-of-squared-error objective function. This really slows things down without much impact, so it's a good idea to set <tt>'unique'</tt> to <tt>false</tt>. Likewise, the <tt>'l1param'</tt> defaults to 10 but should be set to 0 for most problems. This is the recommended way to run the method:</p><pre class="codeinput">optparams = lbfgs(<span class="string">'defaults'</span>); <span class="comment">% Get the optimization parameters</span>
+optparams.RelFuncTol = 1e-10; <span class="comment">% Tighten the stopping tolerance</span>
+optparams.StopTol = 1e-6; <span class="comment">% Tighten the stopping tolerance</span>
+rng(5); <span class="comment">% Set random number generator state for consistent results</span>
+
+[S,info] = cp_sym(X,r,<span class="string">'unique'</span>,false,<span class="string">'l1param'</span>,0,<span class="string">'alg_options'</span>,optparams);
+
+fprintf(<span class="string">'\n'</span>);
+fprintf(<span class="string">'Final function value: %.2g\n'</span>, fg_explicit(S, X, norm(X)^2));
+fprintf(<span class="string">'Stopping condition: %s\n'</span>, info.optout.ExitDescription);
+fprintf(<span class="string">'Check similarity score (1=perfect): %.2f\n'</span>, score(S,S_true));
+fprintf(<span class="string">'\n'</span>);
+</pre><pre class="codeoutput"> Iter  FuncEvals       F(X)          ||G(X)||/N        
+------ --------- ---------------- ----------------
+     0         1       7.34429496       3.10499258
+     1         8       0.40258352       0.08233575
+     2        10       0.37608104       0.04310174
+     3        12       0.36658247       0.01555076
+     4        14       0.36528638       0.00530333
+     5        16       0.36488180       0.00311884
+     6        18       0.36484022       0.00174885
+     7        21       0.36477178       0.00360656
+     8        23       0.36472681       0.00208400
+     9        26       0.36467068       0.00313366
+    10        28       0.36461167       0.00116220
+    11        30       0.36460241       0.00025735
+    12        32       0.36460199       0.00012652
+    13        34       0.36460188       0.00014958
+    14        36       0.36460181       0.00004645
+    15        38       0.36460180       0.00000968
+    16        40       0.36460180       0.00000896
+    17        42       0.36460180       0.00000387
+    18        44       0.36460180       0.00000214
+    19        46       0.36460180       0.00000117
+
+Final function value: 0.36
+Stopping condition: Relative change in F &lt; RelFuncTol
+Check similarity score (1=perfect): 0.99
+
+</pre><h2 id="6">Run CP-SYM using FMINCON from Optimization Toolbox</h2><p>We can also run a version with nonnegativity constraints. In this case, we want to remove lambda from the optimization because otherwise there will be a scaling ambiguity. We need to use FMINCON because it accepts constraints.</p><pre class="codeinput">rng(5); <span class="comment">% Set random number generator state for consistent results</span>
+
+[S,info] = cp_sym(X,r,<span class="string">'unique'</span>,false,<span class="string">'l1param'</span>,0,<span class="string">'nonneg'</span>,true,<span class="string">'nolambda'</span>,true,<span class="string">'alg'</span>,<span class="string">'fmincon'</span>);
+
+fprintf(<span class="string">'\n'</span>);
+fprintf(<span class="string">'Final function value: %.2g\n'</span>, fg_explicit(S, X, norm(X)^2));
+fprintf(<span class="string">'Check similarity score (1=perfect): %.2f\n'</span>, score(S,S_true));
+<span class="comment">%fprintf('Stopping condition: %s\n', info.optout.message);</span>
+fprintf(<span class="string">'\n'</span>);
+</pre><pre class="codeoutput">                                            First-order      Norm of
+ Iter F-count            f(x)  Feasibility   optimality         step
+    0       1    7.344295e+00    0.000e+00    1.083e+01
+    1       4    3.436772e+00    0.000e+00    2.409e+01    5.062e-01
+    2       5    2.263213e+00    0.000e+00    1.100e+01    3.203e-01
+    3       8    2.234300e+00    0.000e+00    9.444e+00    3.504e-01
+    4      12    1.839139e+00    0.000e+00    5.815e+00    1.416e-01
+    5      15    4.820525e-01    0.000e+00    3.146e+00    1.588e-01
+    6      18    4.694919e-01    0.000e+00    2.648e+00    9.253e-02
+    7      21    4.048671e-01    0.000e+00    1.957e+00    7.309e-02
+    8      25    4.146153e-01    0.000e+00    1.602e+00    4.574e-02
+    9      29    4.155776e-01    0.000e+00    1.366e+00    2.359e-02
+   10      32    4.093077e-01    0.000e+00    1.198e+00    3.531e-02
+   11      35    3.887468e-01    0.000e+00    5.824e-01    2.213e-02
+   12      39    3.899451e-01    0.000e+00    6.062e-01    1.360e-02
+   13      43    3.900105e-01    0.000e+00    4.950e-01    9.302e-03
+   14      45    3.925853e-01    0.000e+00    2.848e-01    2.235e-02
+   15      49    3.935844e-01    0.000e+00    2.627e-01    6.053e-03
+   16      51    3.938832e-01    0.000e+00    1.700e-01    1.382e-02
+   17      54    3.894562e-01    0.000e+00    1.524e-01    8.280e-03
+   18      58    3.895712e-01    0.000e+00    1.459e-01    2.473e-03
+   19      61    3.914050e-01    0.000e+00    1.344e-01    4.341e-03
+   20      63    3.784584e-01    0.000e+00    5.684e-01    3.939e-02
+   21      66    3.685269e-01    0.000e+00    5.085e-01    3.048e-02
+   22      70    3.652146e-01    0.000e+00    5.221e-01    2.030e-02
+   23      72    3.658792e-01    0.000e+00    2.656e-01    1.457e-02
+   24      75    3.666182e-01    0.000e+00    1.041e-01    9.337e-03
+   25      77    3.665715e-01    0.000e+00    4.623e-02    5.424e-03
+   26      79    3.661260e-01    0.000e+00    4.772e-02    5.769e-03
+   27      81    3.659356e-01    0.000e+00    5.116e-02    4.427e-03
+   28      83    3.661514e-01    0.000e+00    2.088e-02    2.802e-03
+   29      85    3.654314e-01    0.000e+00    8.162e-02    1.306e-02
+   30      87    3.649481e-01    0.000e+00    1.453e-01    2.118e-02
+
+                                            First-order      Norm of
+ Iter F-count            f(x)  Feasibility   optimality         step
+   31      88    3.646972e-01    0.000e+00    1.482e-02    1.440e-02
+   32      90    3.646946e-01    0.000e+00    7.036e-03    2.067e-03
+   33      93    3.646966e-01    0.000e+00    8.418e-03    2.123e-03
+   34      94    3.646841e-01    0.000e+00    4.000e-03    6.961e-04
+   35      95    3.646086e-01    0.000e+00    3.484e-03    4.203e-03
+   36      96    3.646061e-01    0.000e+00    2.228e-03    9.426e-04
+   37      97    3.646052e-01    0.000e+00    8.000e-04    8.338e-04
+   38      98    3.646020e-01    0.000e+00    2.946e-04    1.100e-03
+   39      99    3.646019e-01    0.000e+00    1.600e-04    7.326e-05
+   40     100    3.646018e-01    0.000e+00    4.683e-05    3.008e-04
+   41     101    3.646018e-01    0.000e+00    4.104e-06    3.462e-06
+   42     102    3.646018e-01    0.000e+00    1.600e-06    4.315e-07
+   43     103    3.646018e-01    0.000e+00    3.200e-07    2.429e-06
+   44     104    3.646018e-01    0.000e+00    1.472e-08    6.060e-07
+
+Local minimum possible. Constraints satisfied.
+
+fmincon stopped because the size of the current step is less than
+the default value of the step size tolerance and constraints are 
+satisfied to within the default value of the constraint tolerance.
+
+
+
+
+Final function value: 0.36
+Check similarity score (1=perfect): 0.99
+
+</pre><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Symmetric CP Decomposition for Symmetric Tensors
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="cp.html">CP Decompositions</a> 
+% &#62;&#62; <a href="cp_sym_doc.html">CP-SYM</a>
+% </p>
+% </html>
+%
+% The function |cp_sym| computes the symmetric CP decomposition of a
+% symmetric tensor. 
+% A *symmetric* tensor is invariant under any permutation
+% of the indices. For a general dense |tensor|, we can verify its symmetry
+% via the |issymmetric| function. An arbitrary dense tensor can be
+% symmetrized by the |symmetrize| function. A symmetric tensor can also be
+% stored as a |symtensor|. 
+% The *symmetric CP decomposition* needs only a _single_ factor matrix
+% (which is reused in every mode) and a weight/sign vector.  This can be
+% stored as a |symktensor| object.
+% The symmetric CP decompsition is described in the following reference:
+%
+% * T. G. Kolda, Numerical Optimization for Symmetric Tensor Decomposition,
+% Mathematical Programming B, 151:225-248, 2015,
+% <https://doi.org/10.1007/s10107-015-0895-0>  
+
+%% Requirements
+% Some of these codes requires an optimizaton solver to use. We recommend
+% installing at least one of the following:
+%
+% * <https://github.com/sandialabs/poblano_toolbox *Poblano* Toolbox, Version 1.1>
+
+
+%% Create a sample problem 
+d = 3; % order
+n = 10; % size
+r = 2; % true rank
+
+rng(5); % Set random number generator state for consistent results
+
+info = create_problem('Size', n*ones(d,1), 'Num_Factors', r, ...
+    'Symmetric', 1:d, 'Factor_Generator', @rand, 'Lambda_Generator', @rand, 'Noise', 0.1);
+
+X = info.Data;
+M_true = info.Soln; 
+S_true = symktensor(M_true); % Convert from ktensor to symktensor
+
+%%
+% Check that the tensor is symmetric
+issymmetric(X)
+
+%%
+% With even a small amount of noise, the gradient at the ideal solution can
+% actually be large. This should be kept in mind when setting optimization
+% termination conditions.
+
+[f,g] = fg_explicit(S_true, X, norm(X)^2);
+fprintf('Relative error || full(S_true) - X || / || X ||: %g\n', norm(full(M_true)-X)/norm(X));
+fprintf('Function value at true solution: %g\n', f);
+fprintf('Gradient norm at true solution: %g\n', norm(g));
+
+
+%% Run CP-SYM using L-BFGS from Poblano Toolbox
+% The default |cp_sym| uses a special objective function where each unique
+% entry is only counted once in the sum-of-squared-error objective
+% function. This really slows things down without much impact, so it's a
+% good idea to set |'unique'| to |false|. Likewise, the |'l1param'|
+% defaults to 10 but should be set to 0 for most problems. This is the
+% recommended way to run the method:
+optparams = lbfgs('defaults'); % Get the optimization parameters
+optparams.RelFuncTol = 1e-10; % Tighten the stopping tolerance
+optparams.StopTol = 1e-6; % Tighten the stopping tolerance
+rng(5); % Set random number generator state for consistent results
+
+[S,info] = cp_sym(X,r,'unique',false,'l1param',0,'alg_options',optparams);
+
+fprintf('\n');
+fprintf('Final function value: %.2g\n', fg_explicit(S, X, norm(X)^2));
+fprintf('Stopping condition: %s\n', info.optout.ExitDescription);
+fprintf('Check similarity score (1=perfect): %.2f\n', score(S,S_true));
+fprintf('\n');
+
+%% Run CP-SYM using FMINCON from Optimization Toolbox
+% We can also run a version with nonnegativity constraints. In this case,
+% we want to remove lambda from the optimization because otherwise there
+% will be a scaling ambiguity. We need to use FMINCON because it accepts
+% constraints.
+
+rng(5); % Set random number generator state for consistent results
+
+[S,info] = cp_sym(X,r,'unique',false,'l1param',0,'nonneg',true,'nolambda',true,'alg','fmincon');
+
+fprintf('\n');
+fprintf('Final function value: %.2g\n', fg_explicit(S, X, norm(X)^2));
+fprintf('Check similarity score (1=perfect): %.2f\n', score(S,S_true));
+%fprintf('Stopping condition: %s\n', info.optout.message);
+fprintf('\n');
+
+##### SOURCE END #####
+--></body></html>

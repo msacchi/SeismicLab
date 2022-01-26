@@ -1,0 +1,301 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Optimization Methods for Tensor Toolbox</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-01-13"><meta name="DC.source" content="opt_options_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Optimization Methods for Tensor Toolbox</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="opt_options_doc.html">Optimization Methods</a>
+</p>
+</p><p>Most MATLAB optimization methods have different interfaces or none at all. In Tensor Toolbox, we are adopting wrappers for moderate consistency, and these will be called from within other Tensor Toolbox functions. Here we outline the choices, their installation instructions, and then the user-tunable parameters.</p><p>A few general notes:</p><div><ul><li>These methods all require explicit initial guesses as well as handles for   the function and gradient calculations. These are handled by the calling routines.</li><li>The parameters marked with asterisks should generally not be modified   by the user because they will be set by the calling routine.</li></ul></div><p>For more information on the details of these methods, see <a href="tt_opt_doc.html">Developer Information for Optimization Methods in Tensor Toolbox</a>.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1"><tt>lbfgsb</tt>: Limited-Memory Quasi-Newton with Bound Constraints</a></li><li><a href="#2"><tt>lbfgs</tt>: Limited-Memory Quasi-Newton</a></li><li><a href="#3"><tt>fminunc</tt>: Optimizaton Toolbox Quasi-Newton Method</a></li><li><a href="#4"><tt>adam</tt>: Stochastic Gradient Descent with Momentum</a></li></ul></div><h2 id="1"><tt>lbfgsb</tt>: Limited-Memory Quasi-Newton with Bound Constraints</h2><p>In most methods, setting <tt>'opt'</tt> to <tt>'lbfgsb'</tt> will enable this method, and then any of the settings in the table below can be modified by passing these as additional options to the method.</p><p>
+<table>
+<tr><td>Name</td><td>Description</td><td>Default</td></tr>
+<tr><td><tt>lower</tt></td><td>Lower bounds, can be vector or scalar</td><td><tt>-Inf</tt></td></tr>
+<tr><td><tt>upper</tt></td><td>Upper bounds, can be vector or scalar</td><td><tt>+Inf</tt></td></tr>
+<tr><td><tt>maxiters</tt></td><td>Max outer iterations</td><td>1000</td></tr>
+<tr><td><tt>printitn</tt></td><td>Printing frequency by iteration (0=no output)</td><td>1</td></tr>
+<tr><td><tt>m</tt></td><td>Limited-memory parameter</td><td>5</td></tr>
+<tr><td><tt>subiters</tt></td><td>Controls maximum calls to function-gradient evalations</td><td>10</td></tr>
+<tr><td><tt>ftol</tt></td><td>Stopping condition based on relative function change</td><td>1e-10</td></tr>
+<tr><td><tt>gtol</tt></td><td>Stopping condition based on gradient norm</td><td>1e-5</td></tr>
+<tr><td><tt>mdesc</tt> (*)</td><td>Method description printed out before run</td><td><tt>'L-BFGS-B Optimization'</tt></td></tr>
+<tr><td><tt>xdesc</tt> (*)</td><td>Variable description</td><td>auto-generated</td></tr>
+</table>
+</p><p><b>Installation Instructions.</b> Download and install <a href="https://github.com/stephenbeckr/L-BFGS-B-C"><b>L-BFGS-B</b> by Stephen Becker</a>. Please see that web page for full details on references, installation, etc. Here we provide cursory instructions for installation:</p><div><ol><li>Download the zip file <a href="https://github.com/stephenbeckr/L-BFGS-B-C/archive/master.zip">https://github.com/stephenbeckr/L-BFGS-B-C/archive/master.zip</a></li><li>Unzip and goto the <tt>Matlab/</tt> subdirectoy with MATLAB</li><li>Type <tt>compile_mex</tt></li><li><i>Add this directory to your saved path!</i></li></ol></div><p><b>Detailed notes.</b> The wrapper for this method is <tt>tt_lbfgsb</tt> in the Tensor Toolbox. Notes regarding mappings to the parameters of Becker's L-BFGS-B code:</p><div><ul><li><tt>maxIts</tt> maps to <tt>maxiters</tt> and the default is increased from 100 to 1000</li><li><tt>printEvery</tt> maps to <tt>printitn</tt></li><li><tt>maxTotalIts</tt> is set to <tt>maxiters*subiters</tt> and this effectively changes the default from 5000 to 10000</li><li><tt>factr</tt> is set to <tt>ftol</tt> / eps and this effectively changes the default from 1e7 to 4.5e5</li><li><tt>pgtol</tt> is set to <tt>gtol</tt></li></ul></div><h2 id="2"><tt>lbfgs</tt>: Limited-Memory Quasi-Newton</h2><p>In most methods, setting <tt>'opt'</tt> to <tt>'lbfgs'</tt> will enable this method, and then any of the settings in the table below can be modified by passing these as additional options to the method.</p><p>
+<table>
+<tr><td>Name</td><td>Description</td><td>Default</td></tr>
+<tr><td><tt>maxiters</tt></td><td>Max outer iterations</td><td>1000</td></tr>
+<tr><td><tt>printitn</tt></td><td>Printing frequency by iteration (0=no output)</td><td>1</td></tr>
+<tr><td><tt>m</tt></td><td>Limited-memory parameter</td><td>5</td></tr>
+<tr><td><tt>subiters</tt></td><td>Controls maximum calls to function-gradient evalations</td><td>10</td></tr>
+<tr><td><tt>ftol</tt></td><td>Stopping condition based on relative function change</td><td>1e-10</td></tr>
+<tr><td><tt>gtol</tt></td><td>Stopping condition based on gradient norm</td><td>1e-5</td></tr>
+<tr><td><tt>mdesc</tt> (*)</td><td>Method description printed out before run</td><td><tt>'Poblano L-BFGS Optimization'</tt></td></tr>
+<tr><td><tt>xdesc</tt> (*)</td><td>Variable description</td><td>auto-generated</td></tr>
+</table>
+</p><p><b>Installation Instructions.</b> Download and install <a href="https://github.com/sandialabs/poblano_toolbox/releases/tag/v1.2"><b>Poblano Toolbox</b>, v1.2</a>. Please see that web page for full details on references, installation, etc. Here we provide cursory instructions for installation:</p><div><ol><li>Download the zip file <a href="https://github.com/sandialabs/poblano_toolbox/archive/v1.2.zip">https://github.com/sandialabs/poblano_toolbox/archive/v1.2.zip</a></li><li>Unzip and goto the <tt>poblano_toolbox-1.2/</tt> subdirectoy within MATLAB</li><li>Type <tt>install_poblano</tt> to save this directory to your path</li></ol></div><p><b>Detailed notes.</b> The wrapper for this method is <tt>tt_lbfgs</tt> in the Tensor Toolbox. Notes regarding mappings to the parameters of Poblano's L-BFGS code:</p><div><ul><li><tt>MaxIters</tt> maps to <tt>maxiters</tt></li><li><tt>Display</tt> maps to <tt>printitn</tt></li><li><tt>MaxFuncEvals</tt> is set to <tt>maxiters*subiters</tt></li><li><tt>RelFuncTol</tt> is set to <tt>ftol</tt></li><li><tt>StopTol</tt> is set to <tt>gtol</tt></li></ul></div><h2 id="3"><tt>fminunc</tt>: Optimizaton Toolbox Quasi-Newton Method</h2><p>In most methods, setting <tt>'opt'</tt> to <tt>'fminunc'</tt> will enable this method, and then any of the settings in the table below can be modified by passing these as additional options to the method. This requires the MATLAB Optimization Toolbox.</p><p>
+<table>
+<tr><td>Name</td><td>Description</td><td>Default</td></tr>
+<tr><td><tt>maxiters</tt></td><td>Max outer iterations</td><td>1000</td></tr>
+<tr><td><tt>printitn</tt></td><td>Display (0=no output)</td><td>1</td></tr>
+<tr><td><tt>subiters</tt></td><td>Controls maximum calls to function-gradient evalations</td><td>10</td></tr>
+<tr><td><tt>gtol</tt></td><td>Stopping condition based on gradient norm</td><td>1e-5</td></tr>
+<tr><td><tt>mdesc</tt> (*)</td><td>Method description printed out before run</td><td><tt>'Quasi-Newton Optimization (via Optimization Toolbox)'</tt></td></tr>
+<tr><td><tt>xdesc</tt> (*)</td><td>Variable description</td><td>auto-generated</td></tr>
+</table>
+</p><h2 id="4"><tt>adam</tt>: Stochastic Gradient Descent with Momentum</h2><p>In most methods, setting <tt>'opt'</tt> to <tt>'adam'</tt> will enable this method, and then any of the settings in the table below can be modified by passing these as additional options to the method.</p><p>This is our own implementation of Adam. A <i>failed epoch</i> is one where the function value does not decrease. After a failed epoch, the method either reduces the learning rate (by <tt>decay</tt>) or exits (once the number of failed epochs exceeds <tt>maxfails</tt>).</p><p>
+<table>
+<tr><td>Name</td><td>Description</td><td>Default</td></tr>
+<tr><td><tt>lower</tt></td><td>Lower bounds, can be vector or scalar</td><td><tt>-Inf</tt></td></tr>
+<tr><td><tt>subiters</tt></td><td>Number of iterations per epoch</td><td>100</td></tr>
+<tr><td><tt>maxiters</tt></td><td>Maximum number of epochs</td><td>100</td></tr>
+<tr><td><tt>rate</tt></td><td>Initial learning rate</td><td>1e-2</td></tr>
+<tr><td><tt>maxfails</tt></td><td>Maximum number of failed epochs</td><td>1</td></tr>
+<tr><td><tt>decay</tt></td><td>Decay of learning rate after failed epoch</td><td>0.1</td></tr>
+<tr><td><tt>backup</tt></td><td>Revert to end of previous epoch after failure</td><td>true</td></tr>
+<tr><td><tt>ftol</tt></td><td>uit if function value goes below this value</td><td><tt>-Inf</tt></td></tr>
+<tr><td><tt>beta1</tt></td><td>Adam parameter</td><td>0.9</td></tr>
+<tr><td><tt>beta2</tt></td><td>Adam parameter</td><td>0.999</td></tr>
+<tr><td><tt>epsilon</tt></td><td>Adam parameter</td><td>1e-8</td></tr>
+<tr><td><tt>printitn</tt></td><td>Printing frequency by epoch (0=no output)</td><td>1</td></tr>
+<tr><td><tt>state</tt> (*)</td><td>State of random number generator</td><td>current state</td></tr>
+<tr><td><tt>mdesc</tt> (*)</td><td>Method description printed out before run</td><td><tt>'Adam Stochastic Optimization'</tt></td></tr>
+<tr><td><tt>xdesc</tt> (*)</td><td>Variable description</td><td>auto-generated</td></tr>
+<tr><td><tt>fdesc</tt> (*)</td><td>Description of (approximate) function computation</td><td>none</td></tr>
+<tr><td><tt>gdesc</tt> (*)</td><td>Description of stochastic gradient computation</td><td>none</td></tr>
+<tr><td><tt>fexact</tt> (*)</td><td>Boolean if function is computed exactly</td><td>true</td></tr>
+</table>
+</p><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Optimization Methods for Tensor Toolbox
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="opt_options_doc.html">Optimization Methods</a> 
+% </p>
+% </html>
+%
+% Most MATLAB optimization methods have different interfaces or none at all.
+% In Tensor Toolbox, we are adopting wrappers for moderate consistency, and
+% these will be called from within other Tensor Toolbox functions. Here we
+% outline the choices, their installation instructions, and then the
+% user-tunable parameters.
+%
+% A few general notes:
+%
+% * These methods all require explicit initial guesses as well as handles for
+%   the function and gradient calculations. These are handled by the calling routines.
+% * The parameters marked with asterisks should generally not be modified
+%   by the user because they will be set by the calling routine.
+%
+% For more information on the details of these methods, see
+% <tt_opt_doc.html Developer Information for Optimization Methods in Tensor Toolbox>.
+
+%% |lbfgsb|: Limited-Memory Quasi-Newton with Bound Constraints 
+% In most methods, setting |'opt'| to |'lbfgsb'| will enable this method,
+% and then any of the settings in the table below can be modified by
+% passing these as additional options to the method.
+%
+% <html>
+% <table>
+% <tr><td>Name</td><td>Description</td><td>Default</td></tr>
+% <tr><td><tt>lower</tt></td><td>Lower bounds, can be vector or scalar</td><td><tt>-Inf</tt></td></tr>
+% <tr><td><tt>upper</tt></td><td>Upper bounds, can be vector or scalar</td><td><tt>+Inf</tt></td></tr>
+% <tr><td><tt>maxiters</tt></td><td>Max outer iterations</td><td>1000</td></tr>
+% <tr><td><tt>printitn</tt></td><td>Printing frequency by iteration (0=no output)</td><td>1</td></tr>
+% <tr><td><tt>m</tt></td><td>Limited-memory parameter</td><td>5</td></tr>
+% <tr><td><tt>subiters</tt></td><td>Controls maximum calls to function-gradient evalations</td><td>10</td></tr>
+% <tr><td><tt>ftol</tt></td><td>Stopping condition based on relative function change</td><td>1e-10</td></tr>
+% <tr><td><tt>gtol</tt></td><td>Stopping condition based on gradient norm</td><td>1e-5</td></tr>
+% <tr><td><tt>mdesc</tt> (*)</td><td>Method description printed out before run</td><td><tt>'L-BFGS-B Optimization'</tt></td></tr>
+% <tr><td><tt>xdesc</tt> (*)</td><td>Variable description</td><td>auto-generated</td></tr>
+% </table>
+% </html>
+% 
+% *Installation Instructions.*
+% Download and install
+% <https://github.com/stephenbeckr/L-BFGS-B-C *L-BFGS-B* by Stephen Becker>.   
+% Please see that web page for full details on references, installation, etc. 
+% Here we provide cursory instructions for installation:
+% 
+% # Download the zip file <https://github.com/stephenbeckr/L-BFGS-B-C/archive/master.zip https://github.com/stephenbeckr/L-BFGS-B-C/archive/master.zip>
+% # Unzip and goto the |Matlab/| subdirectoy with MATLAB
+% # Type |compile_mex|
+% # _Add this directory to your saved path!_
+%
+% *Detailed notes.*
+% The wrapper for this method is |tt_lbfgsb| in the Tensor Toolbox. 
+% Notes regarding mappings to the parameters of Becker's L-BFGS-B code:
+% 
+% * |maxIts| maps to |maxiters| and the default is increased from 100 to 1000
+% * |printEvery| maps to |printitn|
+% * |maxTotalIts| is set to |maxiters*subiters| and this effectively changes the default from 5000 to 10000
+% * |factr| is set to |ftol| / eps and this effectively changes the default from 1e7 to 4.5e5
+% * |pgtol| is set to |gtol| 
+
+%% |lbfgs|: Limited-Memory Quasi-Newton 
+% In most methods, setting |'opt'| to |'lbfgs'| will enable this method,
+% and then any of the settings in the table below can be modified by
+% passing these as additional options to the method.
+%
+% <html>
+% <table>
+% <tr><td>Name</td><td>Description</td><td>Default</td></tr>
+% <tr><td><tt>maxiters</tt></td><td>Max outer iterations</td><td>1000</td></tr>
+% <tr><td><tt>printitn</tt></td><td>Printing frequency by iteration (0=no output)</td><td>1</td></tr>
+% <tr><td><tt>m</tt></td><td>Limited-memory parameter</td><td>5</td></tr>
+% <tr><td><tt>subiters</tt></td><td>Controls maximum calls to function-gradient evalations</td><td>10</td></tr>
+% <tr><td><tt>ftol</tt></td><td>Stopping condition based on relative function change</td><td>1e-10</td></tr>
+% <tr><td><tt>gtol</tt></td><td>Stopping condition based on gradient norm</td><td>1e-5</td></tr>
+% <tr><td><tt>mdesc</tt> (*)</td><td>Method description printed out before run</td><td><tt>'Poblano L-BFGS Optimization'</tt></td></tr>
+% <tr><td><tt>xdesc</tt> (*)</td><td>Variable description</td><td>auto-generated</td></tr>
+% </table>
+% </html>
+% 
+% *Installation Instructions.*
+% Download and install
+% <https://github.com/sandialabs/poblano_toolbox/releases/tag/v1.2 *Poblano Toolbox*, v1.2>.   
+% Please see that web page for full details on references, installation, etc. 
+% Here we provide cursory instructions for installation:
+% 
+% # Download the zip file <https://github.com/sandialabs/poblano_toolbox/archive/v1.2.zip https://github.com/sandialabs/poblano_toolbox/archive/v1.2.zip>
+% # Unzip and goto the |poblano_toolbox-1.2/| subdirectoy within MATLAB
+% # Type |install_poblano| to save this directory to your path
+%
+% *Detailed notes.*
+% The wrapper for this method is |tt_lbfgs| in the Tensor Toolbox. 
+% Notes regarding mappings to the parameters of Poblano's L-BFGS code:
+% 
+% * |MaxIters| maps to |maxiters|
+% * |Display| maps to |printitn|
+% * |MaxFuncEvals| is set to |maxiters*subiters| 
+% * |RelFuncTol| is set to |ftol| 
+% * |StopTol| is set to |gtol| 
+
+%% |fminunc|: Optimizaton Toolbox Quasi-Newton Method
+% In most methods, setting |'opt'| to |'fminunc'| will enable this method,
+% and then any of the settings in the table below can be modified by
+% passing these as additional options to the method. This requires the
+% MATLAB Optimization Toolbox.
+%
+% <html>
+% <table>
+% <tr><td>Name</td><td>Description</td><td>Default</td></tr>
+% <tr><td><tt>maxiters</tt></td><td>Max outer iterations</td><td>1000</td></tr>
+% <tr><td><tt>printitn</tt></td><td>Display (0=no output)</td><td>1</td></tr>
+% <tr><td><tt>subiters</tt></td><td>Controls maximum calls to function-gradient evalations</td><td>10</td></tr>
+% <tr><td><tt>gtol</tt></td><td>Stopping condition based on gradient norm</td><td>1e-5</td></tr>
+% <tr><td><tt>mdesc</tt> (*)</td><td>Method description printed out before run</td><td><tt>'Quasi-Newton Optimization (via Optimization Toolbox)'</tt></td></tr>
+% <tr><td><tt>xdesc</tt> (*)</td><td>Variable description</td><td>auto-generated</td></tr>
+% </table>
+% </html>
+
+
+%% |adam|: Stochastic Gradient Descent with Momentum
+% In most methods, setting |'opt'| to |'adam'| will enable this method,
+% and then any of the settings in the table below can be modified by
+% passing these as additional options to the method.
+%
+% This is our own implementation of Adam. A _failed epoch_ is one where the
+% function value does not decrease. After a failed epoch, the method either
+% reduces the learning rate (by |decay|) or exits (once the number of
+% failed epochs exceeds |maxfails|). 
+%
+%
+% <html>
+% <table>
+% <tr><td>Name</td><td>Description</td><td>Default</td></tr>
+% <tr><td><tt>lower</tt></td><td>Lower bounds, can be vector or scalar</td><td><tt>-Inf</tt></td></tr>
+% <tr><td><tt>subiters</tt></td><td>Number of iterations per epoch</td><td>100</td></tr>
+% <tr><td><tt>maxiters</tt></td><td>Maximum number of epochs</td><td>100</td></tr>
+% <tr><td><tt>rate</tt></td><td>Initial learning rate</td><td>1e-2</td></tr>
+% <tr><td><tt>maxfails</tt></td><td>Maximum number of failed epochs</td><td>1</td></tr>
+% <tr><td><tt>decay</tt></td><td>Decay of learning rate after failed epoch</td><td>0.1</td></tr>
+% <tr><td><tt>backup</tt></td><td>Revert to end of previous epoch after failure</td><td>true</td></tr>
+% <tr><td><tt>ftol</tt></td><td>uit if function value goes below this value</td><td><tt>-Inf</tt></td></tr>
+% <tr><td><tt>beta1</tt></td><td>Adam parameter</td><td>0.9</td></tr>
+% <tr><td><tt>beta2</tt></td><td>Adam parameter</td><td>0.999</td></tr>
+% <tr><td><tt>epsilon</tt></td><td>Adam parameter</td><td>1e-8</td></tr>
+% <tr><td><tt>printitn</tt></td><td>Printing frequency by epoch (0=no output)</td><td>1</td></tr>
+% <tr><td><tt>state</tt> (*)</td><td>State of random number generator</td><td>current state</td></tr>
+% <tr><td><tt>mdesc</tt> (*)</td><td>Method description printed out before run</td><td><tt>'Adam Stochastic Optimization'</tt></td></tr>
+% <tr><td><tt>xdesc</tt> (*)</td><td>Variable description</td><td>auto-generated</td></tr>
+% <tr><td><tt>fdesc</tt> (*)</td><td>Description of (approximate) function computation</td><td>none</td></tr>
+% <tr><td><tt>gdesc</tt> (*)</td><td>Description of stochastic gradient computation</td><td>none</td></tr>
+% <tr><td><tt>fexact</tt> (*)</td><td>Boolean if function is computed exactly</td><td>true</td></tr>
+% </table>
+% </html>
+% 
+
+
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,742 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Identities and Relationships of Tensors</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-01-13"><meta name="DC.source" content="identities_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Identities and Relationships of Tensors</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="working.html">Working with Tensors</a>
+&#62;&#62; <a href="identities_doc.html">Identities</a>
+</p>
+</p><p>There are many mathematical relationships, identities, and connections among tensors.  These identities are presented here and show the versatility of the Tensor Toolbox. The propositions indicated below are references to the following report:</p><p>T.G. Kolda, Multilinear Operators for Higher-order Decompositions, Tech. Rep. SAND2006-2081, Sandia National Laboratories, 2006</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">N-mode product properties</a></li><li><a href="#3">N-mode product and matricization</a></li><li><a href="#6">Norm of difference between two tensors</a></li><li><a href="#8">Tucker tensor properties</a></li><li><a href="#15">Tucker operator and matricized tensors</a></li><li><a href="#16">Orthogonalization of Tucker factors</a></li><li><a href="#18">Kruskal operator properties</a></li><li><a href="#23">Norm of Kruskal operator</a></li><li><a href="#24">Inner product of Kruskal operator with a tensor</a></li></ul></div><h2 id="1">N-mode product properties</h2><p>Create some data.</p><pre class="codeinput">Y = tenrand([4 3 2]);
+A = rand(3,4);
+B = rand(3,3);
+</pre><p>Prop 3.4(a): The order of the multiplication in different modes is irrelevant.</p><p><img src="identities_doc_eq14153395666595984720.png" alt="$$(Y \times_1 A) \times_2 B = (Y \times_2 B) \times_1 A$$" style="width:172px;height:13px;"></p><pre class="codeinput">X1 = ttm( ttm(Y,A,1), B, 2); <span class="comment">%&lt;-- Y x_1 A x_2 B</span>
+X2 = ttm( ttm(Y,B,2), A, 1); <span class="comment">%&lt;-- Y x_2 B x_1 A</span>
+norm(X1 - X2) <span class="comment">%&lt;-- difference is zero</span>
+</pre><pre class="codeoutput">ans =
+   7.6113e-16
+</pre><h2 id="3">N-mode product and matricization</h2><p>Generate some data to work with.</p><pre class="codeinput">Y = tenrand([5 4 3]);
+A = rand(4,5); B = rand(3,4); C = rand(2,3); U = {A,B,C};
+</pre><p>Prop. 3.7a: N-mode multiplication can be expressed in terms of matricized tensors.</p><p><img src="identities_doc_eq04138385974769478340.png" alt="$$X = Y \times_n U \Leftrightarrow  X_{(n)} = UY_{(n)} $$" style="width:153px;height:13px;"></p><pre class="codeinput"><span class="keyword">for</span> n = 1:ndims(Y)
+  X = ttm(Y,U,n); <span class="comment">%&lt;-- X = Y x_n U{n}</span>
+  Xn = U{n} * tenmat(Y,n); <span class="comment">%&lt;-- Xn = U{n} * Yn</span>
+  norm(tenmat(X,n) - Xn)  <span class="comment">% &lt;-- should be zero</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">ans =
+     0
+ans =
+     0
+ans =
+     0
+</pre><p>Prop. 3.7b: We can do matricizations in various ways and still be equivalent.</p><pre class="codeinput">X = ttm(Y,U); <span class="comment">%&lt;-- X = Y x_1 A x_2 B x_3 C</span>
+Xm1 = kron(B,A)*tenmat(Y,[1 2])*C';  <span class="comment">%&lt;-- Kronecker product version</span>
+Xm2 = tenmat(X,[1 2]); <span class="comment">%&lt;-- Matriczed version</span>
+norm(Xm1 - Xm2)  <span class="comment">% &lt;-- should be zero</span>
+Xm1 = B * tenmat(Y,2,[3 1]) * kron(A,C)'; <span class="comment">%&lt;-- Kronecker product version</span>
+Xm2 = tenmat(X,2,[3 1]); <span class="comment">%&lt;-- Matricized version</span>
+norm(Xm1 - Xm2) <span class="comment">% &lt;-- should be zero</span>
+Xm1 = tenmat(Y,[],[1 2 3]) * kron(kron(C,B),A)'; <span class="comment">%&lt;-- Vectorized via Kronecker</span>
+Xm2 = tenmat(X,[],[1 2 3]); <span class="comment">%&lt;-- Vectorized via matricize</span>
+norm(Xm1 - Xm2)
+</pre><pre class="codeoutput">ans =
+   2.1756e-15
+ans =
+   2.2204e-15
+ans =
+   2.6273e-15
+</pre><h2 id="6">Norm of difference between two tensors</h2><p>Prop. 3.9: For tensors X and Y, we have:</p><p><img src="identities_doc_eq01313179506153159224.png" alt="$$\|X-Y\|^2 = \|X\|^2 + \|Y\|^2 - 2<X,Y&gt; $$" style="width:213px;height:15px;"></p><pre class="codeinput">X = tenrand([5 4 3]); Y = tenrand([5 4 3]);
+<span class="comment">% The following 2 results should be equal</span>
+norm(X-Y)
+sqrt(norm(X)^2 - 2*innerprod(X,Y) + norm(Y)^2)
+</pre><pre class="codeoutput">ans =
+    3.0394
+ans =
+    3.0394
+</pre><p>This relationship makes it more convenient to compare the norm of the difference between two different tensor objects.  Imagine if we have a <tt>sptensor</tt> and a <tt>ktensor</tt> and we want the norm of the difference, which may be needed to check for convergence, for example, but which is very expensive to convert to a full (dense) tensor.  Because <tt>innerprod</tt> and <tt>norm</tt> are defined for all types of tensor objects, this is a handy formula.</p><pre class="codeinput">X = sptensor(X);
+Y = ktensor({[1:5]',[1:4]',[1:3]'});
+<span class="comment">% The following 2 results should be equal</span>
+norm(full(X)-full(Y))
+sqrt(norm(X)^2 - 2*innerprod(X,Y) + norm(Y)^2)
+</pre><pre class="codeoutput">ans =
+  148.8032
+ans =
+  148.8032
+</pre><h2 id="8">Tucker tensor properties</h2><p>The properties of the Tucker operator follow directly from the properties of n-mode multiplication.</p><pre class="codeinput"><span class="comment">% Initialize data</span>
+Y = tensor(1:24,[4 3 2]);
+A1 = reshape(1:20,[5 4]);
+A2 = reshape(1:12,[4 3]);
+A3 = reshape(1:6,[3 2]);
+A = {A1,A2,A3};
+B1 = reshape(1:20,[4 5]);
+B2 = reshape(1:12,[3 4]);
+B3 = reshape(1:6,[2 3]);
+B = {B1,B2,B3};
+</pre><p>Proposition 4.2a</p><pre class="codeinput">X = ttensor(ttensor(Y,A),B)
+</pre><pre class="codeoutput">X is a ttensor of size 4 x 3 x 2
+	X.core is a ttensor of size 5 x 4 x 3
+		X.core.core is a tensor of size 4 x 3 x 2
+			X.core.core(:,:,1) = 
+	     1     5     9
+	     2     6    10
+	     3     7    11
+	     4     8    12
+			X.core.core(:,:,2) = 
+	    13    17    21
+	    14    18    22
+	    15    19    23
+	    16    20    24
+		X.core.U{1} = 
+		     1     6    11    16
+		     2     7    12    17
+		     3     8    13    18
+		     4     9    14    19
+		     5    10    15    20
+		X.core.U{2} = 
+		     1     5     9
+		     2     6    10
+		     3     7    11
+		     4     8    12
+		X.core.U{3} = 
+		     1     4
+		     2     5
+		     3     6
+	X.U{1} = 
+		     1     5     9    13    17
+		     2     6    10    14    18
+		     3     7    11    15    19
+		     4     8    12    16    20
+	X.U{2} = 
+		     1     4     7    10
+		     2     5     8    11
+		     3     6     9    12
+	X.U{3} = 
+		     1     3     5
+		     2     4     6
+</pre><pre class="codeinput">AB = {B1*A1, B2*A2, B3*A3};
+Y = ttensor(Y,AB)
+</pre><pre class="codeoutput">Y is a ttensor of size 4 x 3 x 2
+	Y.core is a tensor of size 4 x 3 x 2
+		Y.core(:,:,1) = 
+	     1     5     9
+	     2     6    10
+	     3     7    11
+	     4     8    12
+		Y.core(:,:,2) = 
+	    13    17    21
+	    14    18    22
+	    15    19    23
+	    16    20    24
+	Y.U{1} = 
+		         175         400         625         850
+		         190         440         690         940
+		         205         480         755        1030
+		         220         520         820        1120
+	Y.U{2} = 
+		    70   158   246
+		    80   184   288
+		    90   210   330
+	Y.U{3} = 
+		    22    49
+		    28    64
+</pre><pre class="codeinput">norm(full(X)-full(Y))  <span class="comment">%&lt;-- should be zero</span>
+</pre><pre class="codeoutput">ans =
+     0
+</pre><p>Proposition 4.2b</p><pre class="codeinput">Y = tensor(1:24,[4 3 2]);
+X = ttensor(Y,A);
+Apinv = {pinv(A1),pinv(A2),pinv(A3)};
+Y2 = ttensor(full(X),Apinv);
+norm(full(Y)-full(Y2))  <span class="comment">%&lt;-- should be zero</span>
+</pre><pre class="codeoutput">ans =
+   9.3413e-13
+</pre><p>Proposition 4.2c</p><pre class="codeinput">Y = tensor(1:24,[4 3 2]);
+rand(<span class="string">'state'</span>,0);
+Q1 = orth(rand(5,4));
+Q2 = orth(rand(4,3));
+Q3 = orth(rand(3,2));
+Q = {Q1,Q2,Q3};
+X = ttensor(Y,Q)
+</pre><pre class="codeoutput">X is a ttensor of size 5 x 4 x 3
+	X.core is a tensor of size 4 x 3 x 2
+		X.core(:,:,1) = 
+	     1     5     9
+	     2     6    10
+	     3     7    11
+	     4     8    12
+		X.core(:,:,2) = 
+	    13    17    21
+	    14    18    22
+	    15    19    23
+	    16    20    24
+	X.U{1} = 
+		   -0.4727    0.5608    0.0275   -0.3954
+		   -0.4394   -0.4243    0.3178    0.5707
+		   -0.4659   -0.6116   -0.1037   -0.5982
+		   -0.4209    0.3259    0.5458    0.1138
+		   -0.4350    0.1587   -0.7679    0.3837
+	X.U{2} = 
+		   -0.2570    0.1257    0.8908
+		   -0.3751   -0.2111    0.2636
+		   -0.4640   -0.7988   -0.1591
+		   -0.7602    0.5492   -0.3341
+	X.U{3} = 
+		   -0.3907   -0.0625
+		   -0.8045   -0.4616
+		   -0.4473    0.8849
+</pre><pre class="codeinput">Qt = {Q1',Q2',Q3'};
+Y2 = ttensor(full(X),Qt)
+norm(full(Y)-full(Y2))  <span class="comment">%&lt;-- should be zero</span>
+</pre><pre class="codeoutput">Y2 is a ttensor of size 4 x 3 x 2
+	Y2.core is a tensor of size 5 x 4 x 3
+		Y2.core(:,:,1) = 
+	    1.4195   -0.0317   -1.4127   -0.3848
+	   -0.7708    0.2767    1.3323    0.4969
+	    8.6788   -0.0536   -8.3316   -2.1970
+	   -3.0735    0.1529    3.2424    0.9267
+	    2.9652    0.0889   -2.6130   -0.6316
+		Y2.core(:,:,2) = 
+	    4.6979   -0.3995   -5.3170   -1.6004
+	   -2.2186    0.8006    3.8440    1.4349
+	   28.9023   -2.1266  -31.9901   -9.4788
+	  -10.0638    1.0545   11.8230    3.6490
+	   10.0122   -0.4854  -10.5344   -3.0047
+		Y2.core(:,:,3) = 
+	   -3.4733    0.9238    5.3001    1.8807
+	    0.9310   -0.3464   -1.6360   -0.6138
+	  -21.7522    5.7319   33.0762   11.7190
+	    7.2102   -1.9498  -11.0723   -3.9398
+	   -7.8266    2.0225   11.8142    4.1724
+	Y2.U{1} = 
+		   -0.4727   -0.4394   -0.4659   -0.4209   -0.4350
+		    0.5608   -0.4243   -0.6116    0.3259    0.1587
+		    0.0275    0.3178   -0.1037    0.5458   -0.7679
+		   -0.3954    0.5707   -0.5982    0.1138    0.3837
+	Y2.U{2} = 
+		   -0.2570   -0.3751   -0.4640   -0.7602
+		    0.1257   -0.2111   -0.7988    0.5492
+		    0.8908    0.2636   -0.1591   -0.3341
+	Y2.U{3} = 
+		   -0.3907   -0.8045   -0.4473
+		   -0.0625   -0.4616    0.8849
+ans =
+   4.1300e-14
+</pre><h2 id="15">Tucker operator and matricized tensors</h2><p>The Tucker operator also has various epressions in terms of matricized tensors and the Kronecker product. Proposition 4.3a</p><pre class="codeinput">Y = tensor(1:24,[4 3 2]);
+A1 = reshape(1:20,[5 4]);
+A2 = reshape(1:12,[4 3]);
+A3 = reshape(1:6,[3 2]);
+A = {A1,A2,A3};
+X = ttensor(Y,A)
+<span class="keyword">for</span> n = 1:ndims(Y)
+  rdims = n;
+  cdims = setdiff(1:ndims(Y),rdims);
+  Xn = A{n} * tenmat(Y,rdims,cdims) * kron(A{cdims(2)}, A{cdims(1)})';
+  norm(tenmat(full(X),rdims,cdims) - Xn)  <span class="comment">% &lt;-- should be zero</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">X is a ttensor of size 5 x 4 x 3
+	X.core is a tensor of size 4 x 3 x 2
+		X.core(:,:,1) = 
+	     1     5     9
+	     2     6    10
+	     3     7    11
+	     4     8    12
+		X.core(:,:,2) = 
+	    13    17    21
+	    14    18    22
+	    15    19    23
+	    16    20    24
+	X.U{1} = 
+		     1     6    11    16
+		     2     7    12    17
+		     3     8    13    18
+		     4     9    14    19
+		     5    10    15    20
+	X.U{2} = 
+		     1     5     9
+		     2     6    10
+		     3     7    11
+		     4     8    12
+	X.U{3} = 
+		     1     4
+		     2     5
+		     3     6
+ans =
+     0
+ans =
+     0
+ans =
+     0
+</pre><h2 id="16">Orthogonalization of Tucker factors</h2><p>Proposition 4.4</p><pre class="codeinput">Y = tensor(1:24,[4 3 2]);
+A1 = rand(5,4);
+A2 = rand(4,3);
+A3 = rand(3,2);
+A = {A1,A2,A3};
+X = ttensor(Y,A)
+</pre><pre class="codeoutput">X is a ttensor of size 5 x 4 x 3
+	X.core is a tensor of size 4 x 3 x 2
+		X.core(:,:,1) = 
+	     1     5     9
+	     2     6    10
+	     3     7    11
+	     4     8    12
+		X.core(:,:,2) = 
+	    13    17    21
+	    14    18    22
+	    15    19    23
+	    16    20    24
+	X.U{1} = 
+		    0.2026    0.3795    0.3046    0.5417
+		    0.6721    0.8318    0.1897    0.1509
+		    0.8381    0.5028    0.1934    0.6979
+		    0.0196    0.7095    0.6822    0.3784
+		    0.6813    0.4289    0.3028    0.8600
+	X.U{2} = 
+		    0.8537    0.8216    0.3420
+		    0.5936    0.6449    0.2897
+		    0.4966    0.8180    0.3412
+		    0.8998    0.6602    0.5341
+	X.U{3} = 
+		    0.7271    0.5681
+		    0.3093    0.3704
+		    0.8385    0.7027
+</pre><pre class="codeinput">[Q1,R1] = qr(A1);
+[Q2,R2] = qr(A2);
+[Q3,R3] = qr(A3);
+R = {R1,R2,R3};
+Z = ttensor(Y,R);
+norm(X) - norm(Z)  <span class="comment">%&lt;-- should be zero</span>
+</pre><pre class="codeoutput">ans =
+     0
+</pre><h2 id="18">Kruskal operator properties</h2><p>Proposition 5.2</p><pre class="codeinput">A1 = reshape(1:10,[5 2]);
+A2 = reshape(1:8,[4 2]);
+A3 = reshape(1:6,[3 2]);
+K = ktensor({A1,A2,A3});
+B1 = reshape(1:20,[4 5]);
+B2 = reshape(1:12,[3 4]);
+B3 = reshape(1:6,[2 3]);
+X = ttensor(K,{B1,B2,B3})
+
+Y = ktensor({B1*A1, B2*A2, B3*A3});
+norm(full(X) - full(Y))  <span class="comment">%&lt;-- should be zero</span>
+</pre><pre class="codeoutput">X is a ttensor of size 4 x 3 x 2
+	X.core is a ktensor of size 5 x 4 x 3
+		X.core.lambda = 
+		     1     1
+		X.core.U{1} = 
+		     1     6
+		     2     7
+		     3     8
+		     4     9
+		     5    10
+		X.core.U{2} = 
+		     1     5
+		     2     6
+		     3     7
+		     4     8
+		X.core.U{3} = 
+		     1     4
+		     2     5
+		     3     6
+	X.U{1} = 
+		     1     5     9    13    17
+		     2     6    10    14    18
+		     3     7    11    15    19
+		     4     8    12    16    20
+	X.U{2} = 
+		     1     4     7    10
+		     2     5     8    11
+		     3     6     9    12
+	X.U{3} = 
+		     1     3     5
+		     2     4     6
+ans =
+     0
+</pre><p>Proposition 5.3a (second part)</p><pre class="codeinput">A1 = reshape(1:10,[5 2]);
+A2 = reshape(1:8,[4 2]);
+A3 = reshape(1:6,[3 2]);
+A = {A1,A2,A3};
+X = ktensor(A);
+rdims = 1:ndims(X);
+Z = double(tenmat(full(X), rdims, []));
+Xn = khatrirao(A{rdims},<span class="string">'r'</span>) * ones(length(X.lambda),1);
+norm(Z - Xn)  <span class="comment">% &lt;-- should be zero</span>
+</pre><pre class="codeoutput">ans =
+     0
+</pre><pre class="codeinput">cdims = 1:ndims(X);
+Z = double(tenmat(full(X), [], cdims));
+Xn = ones(length(X.lambda),1)' * khatrirao(A{cdims},<span class="string">'r'</span>)';
+norm(Z - Xn)  <span class="comment">% &lt;-- should be zero</span>
+</pre><pre class="codeoutput">ans =
+     0
+</pre><p>Proposition 5.3b</p><pre class="codeinput">A1 = reshape(1:10,[5 2]);
+A2 = reshape(1:8,[4 2]);
+A3 = reshape(1:6,[3 2]);
+A = {A1,A2,A3};
+X = ktensor(A);
+<span class="keyword">for</span> n = 1:ndims(X)
+  rdims = n;
+  cdims = setdiff(1:ndims(X),rdims);
+  Xn = khatrirao(A{rdims}) * khatrirao(A{cdims},<span class="string">'r'</span>)';
+  Z = double(tenmat(full(X),rdims,cdims));
+  norm(Z - Xn)  <span class="comment">% &lt;-- should be zero</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">ans =
+     0
+ans =
+     0
+ans =
+     0
+</pre><p>Proposition 5.3a (first part)</p><pre class="codeinput">X = ktensor(A);
+<span class="keyword">for</span> n = 1:ndims(X)
+  cdims = n;
+  rdims = setdiff(1:ndims(X),cdims);
+  Xn = khatrirao(A{rdims},<span class="string">'r'</span>) * khatrirao(A{cdims})';
+  Z = double(tenmat(full(X),rdims,cdims));
+  norm(Z - Xn)  <span class="comment">% &lt;-- should be zero</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">ans =
+     0
+ans =
+     0
+ans =
+     0
+</pre><h2 id="23">Norm of Kruskal operator</h2><p>The norm of a ktensor has a special form because it can be reduced to summing the entries of the Hadamard product of N matrices of size R x R. Proposition 5.4</p><pre class="codeinput">A1 = reshape(1:10,[5 2]);
+A2 = reshape(1:8,[4 2]);
+A3 = reshape(1:6,[3 2]);
+A = {A1,A2,A3};
+X = ktensor(A);
+M = ones(size(A{1},2), size(A{1},2));
+<span class="keyword">for</span> i = 1:numel(A)
+  M = M .* (A{i}'*A{i});
+<span class="keyword">end</span>
+norm(X) - sqrt(sum(M(:)))  <span class="comment">%&lt;-- should be zero</span>
+</pre><pre class="codeoutput">ans =
+     0
+</pre><h2 id="24">Inner product of Kruskal operator with a tensor</h2><p>The inner product of a ktensor with a tensor yields Proposition 5.5</p><pre class="codeinput">X = tensor(1:60,[5 4 3]);
+A1 = reshape(1:10,[5 2]);
+A2 = reshape(2:9,[4 2]);
+A3 = reshape(3:8,[3 2]);
+A = {A1,A2,A3};
+K = ktensor(A);
+v = khatrirao(A,<span class="string">'r'</span>) * ones(size(A{1},2),1);
+<span class="comment">% The following 2 results should be equal</span>
+double(tenmat(X,1:ndims(X),[]))' * v
+innerprod(X,K)
+</pre><pre class="codeoutput">ans =
+      935340
+ans =
+      935340
+</pre><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Identities and Relationships of Tensors
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="working.html">Working with Tensors</a> 
+% &#62;&#62; <a href="identities_doc.html">Identities</a>
+% </p>
+% </html>
+%
+% There are many mathematical relationships, identities, and
+% connections among tensors.  These identities are presented here and
+% show the versatility of the Tensor Toolbox.
+% The propositions indicated below are references to the following
+% report:
+%
+% T.G. Kolda, Multilinear Operators for Higher-order Decompositions,
+% Tech. Rep. SAND2006-2081, Sandia National Laboratories, 2006
+
+%% N-mode product properties
+% Create some data.
+Y = tenrand([4 3 2]);
+A = rand(3,4);
+B = rand(3,3);
+%%
+% Prop 3.4(a): The order of the multiplication in different modes is irrelevant. 
+%
+% $$(Y \times_1 A) \times_2 B = (Y \times_2 B) \times_1 A$$
+%
+X1 = ttm( ttm(Y,A,1), B, 2); %<REPLACE_WITH_DASH_DASH Y x_1 A x_2 B
+X2 = ttm( ttm(Y,B,2), A, 1); %<REPLACE_WITH_DASH_DASH Y x_2 B x_1 A
+norm(X1 - X2) %<REPLACE_WITH_DASH_DASH difference is zero
+%% N-mode product and matricization
+% Generate some data to work with.
+Y = tenrand([5 4 3]);
+A = rand(4,5); B = rand(3,4); C = rand(2,3); U = {A,B,C};
+%%
+% Prop. 3.7a: N-mode multiplication can be expressed in terms of matricized
+% tensors.
+%
+% $$X = Y \times_n U \Leftrightarrow  X_{(n)} = UY_{(n)} $$
+% 
+for n = 1:ndims(Y)
+  X = ttm(Y,U,n); %<REPLACE_WITH_DASH_DASH X = Y x_n U{n}
+  Xn = U{n} * tenmat(Y,n); %<REPLACE_WITH_DASH_DASH Xn = U{n} * Yn
+  norm(tenmat(X,n) - Xn)  % <REPLACE_WITH_DASH_DASH should be zero
+end
+%%
+% Prop. 3.7b: We can do matricizations in various ways and still be
+% equivalent.
+X = ttm(Y,U); %<REPLACE_WITH_DASH_DASH X = Y x_1 A x_2 B x_3 C
+Xm1 = kron(B,A)*tenmat(Y,[1 2])*C';  %<REPLACE_WITH_DASH_DASH Kronecker product version
+Xm2 = tenmat(X,[1 2]); %<REPLACE_WITH_DASH_DASH Matriczed version
+norm(Xm1 - Xm2)  % <REPLACE_WITH_DASH_DASH should be zero
+Xm1 = B * tenmat(Y,2,[3 1]) * kron(A,C)'; %<REPLACE_WITH_DASH_DASH Kronecker product version
+Xm2 = tenmat(X,2,[3 1]); %<REPLACE_WITH_DASH_DASH Matricized version
+norm(Xm1 - Xm2) % <REPLACE_WITH_DASH_DASH should be zero
+Xm1 = tenmat(Y,[],[1 2 3]) * kron(kron(C,B),A)'; %<REPLACE_WITH_DASH_DASH Vectorized via Kronecker
+Xm2 = tenmat(X,[],[1 2 3]); %<REPLACE_WITH_DASH_DASH Vectorized via matricize
+norm(Xm1 - Xm2)
+
+%% Norm of difference between two tensors
+% Prop. 3.9: For tensors X and Y, we have:
+%
+% $$\|X-Y\|^2 = \|X\|^2 + \|Y\|^2 - 2<X,Y> $$
+%
+X = tenrand([5 4 3]); Y = tenrand([5 4 3]);
+% The following 2 results should be equal
+norm(X-Y)
+sqrt(norm(X)^2 - 2*innerprod(X,Y) + norm(Y)^2)
+%% 
+% This relationship makes it more convenient to compare the norm of
+% the difference between two different tensor objects.  Imagine if we
+% have a |sptensor| and a |ktensor| and we want the norm of the
+% difference, which may be needed to check for convergence, for
+% example, but which is very expensive to convert to a full (dense)
+% tensor.  Because |innerprod| and |norm| are defined for all types of
+% tensor objects, this is a handy formula.
+X = sptensor(X);
+Y = ktensor({[1:5]',[1:4]',[1:3]'});
+% The following 2 results should be equal
+norm(full(X)-full(Y))
+sqrt(norm(X)^2 - 2*innerprod(X,Y) + norm(Y)^2)
+
+%% Tucker tensor properties
+% The properties of the Tucker operator follow directly from the
+% properties of n-mode multiplication.
+
+% Initialize data
+Y = tensor(1:24,[4 3 2]);
+A1 = reshape(1:20,[5 4]);
+A2 = reshape(1:12,[4 3]);
+A3 = reshape(1:6,[3 2]);
+A = {A1,A2,A3};
+B1 = reshape(1:20,[4 5]);
+B2 = reshape(1:12,[3 4]);
+B3 = reshape(1:6,[2 3]);
+B = {B1,B2,B3};
+%%
+% Proposition 4.2a
+X = ttensor(ttensor(Y,A),B)
+%%
+AB = {B1*A1, B2*A2, B3*A3};
+Y = ttensor(Y,AB)
+%%
+norm(full(X)-full(Y))  %<REPLACE_WITH_DASH_DASH should be zero
+%%
+% Proposition 4.2b
+Y = tensor(1:24,[4 3 2]);
+X = ttensor(Y,A);
+Apinv = {pinv(A1),pinv(A2),pinv(A3)};
+Y2 = ttensor(full(X),Apinv);
+norm(full(Y)-full(Y2))  %<REPLACE_WITH_DASH_DASH should be zero
+%%
+% Proposition 4.2c
+Y = tensor(1:24,[4 3 2]);
+rand('state',0);
+Q1 = orth(rand(5,4));
+Q2 = orth(rand(4,3));
+Q3 = orth(rand(3,2));
+Q = {Q1,Q2,Q3};
+X = ttensor(Y,Q)
+%%
+Qt = {Q1',Q2',Q3'};
+Y2 = ttensor(full(X),Qt)
+norm(full(Y)-full(Y2))  %<REPLACE_WITH_DASH_DASH should be zero
+
+%% Tucker operator and matricized tensors
+% The Tucker operator also has various epressions in terms of
+% matricized tensors and the Kronecker product.
+% Proposition 4.3a
+Y = tensor(1:24,[4 3 2]);
+A1 = reshape(1:20,[5 4]);
+A2 = reshape(1:12,[4 3]);
+A3 = reshape(1:6,[3 2]);
+A = {A1,A2,A3};
+X = ttensor(Y,A)
+for n = 1:ndims(Y)
+  rdims = n;
+  cdims = setdiff(1:ndims(Y),rdims);
+  Xn = A{n} * tenmat(Y,rdims,cdims) * kron(A{cdims(2)}, A{cdims(1)})';
+  norm(tenmat(full(X),rdims,cdims) - Xn)  % <REPLACE_WITH_DASH_DASH should be zero
+end
+
+%% Orthogonalization of Tucker factors
+% Proposition 4.4
+Y = tensor(1:24,[4 3 2]);
+A1 = rand(5,4);
+A2 = rand(4,3);
+A3 = rand(3,2);
+A = {A1,A2,A3};
+X = ttensor(Y,A)
+%%
+[Q1,R1] = qr(A1);
+[Q2,R2] = qr(A2);
+[Q3,R3] = qr(A3);
+R = {R1,R2,R3};
+Z = ttensor(Y,R);
+norm(X) - norm(Z)  %<REPLACE_WITH_DASH_DASH should be zero
+
+%% Kruskal operator properties
+% Proposition 5.2
+A1 = reshape(1:10,[5 2]);
+A2 = reshape(1:8,[4 2]);
+A3 = reshape(1:6,[3 2]);
+K = ktensor({A1,A2,A3});
+B1 = reshape(1:20,[4 5]);
+B2 = reshape(1:12,[3 4]);
+B3 = reshape(1:6,[2 3]);
+X = ttensor(K,{B1,B2,B3})
+
+Y = ktensor({B1*A1, B2*A2, B3*A3});
+norm(full(X) - full(Y))  %<REPLACE_WITH_DASH_DASH should be zero
+
+%%
+% Proposition 5.3a (second part)
+A1 = reshape(1:10,[5 2]);
+A2 = reshape(1:8,[4 2]);
+A3 = reshape(1:6,[3 2]);
+A = {A1,A2,A3};
+X = ktensor(A);
+rdims = 1:ndims(X);
+Z = double(tenmat(full(X), rdims, []));
+Xn = khatrirao(A{rdims},'r') * ones(length(X.lambda),1);
+norm(Z - Xn)  % <REPLACE_WITH_DASH_DASH should be zero
+%%
+cdims = 1:ndims(X);
+Z = double(tenmat(full(X), [], cdims));
+Xn = ones(length(X.lambda),1)' * khatrirao(A{cdims},'r')';
+norm(Z - Xn)  % <REPLACE_WITH_DASH_DASH should be zero
+%%
+% Proposition 5.3b
+A1 = reshape(1:10,[5 2]);
+A2 = reshape(1:8,[4 2]);
+A3 = reshape(1:6,[3 2]);
+A = {A1,A2,A3};
+X = ktensor(A);
+for n = 1:ndims(X)
+  rdims = n;
+  cdims = setdiff(1:ndims(X),rdims);
+  Xn = khatrirao(A{rdims}) * khatrirao(A{cdims},'r')';
+  Z = double(tenmat(full(X),rdims,cdims));
+  norm(Z - Xn)  % <REPLACE_WITH_DASH_DASH should be zero
+end
+%%
+% Proposition 5.3a (first part)
+X = ktensor(A);
+for n = 1:ndims(X)
+  cdims = n;
+  rdims = setdiff(1:ndims(X),cdims);
+  Xn = khatrirao(A{rdims},'r') * khatrirao(A{cdims})';
+  Z = double(tenmat(full(X),rdims,cdims));
+  norm(Z - Xn)  % <REPLACE_WITH_DASH_DASH should be zero
+end
+
+%% Norm of Kruskal operator
+% The norm of a ktensor has a special form because it can be
+% reduced to summing the entries of the Hadamard product of N
+% matrices of size R x R.
+% Proposition 5.4
+A1 = reshape(1:10,[5 2]);
+A2 = reshape(1:8,[4 2]);
+A3 = reshape(1:6,[3 2]);
+A = {A1,A2,A3};
+X = ktensor(A);
+M = ones(size(A{1},2), size(A{1},2));
+for i = 1:numel(A)
+  M = M .* (A{i}'*A{i});
+end
+norm(X) - sqrt(sum(M(:)))  %<REPLACE_WITH_DASH_DASH should be zero
+
+%% Inner product of Kruskal operator with a tensor
+% The inner product of a ktensor with a tensor yields
+% Proposition 5.5
+X = tensor(1:60,[5 4 3]);
+A1 = reshape(1:10,[5 2]);
+A2 = reshape(2:9,[4 2]);
+A3 = reshape(3:8,[3 2]);
+A = {A1,A2,A3};
+K = ktensor(A);
+v = khatrirao(A,'r') * ones(size(A{1},2),1);
+% The following 2 results should be equal
+double(tenmat(X,1:ndims(X),[]))' * v 
+innerprod(X,K)
+
+##### SOURCE END #####
+--></body></html>

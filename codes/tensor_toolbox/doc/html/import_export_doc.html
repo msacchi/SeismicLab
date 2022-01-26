@@ -1,0 +1,378 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Importing and Exporting Tensor Data</title><meta name="generator" content="MATLAB 9.8"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-03-30"><meta name="DC.source" content="import_export_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Importing and Exporting Tensor Data</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="working.html">Working with Tensors</a>
+&#62;&#62; <a href="import_export_doc.html">Importing and Exporting Tensor Data</a>
+</p>
+</p><p>You can import and export tensor data in ASCII format for the following data types:</p><p>
+  <ul>
+    <li><tt>tensor</tt></li>
+    <li><tt>matrix</tt></li>
+    <li><tt>sptensor</tt></li>
+    <li><tt>ktensor</tt></li>
+  </ul>
+</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Tensor/Matrix Data</a></li><li><a href="#2">Sptensor Data</a></li><li><a href="#3">Ktensor Data</a></li><li><a href="#4">Formatting Output - Data Values</a></li><li><a href="#5">Formatting Output - Ktensor Lambda Values</a></li></ul></div><h2 id="1">Tensor/Matrix Data</h2><p>In the case of a tensor, the first three lines give details about the tensor. The format for a 4 x 3 x 2 tensor is as follows...</p><pre>  tensor
+  3
+  4 3 2
+  &lt;value of A(1,1,1)&gt;
+  &lt;value of A(2,1,1)&gt;
+  &lt;value of A(3,1,1)&gt;
+  &lt;value of A(4,1,1)&gt;
+  &lt;value of A(1,2,1)&gt;
+  &lt;value of A(2,2,1)&gt;
+  &lt;value of A(3,2,1)&gt;
+  &lt;value of A(4,2,1)&gt;
+  ...
+  &lt;value of A(2,3,2)&gt;
+  &lt;value of A(3,3,2)&gt;
+  &lt;value of A(4,3,2)&gt;</pre><p>A matrix is formatted the same as a 2-way tensor except that the first line says <tt>matrix</tt> rather than <tt>tensor</tt>.</p><pre class="codeinput">Y1 = tenrand([4 3 2]);
+export_data(Y1,<span class="string">'Y.tensor'</span>);
+Y2 = import_data(<span class="string">'Y.tensor'</span>);
+assert(isequal(Y1,Y2)) <span class="comment">%&lt;-- test if equal when reading tensor from file</span>
+type <span class="string">'Y.tensor'</span>
+</pre><pre class="codeoutput">
+tensor
+3 
+4 3 2 
+7.8410984944456918e-01
+2.6761755162945355e-01
+9.7039153429968650e-01
+9.4510452140896994e-01
+9.1857177911762622e-01
+7.6670088559754168e-01
+1.5661279895469682e-01
+7.5410547015482998e-01
+1.4114456638613404e-01
+7.1495769667190401e-02
+5.9315889926690779e-01
+5.5243694756677753e-01
+7.7619043346318617e-01
+4.7640496891668416e-01
+7.2436234142735267e-01
+5.7227121419711569e-01
+3.5316198205832472e-01
+5.8119606757561004e-02
+6.4105967325759805e-01
+3.1387368807787064e-01
+2.5976459387313477e-01
+3.4807513253975986e-01
+1.2389652883493230e-01
+9.2594519156509847e-02
+</pre><h2 id="2">Sptensor Data</h2><p>In the case of an sptensor, the first four lines give details about the sptensor. The format for a 4 x 3 x 2 sptensor with 10 nonzeros is as follows...</p><pre>  sptensor
+  3
+  4 3 2
+  3
+  i1 j1 k1
+  i2 j2 k2 &lt;value of A(i2,j2,k2)&gt;
+  i3 j3 k3 &lt;value of A(i3,j3,k3)&gt;</pre><pre class="codeinput">X1 = sptensor([1 1 1;2 2 2; 4 3 2],rand(3,1),[4 3 2]);
+export_data(X1,<span class="string">'X.sptensor'</span>);
+X2 = import_data(<span class="string">'X.sptensor'</span>);
+assert(isequal(X1,X2)) <span class="comment">%&lt;-- test if equal when reading tensor from file</span>
+type <span class="string">'X.sptensor'</span>
+</pre><pre class="codeoutput">
+sptensor
+3 
+4 3 2 
+3 
+1 1 1 8.9733153495338303e-01
+2 2 2 4.9896060922967300e-01
+4 3 2 6.5262946333672744e-01
+</pre><h2 id="3">Ktensor Data</h2><p>In the case of an ktensor, the first four lines give details about the ktensor. The format for a 4 x 3 x 2 ktensor with rank=2 is as follows, which contains the lambda values and factor matrices, U, (one per tensor dimension), ...</p><pre>  ktensor
+  3
+  4 3 2
+  2
+  &lt;value of lambda1&gt; &lt;value of lambda2&gt;
+  matrix
+  2
+  4 2
+  &lt;value of U{1}(1,1)&gt; &lt;value of U{1}(1,2)
+  ...
+  &lt;value of U{1}(4,1)&gt; &lt;value of U{1}(4,2)
+  matrix
+  2
+  3 2
+  &lt;value of U{2}(1,1)&gt; &lt;value of U{2}(1,2)
+  ...
+  &lt;value of U{2}(3,1)&gt; &lt;value of U{2}(3,2)
+  matrix
+  2
+  2 2
+  &lt;value of U{3}(1,1)&gt; &lt;value of U{3}(1,2)
+  &lt;value of U{3}(2,1)&gt; &lt;value of U{3}(2,2)</pre><pre class="codeinput">K1 = ktensor(rand(2,1), rand(4,2), rand(3,2), rand(2,2));
+export_data(K1,<span class="string">'K.ktensor'</span>);
+K2 = import_data(<span class="string">'K.ktensor'</span>);
+assert(isequal(K1,K2)) <span class="comment">%&lt;-- test if equal when reading tensor from file</span>
+type <span class="string">'K.ktensor'</span>
+</pre><pre class="codeoutput">
+ktensor
+3 
+4 3 2 
+2 
+5.5321794848598371e-01 2.8539029379907055e-01 
+matrix
+2 
+4 2 
+9.7373498999922170e-01 5.0705186097791988e-01 
+7.2298481642071333e-01 9.2451864889949120e-01 
+5.3540633990533504e-01 9.6085221326105419e-03 
+9.1921869350005314e-01 2.6354160551053118e-01 
+matrix
+2 
+3 2 
+4.1401269139957864e-01 7.8129482939465800e-01 
+8.9449474691739461e-01 6.2150938203639761e-01 
+4.3032399708548463e-01 3.4315258530567716e-01 
+matrix
+2 
+2 2 
+2.0310353424746941e-01 6.4395364377355735e-01 
+9.2082402018958531e-01 5.7706691115717912e-02 
+</pre><h2 id="4">Formatting Output - Data Values</h2><p>When exporting tensor data your can specify the format of the data values using character vector that follows the convention used in <tt>fprintf</tt>. For example, this can be useful when exporting tensors that contain only integers, resulting in a file that is smaller in size. The optional <tt>fmt_data</tt> parameter to <tt>export_data</tt> specifies the format string, with <tt>'%.16</tt>' being the default value.</p><pre class="codeinput">X3 = sptensor([1 1 1;2 2 2; 4 3 2],[1;2;3],[4 3 2]);
+export_data(X3,<span class="string">'X_fmt_data.sptensor'</span>,<span class="string">'fmt_data'</span>,<span class="string">'%d'</span>);
+X4 = import_data(<span class="string">'X_fmt_data.sptensor'</span>);
+assert(isequal(X3,X4)) <span class="comment">%&lt;-- test if equal when reading tensor from file</span>
+type <span class="string">'X_fmt_data.sptensor'</span>
+</pre><pre class="codeoutput">
+sptensor
+3 
+4 3 2 
+3 
+1 1 1 1
+2 2 2 2
+4 3 2 3
+</pre><h2 id="5">Formatting Output - Ktensor Lambda Values</h2><p>When exporting <tt>ktensor</tt> data your can specify the format of the <tt>lambda</tt> values using character vector that follows the convention used in <tt>fprint</tt>. For example, this can be useful when exporting tensors that contain only integers, resulting in a file that is smaller in size. The optional <tt>fmt_lambda</tt> parameter to <tt>export_data</tt> specifies the format string, with <tt>'%.16'</tt> being the default value.</p><pre class="codeinput">K3 = ktensor([1; 2], 4*ones(4,2), 3*ones(3,2), 2*ones(2,2));
+export_data(K3,<span class="string">'K_fmt_data_lambda.ktensor'</span>,<span class="string">'fmt_data'</span>,<span class="string">'%d'</span>,<span class="string">'fmt_lambda'</span>,<span class="string">'%d'</span>);
+K4 = import_data(<span class="string">'K_fmt_data_lambda.ktensor'</span>);
+assert(isequal(K3,K4)) <span class="comment">%&lt;-- test if equal when reading tensor from file</span>
+type <span class="string">'K_fmt_data_lambda.ktensor'</span>
+</pre><pre class="codeoutput">
+ktensor
+3 
+4 3 2 
+2 
+1 2 
+matrix
+2 
+4 2 
+4 4 
+4 4 
+4 4 
+4 4 
+matrix
+2 
+3 2 
+3 3 
+3 3 
+3 3 
+matrix
+2 
+2 2 
+2 2 
+2 2 
+</pre><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Importing and Exporting Tensor Data
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="working.html">Working with Tensors</a> 
+% &#62;&#62; <a href="import_export_doc.html">Importing and Exporting Tensor Data</a>
+% </p>
+% </html>
+%
+% You can import and export tensor data in ASCII format for the following
+% data types:
+%
+% <html>
+%   <ul>
+%     <li><tt>tensor</tt></li>
+%     <li><tt>matrix</tt></li>
+%     <li><tt>sptensor</tt></li>
+%     <li><tt>ktensor</tt></li>
+%   </ul>
+% </html>
+
+%% Tensor/Matrix Data
+% In the case of a tensor, the first three lines give details about the
+% tensor. The format for a 4 x 3 x 2 tensor is as follows...
+%
+%    tensor
+%    3
+%    4 3 2
+%    <value of A(1,1,1)>
+%    <value of A(2,1,1)>
+%    <value of A(3,1,1)>
+%    <value of A(4,1,1)>
+%    <value of A(1,2,1)>
+%    <value of A(2,2,1)>
+%    <value of A(3,2,1)>
+%    <value of A(4,2,1)>
+%    ...
+%    <value of A(2,3,2)>
+%    <value of A(3,3,2)>
+%    <value of A(4,3,2)>
+%
+% A matrix is formatted the same as a 2-way tensor except that the first
+% line says |matrix| rather than |tensor|.
+%
+Y1 = tenrand([4 3 2]);
+export_data(Y1,'Y.tensor');
+Y2 = import_data('Y.tensor');
+assert(isequal(Y1,Y2)) %<REPLACE_WITH_DASH_DASH test if equal when reading tensor from file
+type 'Y.tensor'
+
+%% Sptensor Data
+% In the case of an sptensor, the first four lines give details about the
+% sptensor. The format for a 4 x 3 x 2 sptensor with 10 nonzeros is as 
+% follows...
+%
+%    sptensor
+%    3
+%    4 3 2
+%    3
+%    i1 j1 k1 
+%    i2 j2 k2 <value of A(i2,j2,k2)>
+%    i3 j3 k3 <value of A(i3,j3,k3)>
+%
+X1 = sptensor([1 1 1;2 2 2; 4 3 2],rand(3,1),[4 3 2]);
+export_data(X1,'X.sptensor');
+X2 = import_data('X.sptensor');
+assert(isequal(X1,X2)) %<REPLACE_WITH_DASH_DASH test if equal when reading tensor from file
+type 'X.sptensor'
+
+%% Ktensor Data
+% In the case of an ktensor, the first four lines give details about 
+% the ktensor. The format for a 4 x 3 x 2 ktensor with rank=2 is as 
+% follows, which contains the lambda values and factor matrices, U, 
+% (one per tensor dimension), ...
+%
+%    ktensor
+%    3 
+%    4 3 2 
+%    2 
+%    <value of lambda1> <value of lambda2>
+%    matrix
+%    2 
+%    4 2 
+%    <value of U{1}(1,1)> <value of U{1}(1,2) 
+%    ...
+%    <value of U{1}(4,1)> <value of U{1}(4,2) 
+%    matrix
+%    2 
+%    3 2 
+%    <value of U{2}(1,1)> <value of U{2}(1,2) 
+%    ...
+%    <value of U{2}(3,1)> <value of U{2}(3,2) 
+%    matrix
+%    2 
+%    2 2 
+%    <value of U{3}(1,1)> <value of U{3}(1,2) 
+%    <value of U{3}(2,1)> <value of U{3}(2,2) 
+%
+K1 = ktensor(rand(2,1), rand(4,2), rand(3,2), rand(2,2));
+export_data(K1,'K.ktensor');
+K2 = import_data('K.ktensor');
+assert(isequal(K1,K2)) %<REPLACE_WITH_DASH_DASH test if equal when reading tensor from file
+type 'K.ktensor'
+
+%% Formatting Output - Data Values
+% When exporting tensor data your can specify the format of the data values
+% using character vector that follows the convention used in |fprintf|. For
+% example, this can be useful when exporting tensors that contain only
+% integers, resulting in a file that is smaller in size. The optional
+% |fmt_data| parameter to |export_data| specifies the format string, with
+% |'%.16|' being the default value.
+%
+X3 = sptensor([1 1 1;2 2 2; 4 3 2],[1;2;3],[4 3 2]);
+export_data(X3,'X_fmt_data.sptensor','fmt_data','%d');
+X4 = import_data('X_fmt_data.sptensor');
+assert(isequal(X3,X4)) %<REPLACE_WITH_DASH_DASH test if equal when reading tensor from file
+type 'X_fmt_data.sptensor'
+
+%% Formatting Output - Ktensor Lambda Values
+% When exporting |ktensor| data your can specify the format of the |lambda|
+% values using character vector that follows the convention used in
+% |fprint|. For example, this can be useful when exporting tensors that
+% contain only integers, resulting in a file that is smaller in size. The
+% optional |fmt_lambda| parameter to |export_data| specifies the format
+% string, with |'%.16'| being the default value.
+%
+K3 = ktensor([1; 2], 4*ones(4,2), 3*ones(3,2), 2*ones(2,2));
+export_data(K3,'K_fmt_data_lambda.ktensor','fmt_data','%d','fmt_lambda','%d');
+K4 = import_data('K_fmt_data_lambda.ktensor');
+assert(isequal(K3,K4)) %<REPLACE_WITH_DASH_DASH test if equal when reading tensor from file
+type 'K_fmt_data_lambda.ktensor'
+
+##### SOURCE END #####
+--></body></html>

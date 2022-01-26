@@ -1,0 +1,294 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Alternating least squares for Tucker model</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-01-13"><meta name="DC.source" content="tucker_als_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Alternating least squares for Tucker model</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="tucker.html">Tucker Decompositions</a>
+&#62;&#62; <a href="tucker_als_doc.html">Tucker-ALS</a>
+</p>
+</p><p>The function <tt>tucker_als</tt> computes the best rank(R1,R2,..,Rn) approximation of tensor X, according to the specified dimensions in vector R.  The input X can be a tensor, sptensor, ktensor, or ttensor.  The result returned in T is a ttensor.</p><p>The method is originally from Tucker (1966) and later revisited in De Lathauwer et al. (2000).</p><div><ul><li>L. R. Tucker, Some mathematical notes on three-mode factor analysis,   Psychometrika, 31:279-311, 1966, <a href="http://dx.doi.org/10.1007/BF02289464">http://dx.doi.org/10.1007/BF02289464</a></li><li>L. De Lathauwer, B. De Moor, J. Vandewalle,   On the best rank-1 and rank-(R_1, R_2, R_N) approximation of   higher-order tensors,   SIAM J. Matrix Analysis and Applications, 21:1324-1342, 2000,   <a href="http://doi.org/10.1137/S0895479898346995">http://doi.org/10.1137/S0895479898346995</a></li></ul></div><p>Note: Oftentimes it's better to use <tt>hosvd</tt> instead.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Create a data tensor of size [5 4 3]</a></li><li><a href="#2">Create a [2 2 2] approximation</a></li><li><a href="#3">Create a [2 2 1] approximation</a></li><li><a href="#4">Use a different ordering of the dimensions</a></li><li><a href="#5">Use the n-vecs initialization method</a></li><li><a href="#6">Specify the initial guess manually</a></li></ul></div><h2 id="1">Create a data tensor of size [5 4 3]</h2><pre class="codeinput">rng(<span class="string">'default'</span>); rng(0); <span class="comment">%&lt;-- Set seed for reproducibility</span>
+X = sptenrand([5 4 3], 10)
+</pre><pre class="codeoutput">X is a sparse tensor of size 5 x 4 x 3 with 10 nonzeros
+	(1,2,3)    0.0759
+	(1,3,2)    0.0540
+	(2,2,2)    0.5308
+	(2,2,3)    0.7792
+	(3,1,3)    0.9340
+	(3,4,2)    0.1299
+	(4,1,2)    0.5688
+	(4,4,2)    0.4694
+	(5,2,1)    0.0119
+	(5,4,3)    0.3371
+</pre><h2 id="2">Create a [2 2 2] approximation</h2><pre class="codeinput">T = tucker_als(X,2)        <span class="comment">%&lt;-- best rank(2,2,2) approximation</span>
+</pre><pre class="codeoutput">
+Tucker Alternating Least-Squares:
+ Iter  1: fit = 3.266855e-01 fitdelta = 3.3e-01
+ Iter  2: fit = 4.285677e-01 fitdelta = 1.0e-01
+ Iter  3: fit = 4.707375e-01 fitdelta = 4.2e-02
+ Iter  4: fit = 4.728036e-01 fitdelta = 2.1e-03
+ Iter  5: fit = 4.728492e-01 fitdelta = 4.6e-05
+T is a ttensor of size 5 x 4 x 3
+	T.core is a tensor of size 2 x 2 x 2
+		T.core(:,:,1) = 
+	    0.9045    0.0007
+	   -0.0007    0.8920
+		T.core(:,:,2) = 
+	    0.2732    0.0006
+	    0.0006   -0.2771
+	T.U{1} = 
+		    0.0666    0.0001
+		    0.9978    0.0008
+		   -0.0008    1.0000
+		   -0.0001    0.0007
+		   -0.0001    0.0018
+	T.U{2} = 
+		   -0.0015    1.0000
+		    1.0000    0.0015
+		    0.0021    0.0000
+		   -0.0001    0.0007
+	T.U{3} = 
+		   -0.0000   -0.0000
+		    0.2971    0.9548
+		    0.9548   -0.2971
+</pre><h2 id="3">Create a [2 2 1] approximation</h2><pre class="codeinput">T = tucker_als(X,[2 2 1])  <span class="comment">%&lt;-- best rank(2,2,1) approximation</span>
+</pre><pre class="codeoutput">
+Tucker Alternating Least-Squares:
+ Iter  1: fit = 2.941961e-01 fitdelta = 2.9e-01
+ Iter  2: fit = 3.996958e-01 fitdelta = 1.1e-01
+ Iter  3: fit = 4.229258e-01 fitdelta = 2.3e-02
+ Iter  4: fit = 4.304139e-01 fitdelta = 7.5e-03
+ Iter  5: fit = 4.325472e-01 fitdelta = 2.1e-03
+ Iter  6: fit = 4.330654e-01 fitdelta = 5.2e-04
+ Iter  7: fit = 4.331799e-01 fitdelta = 1.1e-04
+ Iter  8: fit = 4.332039e-01 fitdelta = 2.4e-05
+T is a ttensor of size 5 x 4 x 3
+	T.core is a tensor of size 2 x 2 x 1
+		T.core(:,:,1) = 
+	    0.9293    0.0000
+	   -0.0000    0.8920
+	T.U{1} = 
+		    0.0747   -0.0000
+		    0.9972   -0.0000
+		    0.0000    0.9575
+		   -0.0000    0.2844
+		   -0.0000    0.0475
+	T.U{2} = 
+		    0.0000    0.9911
+		    1.0000   -0.0000
+		    0.0017   -0.0000
+		   -0.0000    0.1333
+	T.U{3} = 
+		   -0.0000
+		    0.4011
+		    0.9160
+</pre><h2 id="4">Use a different ordering of the dimensions</h2><pre class="codeinput">T = tucker_als(X,2,struct(<span class="string">'dimorder'</span>,[3 2 1]))
+</pre><pre class="codeoutput">
+Tucker Alternating Least-Squares:
+ Iter  1: fit = 3.515073e-01 fitdelta = 3.5e-01
+ Iter  2: fit = 3.548900e-01 fitdelta = 3.4e-03
+ Iter  3: fit = 3.560941e-01 fitdelta = 1.2e-03
+ Iter  4: fit = 3.565373e-01 fitdelta = 4.4e-04
+ Iter  5: fit = 3.566994e-01 fitdelta = 1.6e-04
+ Iter  6: fit = 3.567586e-01 fitdelta = 5.9e-05
+T is a ttensor of size 5 x 4 x 3
+	T.core is a tensor of size 2 x 2 x 2
+		T.core(:,:,1) = 
+	    0.8911   -0.2312
+	   -0.1522    0.0400
+		T.core(:,:,2) = 
+	    0.1445    0.1767
+	    0.6535    0.2855
+	T.U{1} = 
+		    0.0011   -0.0003
+		    0.0124    0.0067
+		    0.9855   -0.1691
+		    0.1690    0.9856
+		   -0.0000    0.0000
+	T.U{2} = 
+		    0.9678   -0.2514
+		    0.0146    0.0015
+		   -0.0000    0.0001
+		    0.2513    0.9679
+	T.U{3} = 
+		   -0.0000    0.0000
+		    0.0008    1.0000
+		    1.0000   -0.0008
+</pre><h2 id="5">Use the n-vecs initialization method</h2><p>This initialization is more expensive but generally works very well.</p><pre class="codeinput">T = tucker_als(X,2,struct(<span class="string">'dimorder'</span>,[3 2 1],<span class="string">'init'</span>,<span class="string">'eigs'</span>))
+</pre><pre class="codeoutput">  Computing 2 leading e-vectors for factor 2.
+  Computing 2 leading e-vectors for factor 1.
+
+Tucker Alternating Least-Squares:
+ Iter  1: fit = 4.726805e-01 fitdelta = 4.7e-01
+ Iter  2: fit = 4.728466e-01 fitdelta = 1.7e-04
+ Iter  3: fit = 4.728501e-01 fitdelta = 3.5e-06
+T is a ttensor of size 5 x 4 x 3
+	T.core is a tensor of size 2 x 2 x 2
+		T.core(:,:,1) = 
+	    0.9045   -0.0000
+	    0.0000    0.8918
+		T.core(:,:,2) = 
+	    0.2731   -0.0000
+	   -0.0000   -0.2775
+	T.U{1} = 
+		    0.0666   -0.0000
+		    0.9978   -0.0000
+		    0.0000    1.0000
+		    0.0000    0.0001
+		    0.0000    0.0002
+	T.U{2} = 
+		    0.0000    1.0000
+		    1.0000   -0.0000
+		    0.0021   -0.0000
+		    0.0000    0.0005
+	T.U{3} = 
+		    0.0000    0.0000
+		    0.2973    0.9548
+		    0.9548   -0.2973
+</pre><h2 id="6">Specify the initial guess manually</h2><pre class="codeinput">U0 = {rand(5,2),rand(4,2),[]}; <span class="comment">%&lt;-- Initial guess for factors of T</span>
+T = tucker_als(X,2,struct(<span class="string">'dimorder'</span>,[3 2 1],<span class="string">'init'</span>,{U0}))
+</pre><pre class="codeoutput">
+Tucker Alternating Least-Squares:
+ Iter  1: fit = 3.843537e-01 fitdelta = 3.8e-01
+ Iter  2: fit = 4.493600e-01 fitdelta = 6.5e-02
+ Iter  3: fit = 4.721643e-01 fitdelta = 2.3e-02
+ Iter  4: fit = 4.728355e-01 fitdelta = 6.7e-04
+ Iter  5: fit = 4.728499e-01 fitdelta = 1.4e-05
+T is a ttensor of size 5 x 4 x 3
+	T.core is a tensor of size 2 x 2 x 2
+		T.core(:,:,1) = 
+	    0.9047   -0.0006
+	    0.0006    0.8917
+		T.core(:,:,2) = 
+	    0.2727   -0.0002
+	   -0.0002   -0.2778
+	T.U{1} = 
+		    0.0666   -0.0000
+		    0.9978   -0.0001
+		    0.0001    1.0000
+		    0.0000    0.0001
+		    0.0000    0.0004
+	T.U{2} = 
+		    0.0008    1.0000
+		    1.0000   -0.0008
+		    0.0021   -0.0000
+		    0.0000    0.0010
+	T.U{3} = 
+		    0.0000    0.0000
+		    0.2976    0.9547
+		    0.9547   -0.2976
+</pre><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Alternating least squares for Tucker model 
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="tucker.html">Tucker Decompositions</a> 
+% &#62;&#62; <a href="tucker_als_doc.html">Tucker-ALS</a>
+% </p>
+% </html>
+%
+% The function |tucker_als| computes the best rank(R1,R2,..,Rn)
+% approximation of tensor X, according to the specified dimensions in
+% vector R.  The input X can be a tensor, sptensor, ktensor, or
+% ttensor.  The result returned in T is a ttensor.
+%
+% The method is originally from Tucker (1966) and later revisited in 
+% De Lathauwer et al. (2000).
+%
+% * L. R. Tucker, Some mathematical notes on three-mode factor analysis,
+%   Psychometrika, 31:279-311, 1966, http://dx.doi.org/10.1007/BF02289464
+% * L. De Lathauwer, B. De Moor, J. Vandewalle,
+%   On the best rank-1 and rank-(R_1, R_2, R_N) approximation of
+%   higher-order tensors,
+%   SIAM J. Matrix Analysis and Applications, 21:1324-1342, 2000, 
+%   http://doi.org/10.1137/S0895479898346995  
+%
+% Note: Oftentimes it's better to use |hosvd| instead.
+
+%% Create a data tensor of size [5 4 3]
+rng('default'); rng(0); %<REPLACE_WITH_DASH_DASH Set seed for reproducibility
+X = sptenrand([5 4 3], 10)
+%% Create a [2 2 2] approximation
+T = tucker_als(X,2)        %<REPLACE_WITH_DASH_DASH best rank(2,2,2) approximation 
+%% Create a [2 2 1] approximation
+T = tucker_als(X,[2 2 1])  %<REPLACE_WITH_DASH_DASH best rank(2,2,1) approximation 
+%% Use a different ordering of the dimensions
+T = tucker_als(X,2,struct('dimorder',[3 2 1]))
+%% Use the n-vecs initialization method
+% This initialization is more expensive but generally works very well.
+T = tucker_als(X,2,struct('dimorder',[3 2 1],'init','eigs'))
+%% Specify the initial guess manually
+U0 = {rand(5,2),rand(4,2),[]}; %<REPLACE_WITH_DASH_DASH Initial guess for factors of T
+T = tucker_als(X,2,struct('dimorder',[3 2 1],'init',{U0}))
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,489 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Symmetric Tensors</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-01-13"><meta name="DC.source" content="symtensor_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Symmetric Tensors</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="tensor_types.html">Tensor Types</a>
+&#62;&#62; <a href="symtensor_doc.html">Symmetric Tensors</a>
+</p>
+</p><p>A symmetric tensor is a tensor that is invariant under all permutations of its modes.  Because many of the elements of a symmetric tensor are guaranteed to be equal, we can simplify the storage requirements by only storing the unique values of the symmetric tensor. There are <img src="symtensor_doc_eq09671220210510915986.png" alt="${n+m-1}\choose{m}$" style="width:39px;height:16px;"> such values for an m-way tensor of dimension n. The <tt>symtensor</tt> class is designed to take advantage of this symmetric structure by only storing the unique values of the tensor.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Definition of a symmetric tensor</a></li><li><a href="#2">Creating a symtensor from a symmetric tensor</a></li><li><a href="#3">Unique entries of a tensor</a></li><li><a href="#4">Creating a symtensor from a nonsymmetric tensor</a></li><li><a href="#6">Create an all ones symtensor</a></li><li><a href="#7">Create a random symtensor</a></li><li><a href="#8">Using a generating function to populate a symmetric tensor</a></li><li><a href="#9">Use ndims and size to get the size of a symmetric tensor</a></li><li><a href="#11">Use full to convert a symmetric tensor to a multidimensional array</a></li><li><a href="#12">Subscripted reference of a symmetric tensor</a></li><li><a href="#18">Subscripted assignment</a></li><li><a href="#20">Basic operations (plus, minus, and, or, etc.) on a symmetric tensor</a></li><li><a href="#26">Using <tt>symtenfun</tt> for elementwise operations on one or more symmetric tensors</a></li></ul></div><h2 id="1">Definition of a symmetric tensor</h2><p>A symmetric tensor is invariant under any permutation of the indices. Here is a small example. The <tt>issymmetric</tt> function checks symmetry of a dense tensor.</p><pre class="codeinput">T(:,:,1) = [1 2; 2 3]; T(:,:,2)= [2 3; 3 6];
+T = tensor(T)
+issymmetric(T)
+</pre><pre class="codeoutput">T is a tensor of size 2 x 2 x 2
+	T(:,:,1) = 
+	     1     2
+	     2     3
+	T(:,:,2) = 
+	     2     3
+	     3     6
+
+ans =
+
+  logical
+
+   1
+
+</pre><h2 id="2">Creating a symtensor from a symmetric tensor</h2><p>We can construct a <tt>symtensor</tt> object from a symmetric tensor. This object only stores the unique entries of the tensor. For the 2 x 2 x 2 tensor, this means there are only four unique entries. Everything else comes from permuting the indices of those four entries.</p><pre class="codeinput">S = symtensor(T)
+</pre><pre class="codeoutput">S is a symmetric tensor with 3 modes of dimension 2
+	(1,1,1)     1
+	(1,1,2)     2
+	(1,2,2)     3
+	(2,2,2)     6
+</pre><h2 id="3">Unique entries of a tensor</h2><p>Note from TGK: This needs to be added. It should have some discussion of all the return values from indices. What is a monomial description, etc.</p><pre class="codeinput">[I,C,W,Q] = indices(S)
+</pre><pre class="codeoutput">
+I =
+
+     1     1     1
+     1     1     2
+     1     2     2
+     2     2     2
+
+
+C =
+
+     3     0
+     2     1
+     1     2
+     0     3
+
+
+W =
+
+     1
+     3
+     3
+     1
+
+
+Q =
+
+     4
+
+</pre><h2 id="4">Creating a symtensor from a nonsymmetric tensor</h2><p>A symmetric tensors can be created from the symmetrization of nonsymmetric tensor so long as it is the same size in every mode. If the input is not symmetric, it is symmetrized by creating an average of elements in the same permutation class. For instance, this example starts with a nonsymmetric tensor and symmetrizes it:</p><pre class="codeinput">T2 = tensor([1:8],[2 2 2])
+S2 = symtensor(T2)
+</pre><pre class="codeoutput">T2 is a tensor of size 2 x 2 x 2
+	T2(:,:,1) = 
+	     1     3
+	     2     4
+	T2(:,:,2) = 
+	     5     7
+	     6     8
+S2 is a symmetric tensor with 3 modes of dimension 2
+	(1,1,1)    1.0000
+	(1,1,2)    3.3333
+	(1,2,2)    5.6667
+	(2,2,2)    8.0000
+</pre><p>Converting the symtensor back to a generic tensor is equivalent to running <tt>symmetrize</tt> on the original tensor. In the following example, the full command converts a symtensor to a tensor.</p><pre class="codeinput">full(S2)
+symmetrize(T2)
+</pre><pre class="codeoutput">ans is a tensor of size 2 x 2 x 2
+	ans(:,:,1) = 
+	    1.0000    3.3333
+	    3.3333    5.6667
+	ans(:,:,2) = 
+	    3.3333    5.6667
+	    5.6667    8.0000
+ans is a tensor of size 2 x 2 x 2
+	ans(:,:,1) = 
+	    1.0000    3.3333
+	    3.3333    5.6667
+	ans(:,:,2) = 
+	    3.3333    5.6667
+	    5.6667    8.0000
+</pre><h2 id="6">Create an all ones symtensor</h2><p>The first argument is the generating function, the second argument is the number of modes, and the third argument is the size of each mode.</p><pre class="codeinput">S3 = symtensor(@ones, 3, 2)
+</pre><pre class="codeoutput">S3 is a symmetric tensor with 3 modes of dimension 2
+	(1,1,1)     1
+	(1,1,2)     1
+	(1,2,2)     1
+	(2,2,2)     1
+</pre><h2 id="7">Create a random symtensor</h2><pre class="codeinput">S4 = symtensor(@randn, 3, 2)
+</pre><pre class="codeoutput">S4 is a symmetric tensor with 3 modes of dimension 2
+	(1,1,1)   -0.5883
+	(1,1,2)    2.1832
+	(1,2,2)   -0.1364
+	(2,2,2)    0.1139
+</pre><h2 id="8">Using a generating function to populate a symmetric tensor</h2><p>In general, a symmetric tensor can also have its entries created by any generating function. This is done by passing a function handle, the number of modes, and the dimension. The function is expected to take a two-dimension size as input and return a matrix of that shape. In fact, the second argument to the function will always be 1.</p><pre class="codeinput"><span class="comment">% For example, we can also declare a binary symmetric tensor as follows:</span>
+S5 = symtensor(@(x,y) double(rand(x,y)&gt;.25), 3, 3)
+</pre><pre class="codeoutput">S5 is a symmetric tensor with 3 modes of dimension 3
+	(1,1,1)     0
+	(1,1,2)     1
+	(1,1,3)     0
+	(1,2,2)     1
+	(1,2,3)     1
+	(1,3,3)     1
+	(2,2,2)     1
+	(2,2,3)     0
+	(2,3,3)     1
+	(3,3,3)     1
+</pre><h2 id="9">Use ndims and size to get the size of a symmetric tensor</h2><pre class="codeinput">ndims(S) <span class="comment">%&lt;-- Number of modes of the symmetric tensor</span>
+</pre><pre class="codeoutput">
+ans =
+
+     3
+
+</pre><pre class="codeinput">size(S) <span class="comment">%&lt;-- Size of a symmetric tensor</span>
+</pre><pre class="codeoutput">
+ans =
+
+     2     2     2
+
+</pre><h2 id="11">Use full to convert a symmetric tensor to a multidimensional array</h2><pre class="codeinput">full(S) <span class="comment">%&lt;-- Converts from a symmetric tensor to a tensor</span>
+</pre><pre class="codeoutput">ans is a tensor of size 2 x 2 x 2
+	ans(:,:,1) = 
+	     1     2
+	     2     3
+	ans(:,:,2) = 
+	     2     3
+	     3     6
+</pre><h2 id="12">Subscripted reference of a symmetric tensor</h2><p>Subindex notation extracts the tensor value.</p><pre class="codeinput">S(1,2,2)
+S(2,1,2) <span class="comment">%&lt;-- Equal to above, by symmetry</span>
+</pre><pre class="codeoutput">
+ans =
+
+     3
+
+
+ans =
+
+     3
+
+</pre><p>This works the same as applying it to the full tensor.</p><pre class="codeinput">T(1,2,2)
+T(2,1,2)
+</pre><pre class="codeoutput">
+ans =
+
+     3
+
+
+ans =
+
+     3
+
+</pre><p>Multiple indices can be queried by combining these indices into the rows of a matrix. Consider the following example, which returns a vector consisting of the values of S at indices indicated by the rows of the input matrix.</p><pre class="codeinput">S([1 2 1; 2 1 2])
+</pre><pre class="codeoutput">
+ans =
+
+     2
+     3
+
+</pre><p>Single indices are interpretted as an index into the unique value array, which is stored with respect to increasing indices. This is very different than using linear indexing on the full tensor.</p><pre class="codeinput">S(3) <span class="comment">%&lt;- Third unique entry corresponding to (1,2,2)</span>
+S(4) <span class="comment">%&lt;- Fourth unique entry, corresponding to (2,2,2)</span>
+T(3) <span class="comment">%&lt;- Third entry in the tensor, i.e., (1,2,1) = (1,1,2)</span>
+T(4) <span class="comment">%&lt;- Fourth entry in the tensor, i.e., (2,2,1) = (1,2,2)</span>
+</pre><pre class="codeoutput">
+ans =
+
+     3
+
+
+ans =
+
+     6
+
+
+ans =
+
+     2
+
+
+ans =
+
+     3
+
+</pre><p>Mulitple entries can be obtained at once as well.</p><pre class="codeinput">S([3:4]')
+</pre><pre class="codeoutput">
+ans =
+
+     3
+     6
+
+</pre><h2 id="18">Subscripted assignment</h2><p>Symmetric tensors also support subscripted assignment. Either linear or subindex notation is valid. Multiple values can be assigned the same quantity, but assigning a subset of a symmetric tensor from a multidimensional arrays, tensor, or symtensor is not allowed.</p><pre class="codeinput">S5(1) = 7 <span class="comment">%&lt;-- Linear indexing</span>
+S5(2,1,2) = 6 <span class="comment">%&lt;-- Subindex indexing</span>
+</pre><pre class="codeoutput">S5 is a symmetric tensor with 3 modes of dimension 3
+	(1,1,1)     7
+	(1,1,2)     1
+	(1,1,3)     0
+	(1,2,2)     1
+	(1,2,3)     1
+	(1,3,3)     1
+	(2,2,2)     1
+	(2,2,3)     0
+	(2,3,3)     1
+	(3,3,3)     1
+S5 is a symmetric tensor with 3 modes of dimension 3
+	(1,1,1)     7
+	(1,1,2)     1
+	(1,1,3)     0
+	(1,2,2)     6
+	(1,2,3)     1
+	(1,3,3)     1
+	(2,2,2)     1
+	(2,2,3)     0
+	(2,3,3)     1
+	(3,3,3)     1
+</pre><p>Symmetric tensors do not support enlargement with the assignment operator, so assigning a value to an index other than those which have already been declared produces an error.</p><h2 id="20">Basic operations (plus, minus, and, or, etc.) on a symmetric tensor</h2><p>The tensor object supports many basic operations, illustrated here.</p><pre class="codeinput">A = symtensor(@(x,y) rand(x,y)&gt;.5, 3, 2)
+B = symtensor(@(x,y) rand(x,y)&gt;.5, 3, 2)
+</pre><pre class="codeoutput">A is a symmetric tensor with 3 modes of dimension 2
+	(1,1,1)     0
+	(1,1,2)     1
+	(1,2,2)     0
+	(2,2,2)     1
+B is a symmetric tensor with 3 modes of dimension 2
+	(1,1,1)     1
+	(1,1,2)     0
+	(1,2,2)     1
+	(2,2,2)     1
+</pre><pre class="codeinput">A==B <span class="comment">%&lt;-- Calls eq.</span>
+</pre><pre class="codeoutput">ans is a symmetric tensor with 3 modes of dimension 2
+	(1,1,1)   0
+	(1,1,2)   0
+	(1,2,2)   0
+	(2,2,2)   1
+</pre><pre class="codeinput">A&lt;B <span class="comment">%&lt;-- Calls lt.</span>
+</pre><pre class="codeoutput">ans is a symmetric tensor with 3 modes of dimension 2
+	(1,1,1)   1
+	(1,1,2)   0
+	(1,2,2)   1
+	(2,2,2)   0
+</pre><pre class="codeinput">A.*B <span class="comment">%&lt;-- Calls times. (elementwise multiply)</span>
+</pre><pre class="codeoutput">ans is a symmetric tensor with 3 modes of dimension 2
+	(1,1,1)     0
+	(1,1,2)     0
+	(1,2,2)     0
+	(2,2,2)     1
+</pre><pre class="codeinput">5*A <span class="comment">%&lt;-- Calls mtimes. (scalar multiply)</span>
+</pre><pre class="codeoutput">ans is a symmetric tensor with 3 modes of dimension 2
+	(1,1,1)     0
+	(1,1,2)     5
+	(1,2,2)     0
+	(2,2,2)     5
+</pre><p>The symtensor class supports the following additional MATLABbinary operations: and, or, xor, neq, gt, ge, le, plus, minus, power, ldivide, and rdivide. Supported unary operations include: not, uplus, uminus.</p><h2 id="26">Using <tt>symtenfun</tt> for elementwise operations on one or more symmetric tensors</h2><p>The function <tt>symtenfun</tt> applies a function to a number of symmetric symtensors. This function mirrors the capability of <tt>tenfun</tt> for tensors.</p><pre class="codeinput">tenfun(@min, S, S2, S+1) <span class="comment">%&lt;-- Symtensor formed from elementwise minimization</span>
+</pre><pre class="codeoutput">ans is a symmetric tensor with 3 modes of dimension 2
+	(1,1,1)     1
+	(1,1,2)     2
+	(1,2,2)     3
+	(2,2,2)     6
+</pre><pre class="codeinput">tenfun(@(x)(x-1.5),S) <span class="comment">%&lt;-- Subtract 1.5 from each element of B</span>
+</pre><pre class="codeoutput">ans is a symmetric tensor with 3 modes of dimension 2
+	(1,1,1)   -0.5000
+	(1,1,2)    0.5000
+	(1,2,2)    1.5000
+	(2,2,2)    4.5000
+</pre><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Symmetric Tensors
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="tensor_types.html">Tensor Types</a> 
+% &#62;&#62; <a href="symtensor_doc.html">Symmetric Tensors</a>
+% </p>
+% </html>
+%
+% A symmetric tensor is a tensor that is invariant under all permutations
+% of its modes.  Because many of the elements of a symmetric tensor are
+% guaranteed to be equal, we can simplify the storage requirements by only
+% storing the unique values of the symmetric tensor. There are
+% ${n+m-1}\choose{m}$ such values for an m-way tensor of dimension n. 
+% The |symtensor| class is designed to take advantage of this symmetric
+% structure by only storing the unique values of the tensor. 
+
+%% Definition of a symmetric tensor
+% A symmetric tensor is invariant under any permutation of the indices.
+% Here is a small example. The |issymmetric| function checks symmetry of a
+% dense tensor.
+T(:,:,1) = [1 2; 2 3]; T(:,:,2)= [2 3; 3 6]; 
+T = tensor(T) 
+issymmetric(T)
+
+%% Creating a symtensor from a symmetric tensor
+% We can construct a |symtensor| object from a symmetric tensor. This
+% object only stores the unique entries of the tensor. For the 2 x 2 x 2
+% tensor, this means there are only four unique entries. Everything else
+% comes from permuting the indices of those four entries.
+S = symtensor(T) 
+
+%% Unique entries of a tensor
+% Note from TGK: This needs to be added. It should have some discussion of
+% all the return values from indices. What is a monomial description, etc.
+[I,C,W,Q] = indices(S)
+
+%% Creating a symtensor from a nonsymmetric tensor
+% A symmetric tensors can be created from the symmetrization of
+% nonsymmetric tensor so long as it is the same size in every mode. 
+% If the input is not symmetric, it is symmetrized by creating an average
+% of elements in the same permutation class. For instance, this example
+% starts with a nonsymmetric tensor and symmetrizes it:
+T2 = tensor([1:8],[2 2 2])
+S2 = symtensor(T2)
+
+%% 
+% Converting the symtensor back to a generic tensor is equivalent to
+% running |symmetrize| on the original tensor. In the following example,
+% the full command converts a symtensor to a tensor.
+full(S2)
+symmetrize(T2)
+
+%% Create an all ones symtensor
+% The first argument is the generating function, the second argument is the
+% number of modes, and the third argument is the size of each mode.
+S3 = symtensor(@ones, 3, 2)
+
+%% Create a random symtensor
+S4 = symtensor(@randn, 3, 2)
+
+%% Using a generating function to populate a symmetric tensor
+% In general, a symmetric tensor can also have its entries created by any
+% generating function. This is done by passing a function handle, the
+% number of modes, and the dimension. The function is expected to take a
+% two-dimension size as input and return a matrix of that shape. In fact,
+% the second argument to the function will always be 1. 
+
+% For example, we can also declare a binary symmetric tensor as follows:
+S5 = symtensor(@(x,y) double(rand(x,y)>.25), 3, 3)
+
+%% Use ndims and size to get the size of a symmetric tensor
+ndims(S) %<REPLACE_WITH_DASH_DASH Number of modes of the symmetric tensor
+
+%%
+size(S) %<REPLACE_WITH_DASH_DASH Size of a symmetric tensor
+
+%% Use full to convert a symmetric tensor to a multidimensional array
+full(S) %<REPLACE_WITH_DASH_DASH Converts from a symmetric tensor to a tensor
+
+%% Subscripted reference of a symmetric tensor
+% Subindex notation extracts the tensor value. 
+S(1,2,2)
+S(2,1,2) %<REPLACE_WITH_DASH_DASH Equal to above, by symmetry
+
+%%
+% This works the same as applying it to the full tensor.
+T(1,2,2)
+T(2,1,2)
+
+%%
+% Multiple indices can be queried by combining these indices into the rows 
+% of a matrix. Consider the following example, which returns a vector 
+% consisting of the values of S at indices indicated by the rows of the
+% input matrix.
+S([1 2 1; 2 1 2])
+
+%%
+% Single indices are interpretted as an index into the unique value array,
+% which is stored with respect to increasing indices. This is very
+% different than using linear indexing on the full tensor.
+S(3) %<- Third unique entry corresponding to (1,2,2)
+S(4) %<- Fourth unique entry, corresponding to (2,2,2)
+T(3) %<- Third entry in the tensor, i.e., (1,2,1) = (1,1,2)
+T(4) %<- Fourth entry in the tensor, i.e., (2,2,1) = (1,2,2)
+
+%%
+% Mulitple entries can be obtained at once as well.
+S([3:4]')
+
+%% 
+%% Subscripted assignment
+% Symmetric tensors also support subscripted assignment. Either linear or
+% subindex notation is valid. Multiple values can be assigned the same
+% quantity, but assigning a subset of a symmetric tensor from a 
+% multidimensional arrays, tensor, or symtensor is not allowed.
+S5(1) = 7 %<REPLACE_WITH_DASH_DASH Linear indexing
+S5(2,1,2) = 6 %<REPLACE_WITH_DASH_DASH Subindex indexing
+%%
+% Symmetric tensors do not support enlargement with the assignment
+% operator, so assigning a value to an index other than those which have
+% already been declared produces an error.
+%% Basic operations (plus, minus, and, or, etc.) on a symmetric tensor
+% The tensor object supports many basic operations, illustrated here.
+A = symtensor(@(x,y) rand(x,y)>.5, 3, 2)
+B = symtensor(@(x,y) rand(x,y)>.5, 3, 2)
+%%
+A==B %<REPLACE_WITH_DASH_DASH Calls eq.
+%%
+A<B %<REPLACE_WITH_DASH_DASH Calls lt.
+%%
+A.*B %<REPLACE_WITH_DASH_DASH Calls times. (elementwise multiply)
+%%
+5*A %<REPLACE_WITH_DASH_DASH Calls mtimes. (scalar multiply)
+%%
+% The symtensor class supports the following additional MATLABbinary
+% operations: and, or, xor, neq, gt, ge, le, plus, minus, power, ldivide,
+% and rdivide. Supported unary operations include: not, uplus, uminus.
+
+%% Using |symtenfun| for elementwise operations on one or more symmetric tensors
+% The function |symtenfun| applies a function to a number of symmetric
+% symtensors. This function mirrors the capability of |tenfun| for tensors.
+tenfun(@min, S, S2, S+1) %<REPLACE_WITH_DASH_DASH Symtensor formed from elementwise minimization
+%%
+tenfun(@(x)(x-1.5),S) %<REPLACE_WITH_DASH_DASH Subtract 1.5 from each element of B
+
+##### SOURCE END #####
+--></body></html>

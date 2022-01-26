@@ -1,0 +1,896 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Implicit Symmetric CP Decomposition for Symmetric K-Tensors</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-01-13"><meta name="DC.source" content="cp_isym_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Implicit Symmetric CP Decomposition for Symmetric K-Tensors</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="cp.html">CP Decompositions</a>
+&#62;&#62; <a href="cp_isym_doc.html">CP-ISYM</a>
+</p>
+</p><p>The function <tt>cp_isym</tt> computes the symmetric CP decomposition of a symmetric tensor that is in symmetric k-tensor format, meaning that it is the sum of symmetric outer products and stored as a <tt>symktensor</tt> object. The decomposition is described in the following reference:</p><div><ul><li>S. Sherman, T. G. Kolda, Estimating Higher-Order Moments Using   Symmetric Tensor Decomposition, SIAM J. Matrix Analysis and   Applications, 41:1369-1387, 2020,   <a href="https://doi.org/10.1137/19m1299633">https://doi.org/10.1137/19m1299633</a></li></ul></div><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Requirements</a></li><li><a href="#2">Create a sample problem based on a Gaussian mixture model.</a></li><li><a href="#7">Recommend multiple runs of CP-ISYM</a></li><li><a href="#9">Options for CP-ISYM with L-BFGS-B (default) optimization solver</a></li><li><a href="#15">Options for CP-ISYM with L-BFGS optimization solver from Poblano</a></li><li><a href="#16">Options for CP-ISYM with Quasi-Newton optimization solver from Optimization Toolbox</a></li><li><a href="#17">Options for CP-ISYM with Adam stochastic optimization solver</a></li></ul></div><h2 id="1">Requirements</h2><p>This code requires an optimization solver. Our examples use the L-BFGS-B optimization method; see <a href="opt_options_doc.html">Optimization Options</a> for details of installation and usage as well as other options for optimization solvers.</p><h2 id="2">Create a sample problem based on a Gaussian mixture model.</h2><p>Here we used the third-order moment (d=3), for a problem with random variables of dimension n=100. We take a mixture of r=5 Gaussians and collect p=750 observations.</p><pre class="codeinput">d = 3;
+n = 100;
+r = 5;
+p = 250*r;
+</pre><p>We construct the means so that they are collinear, i.e., the cosine of the angle between any two vectors is 0.5. This is a more difficult problem than purely random vectors which are close to orthogonal.</p><pre class="codeinput">rng(<span class="string">'default'</span>);
+collinearity = 0.5;
+Atrue = matrandcong(n,r,collinearity);
+</pre><p>Each Gaussian gets equal weight in the mixture.</p><pre class="codeinput">wghts = 1/r * ones(r,1);
+</pre><p>The `true` solution is based on the means and their prevalence in the mixture.</p><pre class="codeinput">Mtrue = symktensor(wghts,Atrue,d);
+Mtrue = normalize(Mtrue);
+</pre><p>The data tensor is based on noisy observations from the mixture model. The <tt>idx</tt> determines which Gaussian is sampled. And the samples have noise as specified by <tt>stddev</tt>. The result is assembled into an observation tensor that in <tt>symktensor</tt> format.</p><pre class="codeinput">idx = randsample(r,p,true,wghts);
+stddev = 1e-3;
+noise = stddev * randn(n,p);
+V = Atrue(:,idx) + noise;
+X = symktensor(1/p*ones(p,1),V,d);
+X = normalize(X,0);
+</pre><h2 id="7">Recommend multiple runs of CP-ISYM</h2><p>Since this is a non-convex optimization problem, it's critically important to do multiple runs of the optimzation problem. In the code below, we run 10 times. Not every run will converge to the global minimum. We take solution with the lowest function value, which should ideally yield the best match to the true solution. For our artificial problem, we can actually verify the score of how well the computed solution matches with the ideal solution.</p><pre class="codeinput">rng(7)
+nruns = 10;
+M = cell(nruns,1);
+info = cell(nruns,1);
+<span class="keyword">for</span> i = 1:nruns
+    fprintf(<span class="string">'------------- Run %d of %d --------------\n'</span>, i, nruns);
+    [M{i},info{i}] = cp_isym(X,r,<span class="string">'Xnormsqr'</span>,<span class="string">'exact'</span>,<span class="string">'printitn'</span>,0);
+    fprintf(<span class="string">'Final F: %.2e, Score: %.2f\n'</span>, info{i}.f, score(M{i},Mtrue));
+    <span class="keyword">if</span> i == 1
+        ifbest = i;
+        fbest = info{i}.f;
+        sfbest = score(M{i},Mtrue);
+    <span class="keyword">elseif</span> info{i}.f &lt; fbest
+        ifbest = i;
+        fbest = info{i}.f;
+        sfbest = score(M{i},Mtrue);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">------------- Run 1 of 10 --------------
+Final F: 1.94e-02, Score: 0.38
+------------- Run 2 of 10 --------------
+Final F: 1.94e-02, Score: 0.41
+------------- Run 3 of 10 --------------
+Final F: 1.20e-09, Score: 0.95
+------------- Run 4 of 10 --------------
+Final F: 7.76e-09, Score: 0.95
+------------- Run 5 of 10 --------------
+Final F: 1.94e-02, Score: 0.41
+------------- Run 6 of 10 --------------
+Final F: 5.01e-09, Score: 0.95
+------------- Run 7 of 10 --------------
+Final F: 3.65e-09, Score: 0.95
+------------- Run 8 of 10 --------------
+Final F: 7.29e-09, Score: 0.95
+------------- Run 9 of 10 --------------
+Final F: 1.94e-02, Score: 0.41
+------------- Run 10 of 10 --------------
+Final F: 6.14e-02, Score: 0.00
+</pre><pre class="codeinput">fprintf(<span class="string">'------------- Best of %d runs --------------\n'</span>, nruns);
+fprintf(<span class="string">'Run %d -&gt; Final F: %.2e, Score: %.2f\n'</span>, ifbest, fbest, sfbest);
+</pre><pre class="codeoutput">------------- Best of 10 runs --------------
+Run 3 -&gt; Final F: 1.20e-09, Score: 0.95
+</pre><h2 id="9">Options for CP-ISYM with L-BFGS-B (default) optimization solver</h2><p>The CP solution should produce something close to <tt>Mtrue</tt>, but it will not be exact because of the randomness in building the observation tensor. Here we show what happens when the true solution is provided as an initial guess. The function should converge to zero, and the similarlity score should be close to one. The method defaults to <tt>'lfbgsb'</tt>.</p><pre class="codeinput">[M,info] = cp_isym(X,r,<span class="string">'Xnormsqr'</span>,<span class="string">'exact'</span>,<span class="string">'init'</span>,Mtrue);
+fprintf(<span class="string">'\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n'</span>, info.f, score(M,Mtrue));
+</pre><pre class="codeoutput">
+CP-ISYM Implict Symmetric CP Optimzation
+L-BFGS-B Optimization (https://github.com/stephenbeckr/L-BFGS-B-C)
+Order, Size: 3, 100
+Lower bound: -Inf, Upper bound: Inf
+Parameters: m=5, ftol=1e-10, gtol=1e-05, maxiters = 1000, subiters = 10
+
+Begin Main Loop
+Iter     1, f(x) = 1.798804e-04, ||grad||_infty = 1.54e-02, 4.50e-03
+Iter     2, f(x) = 2.009885e-06, ||grad||_infty = 1.15e-03, 5.64e-03
+Iter     3, f(x) = 1.320009e-06, ||grad||_infty = 7.90e-04, 6.92e-03
+Iter     4, f(x) = 9.160013e-07, ||grad||_infty = 2.02e-04, 8.24e-03
+Iter     5, f(x) = 6.929470e-07, ||grad||_infty = 1.16e-04, 9.59e-03
+Iter     6, f(x) = 2.975243e-07, ||grad||_infty = 2.70e-04, 1.09e-02
+Iter     7, f(x) = 1.647469e-07, ||grad||_infty = 1.26e-04, 1.23e-02
+Iter     8, f(x) = 1.401774e-07, ||grad||_infty = 6.75e-05, 1.37e-02
+Iter     9, f(x) = 1.275847e-07, ||grad||_infty = 7.95e-05, 1.50e-02
+Iter    10, f(x) = 7.883570e-08, ||grad||_infty = 1.39e-04, 1.70e-02
+Iter    11, f(x) = 5.170653e-08, ||grad||_infty = 3.19e-05, 1.83e-02
+Iter    12, f(x) = 3.582501e-08, ||grad||_infty = 1.63e-05, 1.95e-02
+Iter    13, f(x) = 1.921946e-08, ||grad||_infty = 9.09e-05, 2.10e-02
+Iter    14, f(x) = 6.336888e-09, ||grad||_infty = 4.28e-05, 2.22e-02
+Iter    15, f(x) = 3.691645e-09, ||grad||_infty = 3.04e-05, 2.37e-02
+Iter    16, f(x) = 2.252858e-09, ||grad||_infty = 9.17e-06, 2.51e-02
+End Main Loop
+
+Final f: 2.2529e-09
+Setup time: 0.0024 seconds
+Optimization time: 0.026 seconds
+Iterations: 16
+Total iterations: 35
+Exit condition: CONVERGENCE: NORM_OF_PROJECTED_GRADIENT_&lt;=_PGTOL.
+
+		*** Final F: 2.25e-09, Score: 0.95 ***
+
+</pre><p>It is also possible to specify the initial guess as factor matrix</p><pre class="codeinput">[M,info] = cp_isym(X,r,<span class="string">'Xnormsqr'</span>,<span class="string">'exact'</span>,<span class="string">'init'</span>,Mtrue);
+fprintf(<span class="string">'\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n'</span>, info.f, score(M,Mtrue));
+</pre><pre class="codeoutput">
+CP-ISYM Implict Symmetric CP Optimzation
+L-BFGS-B Optimization (https://github.com/stephenbeckr/L-BFGS-B-C)
+Order, Size: 3, 100
+Lower bound: -Inf, Upper bound: Inf
+Parameters: m=5, ftol=1e-10, gtol=1e-05, maxiters = 1000, subiters = 10
+
+Begin Main Loop
+Iter     1, f(x) = 1.798804e-04, ||grad||_infty = 1.54e-02, 4.42e-03
+Iter     2, f(x) = 2.009885e-06, ||grad||_infty = 1.15e-03, 5.64e-03
+Iter     3, f(x) = 1.320009e-06, ||grad||_infty = 7.90e-04, 7.02e-03
+Iter     4, f(x) = 9.160013e-07, ||grad||_infty = 2.02e-04, 8.23e-03
+Iter     5, f(x) = 6.929470e-07, ||grad||_infty = 1.16e-04, 1.00e-02
+Iter     6, f(x) = 2.975243e-07, ||grad||_infty = 2.70e-04, 1.14e-02
+Iter     7, f(x) = 1.647469e-07, ||grad||_infty = 1.26e-04, 1.26e-02
+Iter     8, f(x) = 1.401774e-07, ||grad||_infty = 6.75e-05, 1.39e-02
+Iter     9, f(x) = 1.275847e-07, ||grad||_infty = 7.95e-05, 1.53e-02
+Iter    10, f(x) = 7.883570e-08, ||grad||_infty = 1.39e-04, 1.67e-02
+Iter    11, f(x) = 5.170653e-08, ||grad||_infty = 3.19e-05, 1.80e-02
+Iter    12, f(x) = 3.582501e-08, ||grad||_infty = 1.63e-05, 1.93e-02
+Iter    13, f(x) = 1.921946e-08, ||grad||_infty = 9.09e-05, 2.06e-02
+Iter    14, f(x) = 6.336888e-09, ||grad||_infty = 4.28e-05, 2.19e-02
+Iter    15, f(x) = 3.691645e-09, ||grad||_infty = 3.04e-05, 2.31e-02
+Iter    16, f(x) = 2.252858e-09, ||grad||_infty = 9.17e-06, 2.46e-02
+End Main Loop
+
+Final f: 2.2529e-09
+Setup time: 0.0016 seconds
+Optimization time: 0.025 seconds
+Iterations: 16
+Total iterations: 35
+Exit condition: CONVERGENCE: NORM_OF_PROJECTED_GRADIENT_&lt;=_PGTOL.
+
+		*** Final F: 2.25e-09, Score: 0.95 ***
+
+</pre><p>So far we've been using the exact objective function which is close to zero for the optimal zero. We can, however, ignore the constant <tt>|X</tt>|^2 term in objective function, which saves some preprocessing cost. The main disadvantage of ignoring the constant term is that the final function value will no longer be near zero.</p><pre class="codeinput">[M,info] = cp_isym(X,r,<span class="string">'Xnormsqr'</span>,0,<span class="string">'init'</span>,Atrue,<span class="string">'printitn'</span>,1);
+fprintf(<span class="string">'\n\t\t*** Final F (adjusted): %.2e, Score: %.2f ***\n\n'</span>, <span class="keyword">...</span>
+    info.f + norm(X)^2, score(M,Mtrue));
+</pre><pre class="codeoutput">
+CP-ISYM Implict Symmetric CP Optimzation
+L-BFGS-B Optimization (https://github.com/stephenbeckr/L-BFGS-B-C)
+Order, Size: 3, 100
+Lower bound: -Inf, Upper bound: Inf
+Parameters: m=5, ftol=1e-10, gtol=1e-05, maxiters = 1000, subiters = 10
+
+Begin Main Loop
+Iter     1, f(x) = -2.108869e-01, ||grad||_infty = 5.67e-02, 3.00e-03
+Iter     2, f(x) = -2.551309e-01, ||grad||_infty = 4.68e-02, 5.40e-03
+Iter     3, f(x) = -2.954389e-01, ||grad||_infty = 1.44e-02, 7.86e-03
+Iter     4, f(x) = -2.983326e-01, ||grad||_infty = 1.31e-02, 8.97e-03
+Iter     5, f(x) = -2.998836e-01, ||grad||_infty = 5.63e-03, 1.03e-02
+Iter     6, f(x) = -3.003519e-01, ||grad||_infty = 5.88e-04, 1.20e-02
+Iter     7, f(x) = -3.003573e-01, ||grad||_infty = 7.43e-05, 1.36e-02
+Iter     8, f(x) = -3.003574e-01, ||grad||_infty = 5.83e-05, 1.49e-02
+Iter     9, f(x) = -3.003576e-01, ||grad||_infty = 6.35e-05, 1.62e-02
+Iter    10, f(x) = -3.003578e-01, ||grad||_infty = 7.69e-05, 1.76e-02
+Iter    11, f(x) = -3.003579e-01, ||grad||_infty = 6.13e-05, 2.02e-02
+Iter    12, f(x) = -3.003580e-01, ||grad||_infty = 1.96e-05, 2.14e-02
+Iter    13, f(x) = -3.003580e-01, ||grad||_infty = 2.51e-05, 2.26e-02
+Iter    14, f(x) = -3.003580e-01, ||grad||_infty = 3.02e-06, 2.38e-02
+End Main Loop
+
+Final f: -3.0036e-01
+Setup time: 0.0013 seconds
+Optimization time: 0.024 seconds
+Iterations: 14
+Total iterations: 33
+Exit condition: CONVERGENCE: NORM_OF_PROJECTED_GRADIENT_&lt;=_PGTOL.
+
+		*** Final F (adjusted): 4.60e-10, Score: 0.95 ***
+
+</pre><p>By default, the method uses the randomized range finder (rrf) for the initial guess. This is the default initial guess and works well.</p><pre class="codeinput">rng(1)
+[M,info] = cp_isym(X,r,<span class="string">'Xnormsqr'</span>,<span class="string">'exact'</span>,<span class="string">'printitn'</span>,5,<span class="string">'init'</span>,<span class="string">'rrf'</span>);
+fprintf(<span class="string">'\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n'</span>, info.f, score(M,Mtrue));
+</pre><pre class="codeoutput">
+CP-ISYM Implict Symmetric CP Optimzation
+L-BFGS-B Optimization (https://github.com/stephenbeckr/L-BFGS-B-C)
+Order, Size: 3, 100
+Lower bound: -Inf, Upper bound: Inf
+Parameters: m=5, ftol=1e-10, gtol=1e-05, maxiters = 1000, subiters = 10
+
+Begin Main Loop
+Iter     5, f(x) = 4.265680e-02, ||grad||_infty = 1.81e-02, 6.42e-03
+Iter    10, f(x) = 2.260594e-02, ||grad||_infty = 1.28e-02, 1.04e-02
+Iter    15, f(x) = 1.363733e-02, ||grad||_infty = 1.88e-02, 1.48e-02
+Iter    20, f(x) = 1.381487e-03, ||grad||_infty = 1.22e-02, 1.95e-02
+Iter    25, f(x) = 5.283198e-05, ||grad||_infty = 1.45e-03, 2.32e-02
+Iter    30, f(x) = 6.142064e-07, ||grad||_infty = 1.11e-04, 2.67e-02
+Iter    35, f(x) = 1.823079e-08, ||grad||_infty = 1.78e-05, 3.09e-02
+Iter    39, f(x) = 8.114700e-10, ||grad||_infty = 3.67e-06, 3.46e-02
+End Main Loop
+
+Final f: 8.1147e-10
+Setup time: 0.00097 seconds
+Optimization time: 0.035 seconds
+Iterations: 39
+Total iterations: 86
+Exit condition: CONVERGENCE: NORM_OF_PROJECTED_GRADIENT_&lt;=_PGTOL.
+
+		*** Final F: 8.11e-10, Score: 0.95 ***
+
+</pre><p>If we run instead with a random Gaussian initial guess, we are unlikey to converge.</p><pre class="codeinput">rng(77)
+[M,info,M0] = cp_isym(X,r,<span class="string">'Xnormsqr'</span>,<span class="string">'exact'</span>,<span class="string">'printitn'</span>,5,<span class="string">'init'</span>,@randn);
+fprintf(<span class="string">'\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n'</span>, info.f, score(M,Mtrue));
+</pre><pre class="codeoutput">
+CP-ISYM Implict Symmetric CP Optimzation
+L-BFGS-B Optimization (https://github.com/stephenbeckr/L-BFGS-B-C)
+Order, Size: 3, 100
+Lower bound: -Inf, Upper bound: Inf
+Parameters: m=5, ftol=1e-10, gtol=1e-05, maxiters = 1000, subiters = 10
+
+Begin Main Loop
+Iter     5, f(x) = 1.568859e+00, ||grad||_infty = 2.43e+03, 4.85e-03
+Iter    10, f(x) = 3.002914e-01, ||grad||_infty = 1.21e-02, 9.12e-03
+Iter    11, f(x) = 3.002914e-01, ||grad||_infty = 1.68e-03, 9.79e-03
+End Main Loop
+
+Final f: 3.0029e-01
+Setup time: 0.0032 seconds
+Optimization time: 0.01 seconds
+Iterations: 11
+Total iterations: 24
+Exit condition: CONVERGENCE: REL_REDUCTION_OF_F_&lt;=_FACTR*EPSMCH.
+
+		*** Final F: 3.00e-01, Score: 0.00 ***
+
+</pre><p>Sometimes a random initialization does a little better if the convergence tolerances are tightened and the maximum iterations is increased. We also increase the memory in Limited-memory BFGS to see if that helps. It gets a little better, but still no where near the solution with the randomized range finder.</p><pre class="codeinput">[M,info] = cp_isym(X,r,<span class="string">'Xnormsqr'</span>,<span class="string">'exact'</span>,<span class="string">'printitn'</span>,5,<span class="string">'init'</span>,M0,<span class="keyword">...</span>
+    <span class="string">'ftol'</span>,1e-14,<span class="string">'gtol'</span>,1e-8,<span class="string">'maxiters'</span>,10000,<span class="string">'m'</span>,25);
+fprintf(<span class="string">'\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n'</span>, info.f, score(M,Mtrue));
+</pre><pre class="codeoutput">
+CP-ISYM Implict Symmetric CP Optimzation
+L-BFGS-B Optimization (https://github.com/stephenbeckr/L-BFGS-B-C)
+Order, Size: 3, 100
+Lower bound: -Inf, Upper bound: Inf
+Parameters: m=25, ftol=1e-14, gtol=1e-08, maxiters = 10000, subiters = 10
+
+Begin Main Loop
+Iter     5, f(x) = 1.568859e+00, ||grad||_infty = 2.43e+03, 4.86e-03
+Iter    10, f(x) = 3.002914e-01, ||grad||_infty = 8.83e-03, 8.24e-03
+Iter    15, f(x) = 3.002914e-01, ||grad||_infty = 9.08e-04, 1.36e-02
+Iter    20, f(x) = 3.002914e-01, ||grad||_infty = 1.39e-02, 1.75e-02
+Iter    25, f(x) = 3.002914e-01, ||grad||_infty = 1.59e-01, 2.18e-02
+Iter    30, f(x) = 3.002899e-01, ||grad||_infty = 1.81e+00, 2.69e-02
+Iter    35, f(x) = 2.191333e-01, ||grad||_infty = 3.14e+02, 3.63e-02
+Iter    40, f(x) = 1.203681e-01, ||grad||_infty = 4.07e+03, 4.29e-02
+Iter    45, f(x) = 1.116589e-01, ||grad||_infty = 7.46e+02, 5.05e-02
+Iter    50, f(x) = 1.041222e-01, ||grad||_infty = 4.91e+01, 6.26e-02
+Iter    55, f(x) = 1.034506e-01, ||grad||_infty = 1.35e-03, 6.81e-02
+Iter    60, f(x) = 1.034506e-01, ||grad||_infty = 4.54e-02, 7.33e-02
+Iter    65, f(x) = 1.034504e-01, ||grad||_infty = 5.71e-01, 7.93e-02
+Iter    70, f(x) = 1.034220e-01, ||grad||_infty = 6.39e+00, 8.47e-02
+Iter    75, f(x) = 1.021516e-01, ||grad||_infty = 1.85e+02, 9.17e-02
+Iter    80, f(x) = 8.415741e-02, ||grad||_infty = 5.40e+02, 9.89e-02
+Iter    85, f(x) = 8.404990e-02, ||grad||_infty = 6.41e+00, 1.05e-01
+Iter    90, f(x) = 8.404952e-02, ||grad||_infty = 1.19e-01, 1.12e-01
+Iter    95, f(x) = 8.404951e-02, ||grad||_infty = 9.01e-03, 1.18e-01
+Iter    97, f(x) = 8.404951e-02, ||grad||_infty = 5.18e-05, 1.21e-01
+End Main Loop
+
+Final f: 8.4050e-02
+Setup time: 0.00064 seconds
+Optimization time: 0.12 seconds
+Iterations: 97
+Total iterations: 214
+Exit condition: CONVERGENCE: REL_REDUCTION_OF_F_&lt;=_FACTR*EPSMCH.
+
+		*** Final F: 8.40e-02, Score: 0.07 ***
+
+</pre><h2 id="15">Options for CP-ISYM with L-BFGS optimization solver from Poblano</h2><pre class="codeinput">rng(1)
+[M,info] = cp_isym(X,r,<span class="string">'Xnormsqr'</span>,<span class="string">'exact'</span>,<span class="string">'printitn'</span>,5,<span class="string">'method'</span>,<span class="string">'lbfgs'</span>);
+fprintf(<span class="string">'\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n'</span>, info.f, score(M,Mtrue));
+</pre><pre class="codeoutput">
+CP-ISYM Implict Symmetric CP Optimzation
+Poblano L-BFGS Optimization
+Order, Size: 3, 100
+Parameters: m=5, ftol=1e-10, gtol=1e-05, maxiters = 1000, maxsubiters=10000
+
+Begin Main Loop
+ Iter  FuncEvals       F(X)          ||G(X)||/N        
+------ --------- ---------------- ----------------
+     0         1       3.92027347       0.02425307
+     5        18       0.04889771       0.00026180
+    10        30       0.02227461       0.00010159
+    15        45       0.01590084       0.00016813
+    20        60       0.00156181       0.00008811
+    25        70       0.00005713       0.00001458
+    26        73       0.00001608       0.00000982
+End Main Loop
+
+Final f: 1.6075e-05
+Setup time: 0.0018 seconds
+Optimization time: 0.087 seconds
+Iterations: 26
+Total iterations: 73
+Exit condition: Successful termination based on StopTol
+
+		*** Final F: 1.61e-05, Score: 0.95 ***
+
+</pre><h2 id="16">Options for CP-ISYM with Quasi-Newton optimization solver from Optimization Toolbox</h2><pre class="codeinput">rng(1)
+[M,info] = cp_isym(X,r,<span class="string">'Xnormsqr'</span>,<span class="string">'exact'</span>,<span class="string">'printitn'</span>,5,<span class="string">'method'</span>,<span class="string">'fminunc'</span>);
+fprintf(<span class="string">'\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n'</span>, info.f, score(M,Mtrue));
+</pre><pre class="codeoutput">
+CP-ISYM Implict Symmetric CP Optimzation
+Quasi-Newton Optimization (via Optimization Toolbox)
+Order, Size: 3, 100
+Parameters: gtol=1e-05, maxiters = 1000, maxsubiters=10000
+
+Begin Main Loop
+                                                        First-order 
+ Iteration  Func-count       f(x)        Step-size       optimality
+     0           1          3.92027                          1.95
+     1           3         0.275394       0.164109         0.0628  
+     2           7          0.14028        12.0063           0.11  
+     3           8         0.128657              1         0.0684  
+     4          10         0.085529            0.5         0.0396  
+     5          11        0.0815813              1         0.0462  
+     6          12        0.0798902              1        0.00739  
+     7          14        0.0776973             10         0.0267  
+     8          15        0.0750789              1         0.0245  
+     9          17        0.0704473       0.480552          0.042  
+    10          18        0.0670865              1         0.0368  
+    11          19        0.0616269              1         0.0325  
+    12          20         0.055824              1         0.0328  
+    13          21        0.0544128              1         0.0339  
+    14          22        0.0505937              1         0.0154  
+    15          23        0.0481738              1         0.0168  
+    16          24        0.0416669              1          0.054  
+    17          25        0.0381286              1         0.0336  
+    18          26        0.0335275              1         0.0159  
+    19          27        0.0317987              1         0.0146  
+                                                        First-order 
+ Iteration  Func-count       f(x)        Step-size       optimality
+    20          28        0.0301083              1         0.0111  
+    21          29        0.0293649              1         0.0161  
+    22          30         0.027827              1        0.00893  
+    23          31        0.0265521              1        0.00975  
+    24          32        0.0261249              1        0.00918  
+    25          33        0.0251787              1        0.00625  
+    26          34          0.02455              1        0.00806  
+    27          35         0.023779              1        0.00911  
+    28          36        0.0230934              1        0.00845  
+    29          37        0.0224019              1        0.00844  
+    30          38        0.0220964              1        0.00687  
+    31          39        0.0218681              1         0.0049  
+    32          40         0.021706              1        0.00375  
+    33          41        0.0215136              1         0.0033  
+    34          42        0.0213676              1        0.00304  
+    35          43        0.0212558              1        0.00323  
+    36          44        0.0211222              1        0.00409  
+    37          45        0.0208738              1        0.00475  
+    38          46        0.0205572              1        0.00656  
+    39          47        0.0201352              1         0.0065  
+                                                        First-order 
+ Iteration  Func-count       f(x)        Step-size       optimality
+    40          48        0.0196422              1        0.00387  
+    41          49        0.0193932              1        0.00333  
+    42          50        0.0191319              1        0.00872  
+    43          51        0.0186628              1        0.00878  
+    44          52         0.017685              1        0.00907  
+    45          53        0.0169716              1        0.00861  
+    46          54          0.01577              1        0.00994  
+    47          56        0.0131656            0.5         0.0106  
+    48          57        0.0117538              1         0.0153  
+    49          58       0.00879083              1         0.0134  
+    50          59       0.00839261              1          0.012  
+    51          60       0.00394004              1        0.00878  
+    52          61       0.00304266              1          0.013  
+    53          62       0.00244168              1         0.0069  
+    54          63       0.00225538              1        0.00627  
+    55          64        0.0014968              1        0.00464  
+    56          65       0.00105029              1        0.00366  
+    57          66      0.000674101              1        0.00456  
+    58          67      0.000456871              1         0.0042  
+    59          68      0.000245825              1        0.00299  
+                                                        First-order 
+ Iteration  Func-count       f(x)        Step-size       optimality
+    60          69      9.62095e-05              1         0.0024  
+    61          70      4.02262e-05              1        0.00114  
+    62          71      2.70099e-05              1       0.000664  
+    63          72      2.21994e-05              1       0.000556  
+    64          73      1.73964e-05              1       0.000481  
+    65          74      1.28057e-05              1       0.000433  
+    66          75      1.05719e-05              1       0.000388  
+    67          76       9.4027e-06              1        0.00034  
+    68          77       7.7716e-06              1       0.000308  
+    69          78      5.32426e-06              1       0.000286  
+    70          79      2.70776e-06              1       0.000259  
+    71          80      1.17346e-06              1       0.000219  
+    72          81      6.75895e-07              1       0.000149  
+    73          82      5.27851e-07              1       0.000111  
+    74          83       4.0086e-07              1       9.15e-05  
+    75          84      2.47388e-07              1        6.9e-05  
+    76          85      1.30409e-07              1       5.92e-05  
+    77          86      7.85393e-08              1       4.16e-05  
+    78          87      6.17683e-08              1       3.58e-05  
+    79          88      5.12695e-08              1       2.56e-05  
+
+Local minimum found.
+
+Optimization completed because the size of the gradient is less than
+the selected value of the optimality tolerance.
+
+
+
+End Main Loop
+
+Final f: 5.1269e-08
+Setup time: 1.1 seconds
+Optimization time: 0.63 seconds
+Iterations: 79
+Total iterations: 88
+Exit condition: Gradient norm smaller than tolerance
+
+		*** Final F: 5.13e-08, Score: 0.95 ***
+
+</pre><h2 id="17">Options for CP-ISYM with Adam stochastic optimization solver</h2><p>When the number of observations is very large, a stochastic method may be faster. Our example is very small (p=1250), but we use it nonetheless just to demonstrate the capabilities of the stochastic method. The method is called by specifying the <tt>'method'</tt> to be <tt>'adam'</tt>.</p><pre class="codeinput">rng(5)
+[M,info] = cp_isym(X,r,<span class="string">'method'</span>,<span class="string">'adam'</span>);
+fprintf(<span class="string">'\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n'</span>, f_implicit(M,X,norm(X)^2), score(M,Mtrue));
+</pre><pre class="codeoutput">
+CP-ISYM Implict Symmetric CP Optimzation
+Adam Stochastic Optimization
+Order, Size: 3, 100
+Function: 1000 samples out of 1250 observations
+Gradient: using 100 samples  out of 1250 observations
+Max iterations (epochs): 100
+Iterations per epoch: 100
+Learning rate / decay / maxfails: 0.01 0.1 1
+Backup to best known solution after epoch fail? true
+beta1 / beta2 / epsilon: 0.9 0.999 1e-08
+
+Begin Main Loop
+Epoch  0: f~ = 4.828625e+00
+Epoch  1: f~ = -2.657838e-01, step = 0.01
+Epoch  2: f~ = -2.832830e-01, step = 0.01
+Epoch  3: f~ = -2.982487e-01, step = 0.01
+Epoch  4: f~ = -2.985366e-01, step = 0.01
+Epoch  5: f~ = -2.984525e-01, step = 0.01, nfails = 1 (resetting to solution from last epoch)
+Epoch  6: f~ = -3.001280e-01, step = 0.001
+Epoch  7: f~ = -2.996104e-01, step = 0.001, nfails = 2 (resetting to solution from last epoch)
+End Main Loop
+
+Final f~: -3.0013e-01
+Setup time: 0.01 seconds
+Optimization time: 0.40 seconds
+Number of epochs: 7
+Total iterations: 700
+Exit condition: Number of failed epochs &gt; 1
+
+		*** Final F: 1.51e-04, Score: 0.95 ***
+
+</pre><p>Since this problem is small, we can compute the function value exactly.</p><pre class="codeinput">rng(5)
+[M,info] = cp_isym(X,r,<span class="string">'method'</span>,<span class="string">'adam'</span>,<span class="string">'fsamp'</span>,<span class="string">'exact'</span>,<span class="string">'Xnormsqr'</span>,<span class="string">'exact'</span>);
+fprintf(<span class="string">'\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n'</span>, f_implicit(M,X,norm(X)^2), score(M,Mtrue));
+</pre><pre class="codeoutput">
+CP-ISYM Implict Symmetric CP Optimzation
+Adam Stochastic Optimization
+Order, Size: 3, 100
+Function: exact
+Gradient: using 100 samples  out of 1250 observations
+Max iterations (epochs): 100
+Iterations per epoch: 100
+Learning rate / decay / maxfails: 0.01 0.1 1
+Backup to best known solution after epoch fail? true
+beta1 / beta2 / epsilon: 0.9 0.999 1e-08
+
+Begin Main Loop
+Epoch  0: f = 5.123527e+00
+Epoch  1: f = 3.595388e-02, step = 0.01
+Epoch  2: f = 1.618031e-02, step = 0.01
+Epoch  3: f = 1.507292e-03, step = 0.01
+Epoch  4: f = 2.553210e-03, step = 0.01, nfails = 1 (resetting to solution from last epoch)
+Epoch  5: f = 1.624327e-04, step = 0.001
+Epoch  6: f = 1.601540e-04, step = 0.001
+Epoch  7: f = 3.981757e-04, step = 0.001, nfails = 2 (resetting to solution from last epoch)
+End Main Loop
+
+Final f: 1.6015e-04
+Setup time: 0.01 seconds
+Optimization time: 0.41 seconds
+Number of epochs: 7
+Total iterations: 700
+Exit condition: Number of failed epochs &gt; 1
+
+		*** Final F: 1.60e-04, Score: 0.96 ***
+
+</pre><p>We can also change the number of samples in each stochastic gradient (<tt>'gsamp'</tt>) and correspondingly increase the number of iterations per epoch (<tt>'subiters'</tt>).</p><pre class="codeinput">rng(5)
+[M,info] = cp_isym(X,r,<span class="string">'method'</span>,<span class="string">'adam'</span>,<span class="string">'fsamp'</span>,<span class="string">'exact'</span>,<span class="string">'Xnormsqr'</span>,<span class="string">'exact'</span>,<span class="keyword">...</span>
+    <span class="string">'gsamp'</span>,10,<span class="string">'subiters'</span>,250);
+fprintf(<span class="string">'\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n'</span>, f_implicit(M,X,norm(X)^2), score(M,Mtrue));
+</pre><pre class="codeoutput">
+CP-ISYM Implict Symmetric CP Optimzation
+Adam Stochastic Optimization
+Order, Size: 3, 100
+Function: exact
+Gradient: using 10 samples  out of 1250 observations
+Max iterations (epochs): 100
+Iterations per epoch: 250
+Learning rate / decay / maxfails: 0.01 0.1 1
+Backup to best known solution after epoch fail? true
+beta1 / beta2 / epsilon: 0.9 0.999 1e-08
+
+Begin Main Loop
+Epoch  0: f = 5.123527e+00
+Epoch  1: f = 2.239609e-02, step = 0.01
+Epoch  2: f = 6.190717e-03, step = 0.01
+Epoch  3: f = 1.955220e-02, step = 0.01, nfails = 1 (resetting to solution from last epoch)
+Epoch  4: f = 6.693318e-03, step = 0.001, nfails = 2 (resetting to solution from last epoch)
+End Main Loop
+
+Final f: 6.1907e-03
+Setup time: 0.00 seconds
+Optimization time: 0.26 seconds
+Number of epochs: 4
+Total iterations: 1000
+Exit condition: Number of failed epochs &gt; 1
+
+		*** Final F: 6.19e-03, Score: 0.89 ***
+
+</pre><p>We can further improve by increasing the number of times we decrease the step length (<tt>'maxfails'</tt>).</p><pre class="codeinput">rng(5)
+[M,info] = cp_isym(X,r,<span class="string">'method'</span>,<span class="string">'adam'</span>,<span class="string">'fsamp'</span>,<span class="string">'exact'</span>,<span class="string">'Xnormsqr'</span>,<span class="string">'exact'</span>,<span class="keyword">...</span>
+    <span class="string">'gsamp'</span>,10,<span class="string">'subiters'</span>,250,<span class="string">'maxfails'</span>,4);
+fprintf(<span class="string">'\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n'</span>, f_implicit(M,X,norm(X)^2), score(M,Mtrue));
+</pre><pre class="codeoutput">
+CP-ISYM Implict Symmetric CP Optimzation
+Adam Stochastic Optimization
+Order, Size: 3, 100
+Function: exact
+Gradient: using 10 samples  out of 1250 observations
+Max iterations (epochs): 100
+Iterations per epoch: 250
+Learning rate / decay / maxfails: 0.01 0.1 4
+Backup to best known solution after epoch fail? true
+beta1 / beta2 / epsilon: 0.9 0.999 1e-08
+
+Begin Main Loop
+Epoch  0: f = 5.123527e+00
+Epoch  1: f = 2.239609e-02, step = 0.01
+Epoch  2: f = 6.190717e-03, step = 0.01
+Epoch  3: f = 1.955220e-02, step = 0.01, nfails = 1 (resetting to solution from last epoch)
+Epoch  4: f = 6.693318e-03, step = 0.001, nfails = 2 (resetting to solution from last epoch)
+Epoch  5: f = 1.111507e-03, step = 0.0001
+Epoch  6: f = 3.658467e-04, step = 0.0001
+Epoch  7: f = 1.958052e-04, step = 0.0001
+Epoch  8: f = 2.450883e-04, step = 0.0001, nfails = 3 (resetting to solution from last epoch)
+Epoch  9: f = 1.802417e-04, step = 1e-05
+Epoch 10: f = 1.692018e-04, step = 1e-05
+Epoch 11: f = 1.604512e-04, step = 1e-05
+Epoch 12: f = 1.384002e-04, step = 1e-05
+Epoch 13: f = 1.418440e-04, step = 1e-05, nfails = 4 (resetting to solution from last epoch)
+Epoch 14: f = 1.356883e-04, step = 1e-06
+Epoch 15: f = 1.352304e-04, step = 1e-06
+Epoch 16: f = 1.333213e-04, step = 1e-06
+Epoch 17: f = 1.320493e-04, step = 1e-06
+Epoch 18: f = 1.304712e-04, step = 1e-06
+Epoch 19: f = 1.304975e-04, step = 1e-06, nfails = 5 (resetting to solution from last epoch)
+End Main Loop
+
+Final f: 1.3047e-04
+Setup time: 0.01 seconds
+Optimization time: 1.41 seconds
+Number of epochs: 19
+Total iterations: 4750
+Exit condition: Number of failed epochs &gt; 4
+
+		*** Final F: 1.30e-04, Score: 0.97 ***
+
+</pre><p>We also change the initial learning rate via 'rate'.</p><pre class="codeinput">rng(5)
+[M,info] = cp_isym(X,r,<span class="string">'method'</span>,<span class="string">'adam'</span>,<span class="string">'fsamp'</span>,<span class="string">'exact'</span>,<span class="string">'Xnormsqr'</span>,<span class="string">'exact'</span>,<span class="string">'rate'</span>,1e-3);
+fprintf(<span class="string">'\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n'</span>, f_implicit(M,X,norm(X)^2), score(M,Mtrue));
+</pre><pre class="codeoutput">
+CP-ISYM Implict Symmetric CP Optimzation
+Adam Stochastic Optimization
+Order, Size: 3, 100
+Function: exact
+Gradient: using 100 samples  out of 1250 observations
+Max iterations (epochs): 100
+Iterations per epoch: 100
+Learning rate / decay / maxfails: 0.001 0.1 1
+Backup to best known solution after epoch fail? true
+beta1 / beta2 / epsilon: 0.9 0.999 1e-08
+
+Begin Main Loop
+Epoch  0: f = 5.123527e+00
+Epoch  1: f = 1.636029e-01, step = 0.001
+Epoch  2: f = 6.960158e-02, step = 0.001
+Epoch  3: f = 4.769470e-02, step = 0.001
+Epoch  4: f = 3.871023e-02, step = 0.001
+Epoch  5: f = 3.369702e-02, step = 0.001
+Epoch  6: f = 3.012290e-02, step = 0.001
+Epoch  7: f = 2.722983e-02, step = 0.001
+Epoch  8: f = 2.466563e-02, step = 0.001
+Epoch  9: f = 2.200866e-02, step = 0.001
+Epoch 10: f = 1.999008e-02, step = 0.001
+Epoch 11: f = 1.800170e-02, step = 0.001
+Epoch 12: f = 1.660821e-02, step = 0.001
+Epoch 13: f = 1.525271e-02, step = 0.001
+Epoch 14: f = 1.399967e-02, step = 0.001
+Epoch 15: f = 1.185572e-02, step = 0.001
+Epoch 16: f = 9.517354e-03, step = 0.001
+Epoch 17: f = 6.242648e-03, step = 0.001
+Epoch 18: f = 3.505938e-03, step = 0.001
+Epoch 19: f = 1.700016e-03, step = 0.001
+Epoch 20: f = 7.406634e-04, step = 0.001
+Epoch 21: f = 4.796099e-04, step = 0.001
+Epoch 22: f = 4.453608e-04, step = 0.001
+Epoch 23: f = 1.749952e-04, step = 0.001
+Epoch 24: f = 1.949576e-04, step = 0.001, nfails = 1 (resetting to solution from last epoch)
+Epoch 25: f = 6.149062e-05, step = 0.0001
+Epoch 26: f = 7.074476e-05, step = 0.0001, nfails = 2 (resetting to solution from last epoch)
+End Main Loop
+
+Final f: 6.1491e-05
+Setup time: 0.01 seconds
+Optimization time: 1.13 seconds
+Number of epochs: 26
+Total iterations: 2600
+Exit condition: Number of failed epochs &gt; 1
+
+		*** Final F: 6.15e-05, Score: 0.96 ***
+
+</pre><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Implicit Symmetric CP Decomposition for Symmetric K-Tensors
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="cp.html">CP Decompositions</a> 
+% &#62;&#62; <a href="cp_isym_doc.html">CP-ISYM</a>
+% </p>
+% </html>
+%
+% The function |cp_isym| computes the symmetric CP
+% decomposition of a symmetric tensor that is in symmetric k-tensor format,
+% meaning that it is the sum of symmetric outer products and stored as a
+% |symktensor| object.
+% The decomposition is described in the following reference:
+%
+% * S. Sherman, T. G. Kolda, Estimating Higher-Order Moments Using
+%   Symmetric Tensor Decomposition, SIAM J. Matrix Analysis and 
+%   Applications, 41:1369-1387, 2020,
+%   <https://doi.org/10.1137/19m1299633>
+
+%% Requirements
+% This code requires an optimization solver. Our examples use the L-BFGS-B
+% optimization method; see <opt_options_doc.html Optimization Options> for
+% details of installation and usage as well as other options for
+% optimization solvers.
+
+
+%% Create a sample problem based on a Gaussian mixture model. 
+% Here we used the third-order moment (d=3), for a problem with random
+% variables of dimension n=100. We take a mixture of r=5 Gaussians and
+% collect p=750 observations.
+d = 3; 
+n = 100;
+r = 5;
+p = 250*r;
+
+%%
+% We construct the means so that they are collinear, i.e., the cosine of
+% the angle between any two vectors is 0.5. This is a more difficult
+% problem than purely random vectors which are close to orthogonal.
+rng('default');
+collinearity = 0.5;
+Atrue = matrandcong(n,r,collinearity);
+
+%%
+% Each Gaussian gets equal weight in the mixture.
+wghts = 1/r * ones(r,1);
+
+%%
+% The `true` solution is based on the means and their prevalence in the
+% mixture.
+Mtrue = symktensor(wghts,Atrue,d);
+Mtrue = normalize(Mtrue);
+
+%%
+% The data tensor is based on noisy observations from the mixture model.
+% The |idx| determines which Gaussian is sampled. And the samples have
+% noise as specified by |stddev|. The result is assembled into an
+% observation tensor that in |symktensor| format.
+idx = randsample(r,p,true,wghts);
+stddev = 1e-3;
+noise = stddev * randn(n,p);
+V = Atrue(:,idx) + noise;
+X = symktensor(1/p*ones(p,1),V,d);
+X = normalize(X,0);
+
+%% Recommend multiple runs of CP-ISYM 
+% Since this is a non-convex optimization problem, it's critically
+% important to do multiple runs of the optimzation problem. In the code
+% below, we run 10 times. Not every run will converge to the global minimum. 
+% We take solution with the lowest function value, which should ideally
+% yield the best match to the true solution. For our artificial problem, we
+% can actually verify the score of how well the computed solution matches
+% with the ideal solution.
+rng(7)
+nruns = 10;
+M = cell(nruns,1);
+info = cell(nruns,1);
+for i = 1:nruns
+    fprintf('REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- Run %d of %d REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n', i, nruns);
+    [M{i},info{i}] = cp_isym(X,r,'Xnormsqr','exact','printitn',0);
+    fprintf('Final F: %.2e, Score: %.2f\n', info{i}.f, score(M{i},Mtrue));
+    if i == 1
+        ifbest = i;
+        fbest = info{i}.f;
+        sfbest = score(M{i},Mtrue);
+    elseif info{i}.f < fbest
+        ifbest = i;
+        fbest = info{i}.f;
+        sfbest = score(M{i},Mtrue);
+    end
+end
+
+%%
+fprintf('REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH- Best of %d runs REPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASHREPLACE_WITH_DASH_DASH\n', nruns);
+fprintf('Run %d -> Final F: %.2e, Score: %.2f\n', ifbest, fbest, sfbest);
+
+%% Options for CP-ISYM with L-BFGS-B (default) optimization solver
+% The CP solution should produce something close to |Mtrue|, but it will
+% not be exact because of the randomness in building the observation
+% tensor. Here we show what happens when the true solution is provided as
+% an initial guess. The function should converge to zero, and the
+% similarlity score should be close to one. The method defaults to
+% |'lfbgsb'|.
+
+[M,info] = cp_isym(X,r,'Xnormsqr','exact','init',Mtrue);
+fprintf('\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n', info.f, score(M,Mtrue));
+
+%% 
+% It is also possible to specify the initial guess as factor matrix 
+[M,info] = cp_isym(X,r,'Xnormsqr','exact','init',Mtrue);
+fprintf('\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n', info.f, score(M,Mtrue));
+
+%%
+% So far we've been using the exact objective function which is close to
+% zero for the optimal zero. We can, however, ignore the constant ||X||^2
+% term in objective function, which saves some preprocessing cost. The main
+% disadvantage of ignoring the constant term is that the final function
+% value will no longer be near zero. 
+[M,info] = cp_isym(X,r,'Xnormsqr',0,'init',Atrue,'printitn',1);
+fprintf('\n\t\t*** Final F (adjusted): %.2e, Score: %.2f ***\n\n', ...
+    info.f + norm(X)^2, score(M,Mtrue));
+
+%% 
+% By default, the method uses the randomized range finder (rrf) for the
+% initial guess. This is the default initial guess and works well.
+rng(1)
+[M,info] = cp_isym(X,r,'Xnormsqr','exact','printitn',5,'init','rrf');
+fprintf('\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n', info.f, score(M,Mtrue));
+
+
+%% 
+% If we run instead with a random Gaussian initial guess, we are unlikey to
+% converge. 
+rng(77)
+[M,info,M0] = cp_isym(X,r,'Xnormsqr','exact','printitn',5,'init',@randn);
+fprintf('\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n', info.f, score(M,Mtrue));
+
+
+%%
+% Sometimes a random initialization does a little better if the convergence
+% tolerances are tightened and the maximum iterations is increased. We also
+% increase the memory in Limited-memory BFGS to see if that helps. It gets
+% a little better, but still no where near the solution with the randomized
+% range finder. 
+[M,info] = cp_isym(X,r,'Xnormsqr','exact','printitn',5,'init',M0,...
+    'ftol',1e-14,'gtol',1e-8,'maxiters',10000,'m',25);
+fprintf('\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n', info.f, score(M,Mtrue));
+
+%% Options for CP-ISYM with L-BFGS optimization solver from Poblano
+rng(1)
+[M,info] = cp_isym(X,r,'Xnormsqr','exact','printitn',5,'method','lbfgs');
+fprintf('\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n', info.f, score(M,Mtrue));
+
+%% Options for CP-ISYM with Quasi-Newton optimization solver from Optimization Toolbox
+rng(1)
+[M,info] = cp_isym(X,r,'Xnormsqr','exact','printitn',5,'method','fminunc');
+fprintf('\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n', info.f, score(M,Mtrue));
+
+%% Options for CP-ISYM with Adam stochastic optimization solver
+% When the number of observations is very large, a stochastic method may be
+% faster. Our example is very small (p=1250), but we use it nonetheless
+% just to demonstrate the capabilities of the stochastic method. The method
+% is called by specifying the |'method'| to be |'adam'|. 
+
+rng(5)
+[M,info] = cp_isym(X,r,'method','adam');
+fprintf('\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n', f_implicit(M,X,norm(X)^2), score(M,Mtrue));
+
+%%
+% Since this problem is small, we can compute the function value exactly.
+rng(5)
+[M,info] = cp_isym(X,r,'method','adam','fsamp','exact','Xnormsqr','exact');
+fprintf('\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n', f_implicit(M,X,norm(X)^2), score(M,Mtrue));
+
+%%
+% We can also change the number of samples in each stochastic gradient
+% (|'gsamp'|) and correspondingly increase the number of iterations per
+% epoch (|'subiters'|).
+rng(5)
+[M,info] = cp_isym(X,r,'method','adam','fsamp','exact','Xnormsqr','exact',...
+    'gsamp',10,'subiters',250);
+fprintf('\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n', f_implicit(M,X,norm(X)^2), score(M,Mtrue));
+
+%%
+% We can further improve by increasing the number of times we decrease the
+% step length (|'maxfails'|). 
+rng(5)
+[M,info] = cp_isym(X,r,'method','adam','fsamp','exact','Xnormsqr','exact',...
+    'gsamp',10,'subiters',250,'maxfails',4);
+fprintf('\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n', f_implicit(M,X,norm(X)^2), score(M,Mtrue));
+
+%%
+% We also change the initial learning rate via 'rate'.
+rng(5)
+[M,info] = cp_isym(X,r,'method','adam','fsamp','exact','Xnormsqr','exact','rate',1e-3);
+fprintf('\n\t\t*** Final F: %.2e, Score: %.2f ***\n\n', f_implicit(M,X,norm(X)^2), score(M,Mtrue));
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,333 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Function Types for GCP</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-01-13"><meta name="DC.source" content="gcp_opt_fg_options_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Function Types for GCP</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="cp.html">CP Decompositions</a>
+&#62;&#62; <a href="gcp_opt_doc.html">GCP-OPT</a>
+&#62;&#62; <a href="gcp_opt_gf_options_doc.html">Function Types for GCP</a>
+</p>
+</p><p>The GCP capability of the Tensor Toolbox allows the user to specify a fit function. There are a number of ''standard'' choices that we provide via the helper function <tt>tt_gcp_fg_setup</tt> function. These choices are presented in detail below. Motivations and details for these choices can be found in:</p><div><ul><li>D. Hong, T. G. Kolda, J. A. Duersch, Generalized Canonical   Polyadic Tensor Decomposition, SIAM Review, 62:133-163, 2020,   <a href="https://doi.org/10.1137/18M1203626">https://doi.org/10.1137/18M1203626</a></li></ul></div><p>These choices can be passed directly to gcp_opt via the 'type' option. To test the options, call the hidden function:</p><p><tt>[f,g,lowerbnd] = tt_gcp_fg_setup(type)</tt></p><p>We discuss the choices for the type below.</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Gaussian (real-valued data)</a></li><li><a href="#2">Poisson (count data)</a></li><li><a href="#3">Poisson with Log Link (count data)</a></li><li><a href="#4">Bernoulli with Odds Link (binary data)</a></li><li><a href="#5">Bernoulli with Logit Link (binary data)</a></li><li><a href="#6">Rayleigh (real-valued data)</a></li><li><a href="#7">Gamma (nonnegative real-valued data)</a></li><li><a href="#8">Huber (nonnegative real-valued data)</a></li><li><a href="#9">Negative Binomial (count data)</a></li><li><a href="#10">Beta (nonnegative real-valued data)</a></li></ul></div><h2 id="1">Gaussian (real-valued data)</h2><p>This is indicated by specifying the type as either <tt>'normal'</tt> or <tt>'gaussian'</tt>. This choice correspond to standard CP, which is implemented in  <tt>cp_als</tt> and <tt>cp_opt</tt>. It is useful for continuous real-valued data tensors. This choice specifies</p><p><img src="gcp_opt_fg_options_doc_eq09388644898771493288.png" alt="$$f(x,m) = (x-m)^2, \quad g(x,m) = 2(m-x), \quad \ell=-\infty$$" style="width:227px;height:11px;"></p><pre class="codeinput">[f,g,lowerbnd] = tt_gcp_fg_setup(<span class="string">'normal'</span>)
+</pre><pre class="codeoutput">f =
+  function_handle with value:
+    @(x,m)(m-x).^2
+g =
+  function_handle with value:
+    @(x,m)2.*(m-x)
+lowerbnd =
+  -Inf
+</pre><h2 id="2">Poisson (count data)</h2><p>This is indicated by specifying the type as either <tt>'count'</tt> or <tt>'poisson'</tt>. This choice is useful for count data tensors, i.e., tensors that have only entries in {0,1,2,...}. This choice corresponds to Poisson CP, which is implemente din <tt>cp_apr</tt>. This choice specifies</p><p><img src="gcp_opt_fg_options_doc_eq01319482828136681922.png" alt="$$f(x,m) = m - x \log(m + 10^{-10}),&#xA;\quad g(x,m) = 1 - \frac{x}{m+10^{-10}},&#xA;\quad \ell=0$$" style="width:292px;height:19px;"></p><p>The quantity <img src="gcp_opt_fg_options_doc_eq13518639599403624062.png" alt="$10^{-10}$" style="width:21px;height:9px;"> is a fudge factor to avoid divide-by-zero errors.</p><pre class="codeinput">[f,g,lowerbnd] = tt_gcp_fg_setup(<span class="string">'count'</span>)
+</pre><pre class="codeoutput">f =
+  function_handle with value:
+    @(x,m)m-x.*log(m+1e-10)
+g =
+  function_handle with value:
+    @(x,m)1-x./(m+1e-10)
+lowerbnd =
+     0
+</pre><h2 id="3">Poisson with Log Link (count data)</h2><p>This is indicated by specifying the type as <tt>'poisson-log'</tt>. This choice is useful for count data tensors, i.e., tensors that have only entries in {0,1,2,...}.  This choice specifies</p><p><img src="gcp_opt_fg_options_doc_eq06979095243309502660.png" alt="$$f(x,m) = e^m - x m,&#xA;\quad g(x,m) = e^m - x,&#xA;\quad \ell=-\infty$$" style="width:217px;height:10px;"></p><pre class="codeinput">[f,g,lowerbnd] = tt_gcp_fg_setup(<span class="string">'poisson-log'</span>)
+</pre><pre class="codeoutput">f =
+  function_handle with value:
+    @(x,m)exp(m)-x.*m
+g =
+  function_handle with value:
+    @(x,m)exp(m)-x
+lowerbnd =
+  -Inf
+</pre><h2 id="4">Bernoulli with Odds Link (binary data)</h2><p>This is indicated by specifying the type as either <tt>'binary'</tt> or <tt>'bernoulli-odds'</tt>. This choice is useful for binary data tensors, i.e., tensors that have only 0 or 1 entries. This choice specifies</p><p><img src="gcp_opt_fg_options_doc_eq15344686563027419211.png" alt="$$f(x,m) = \log(m+1) - x \log(m + 10^{-10}),&#xA;\quad g(x,m) = \frac{1}{m+1} - \frac{x}{m+10^{-10}},&#xA;\quad \ell=0$$" style="width:352px;height:21px;"></p><p>The quantity <img src="gcp_opt_fg_options_doc_eq13518639599403624062.png" alt="$10^{-10}$" style="width:21px;height:9px;"> is a fudge factor to avoid divide-by-zero errors.</p><pre class="codeinput">[f,g,lowerbnd] = tt_gcp_fg_setup(<span class="string">'binary'</span>)
+</pre><pre class="codeoutput">f =
+  function_handle with value:
+    @(x,m)log(m+1)-x.*log(m+1e-10)
+g =
+  function_handle with value:
+    @(x,m)1./(m+1)-x./(m+1e-10)
+lowerbnd =
+     0
+</pre><h2 id="5">Bernoulli with Logit Link (binary data)</h2><p>This is indicated by specifying the type as <tt>'bernoulli-logit'</tt>. This choice is useful for binary data tensors, i.e., tensors that have only 0 or 1 entries. This choice specifies</p><p><img src="gcp_opt_fg_options_doc_eq14369795131929856704.png" alt="$$f(x,m) = \log(e^m+1) - x m,&#xA;\quad g(x,m) = \frac{e^m}{e^m+1} - x,&#xA;\quad \ell=-\infty$$" style="width:273px;height:21px;"></p><pre class="codeinput">[f,g,lowerbnd] = tt_gcp_fg_setup(<span class="string">'bernoulli-logit'</span>)
+</pre><pre class="codeoutput">f =
+  function_handle with value:
+    @(x,m)log(exp(m)+1)-x.*m
+g =
+  function_handle with value:
+    @(x,m)exp(m)./(exp(m)+1)-x
+lowerbnd =
+  -Inf
+</pre><h2 id="6">Rayleigh (real-valued data)</h2><p>This is indicated by specifying the type <tt>'rayleigh'</tt>. This choice is useful for nonnegative real-values data tensors, i.e., tensors that have only nonnegative. This choice specifies</p><p><img src="gcp_opt_fg_options_doc_eq10759738147157686997.png" alt="$$f(x,m) = 2 \log(m+10^{-10}) - \frac{\pi}{4} \frac{x}{(m + 10^{-10})^2},&#xA;\quad g(x,m) = \frac{1}{m+10^{-10}} - \frac{\pi}{2} \frac{x}{(m + 10^{-10})^3},&#xA;\quad \ell=0$$" style="width:408px;height:23px;"></p><p>The quantity <img src="gcp_opt_fg_options_doc_eq13518639599403624062.png" alt="$10^{-10}$" style="width:21px;height:9px;"> is a fudge factor to avoid divide-by-zero errors.</p><pre class="codeinput">[f,g,lowerbnd] = tt_gcp_fg_setup(<span class="string">'rayleigh'</span>)
+</pre><pre class="codeoutput">f =
+  function_handle with value:
+    @(x,m)2*log(m+1e-10)+(pi/4)*(x./(m+1e-10)).^2
+g =
+  function_handle with value:
+    @(x,m)2./(m+1e-10)-(pi/2)*x.^2./(m+1e-10).^3
+lowerbnd =
+     0
+</pre><h2 id="7">Gamma (nonnegative real-valued data)</h2><p>This is indicated by specifying the type <tt>'gamma'</tt>. This choice is useful for nonnegative real-values data tensors, i.e., tensors that have only nonnegative. This choice specifies</p><p><img src="gcp_opt_fg_options_doc_eq03332360570088943386.png" alt="$$f(x,m) = \frac{x}{m+10^{-10}} + \log(m + 10^{-10}),&#xA;\quad g(x,m) = \frac{-x}{(m+10^{-10})^2} - \frac{1}{m + 10^{-10}},&#xA;\quad \ell=0$$" style="width:373px;height:23px;"></p><p>The quantity <img src="gcp_opt_fg_options_doc_eq13518639599403624062.png" alt="$10^{-10}$" style="width:21px;height:9px;"> is a fudge factor to avoid divide-by-zero errors.</p><pre class="codeinput">[f,g,lowerbnd] = tt_gcp_fg_setup(<span class="string">'gamma'</span>)
+</pre><pre class="codeoutput">f =
+  function_handle with value:
+    @(x,m)x./(m+1e-10)+log(m+1e-10)
+g =
+  function_handle with value:
+    @(x,m)-x./((m+1e-10).^2)+1./(m+1e-10)
+lowerbnd =
+     0
+</pre><h2 id="8">Huber (nonnegative real-valued data)</h2><p>This is indicated by specifying the type <tt>'huber (DELTA)'</tt>, where <tt>DELTA</tt> is <img src="gcp_opt_fg_options_doc_eq14413057877136744318.png" alt="$\Delta$" style="width:7px;height:7px;"> in the equations below. This choice is useful for nonnegative real-values data tensors, i.e., tensors that have only nonnegative. This choice specifies</p><p><img src="gcp_opt_fg_options_doc_eq13554710036379280593.png" alt="$$f(x,m) = \left\{ \begin{array}{ll}(x-m)^2 &amp; \mbox{if } |x-m| \leq \Delta, \\&#xA;2\Delta|x-m|-\Delta^2 &amp; \mbox{otherwise}\end{array}\right.,&#xA;\quad&#xA;g(x,m) = \left\{ \begin{array}{ll}-2(x-m) &amp; \mbox{if } |x-m| \leq \Delta, \\&#xA;2\Delta\mbox{sgn}(x-m) &amp; \mbox{otherwise}\end{array}\right.,&#xA;\quad&#xA;\ell = 0&#xA;$$" style="width:457px;height:24px;"></p><pre class="codeinput">[f,g,lowerbnd] = tt_gcp_fg_setup(<span class="string">'huber (0.25)'</span>)
+</pre><pre class="codeoutput">f =
+  function_handle with value:
+    @(x,m)(x-m).^2.*(abs(x-m)&lt;0.25)+(0.5.*abs(x-m)-0.0625).*(abs(x-m)&gt;=0.25)
+g =
+  function_handle with value:
+    @(x,m)-2.*(x-m).*(abs(x-m)&lt;0.25)-(0.5.*sign(x-m)).*(abs(x-m)&gt;=0.25)
+lowerbnd =
+  -Inf
+</pre><h2 id="9">Negative Binomial (count data)</h2><p>This is indicated by specifying the type <tt>'negative-binomial (r)'</tt>, where <tt>r</tt> is <img src="gcp_opt_fg_options_doc_eq04958265083611378313.png" alt="$r$" style="width:5px;height:5px;"> in the equations below. This choice is useful for count data tensors. This choice specifies</p><p><img src="gcp_opt_fg_options_doc_eq02630640821226995227.png" alt="$$f(x,m) = (r+x) \log(1+m) - x \log(m+10^{-10}),&#xA;\quad&#xA;g(x,m) = \frac{(r+x)}{1+m} - \frac{x}{m+10^{-10}},&#xA;\quad&#xA;\ell = 0&#xA;$$" style="width:388px;height:22px;"></p><pre class="codeinput">[f,g,lowerbnd] = tt_gcp_fg_setup(<span class="string">'negative-binomial (4)'</span>)
+</pre><pre class="codeoutput">f =
+  function_handle with value:
+    @(x,m)(4+x).*log(1+m)-x*log(m+1e-10)
+g =
+  function_handle with value:
+    @(x,m)(5)./(1+m)-x./(m+1e-10)
+lowerbnd =
+     0
+</pre><h2 id="10">Beta (nonnegative real-valued data)</h2><p>This is indicated by specifying the type <tt>'beta (BETA)'</tt>, where <tt>BETA</tt> is <img src="gcp_opt_fg_options_doc_eq17331442575217596290.png" alt="$\beta$" style="width:6px;height:9px;"> in the equations below. This choice is useful for nonnegative data tensors. Choices of <img src="gcp_opt_fg_options_doc_eq01943888942785439951.png" alt="$\beta=0$" style="width:24px;height:9px;"> or <img src="gcp_opt_fg_options_doc_eq07813526719646221217.png" alt="$\beta=1$" style="width:23px;height:9px;"> are not allowed because these correspond to 'gamma' or 'rayleigh'. This choice specifies</p><p><img src="gcp_opt_fg_options_doc_eq13037096630138065442.png" alt="$$f(x,m) = \frac{ (m+10^{-10})^\beta }{\beta} - \frac{x(m+10^{-10})^{(\beta-1)} }{\beta-1},&#xA;\quad&#xA;g(x,m) = (m+10^{-10})^{(\beta-1)} - x(m+10^{-10})^{(\beta-2)},&#xA;\quad&#xA;\ell = 0&#xA;$$" style="width:442px;height:24px;"></p><pre class="codeinput">[f,g,lowerbnd] = tt_gcp_fg_setup(<span class="string">'beta (0.3)'</span>)
+</pre><pre class="codeoutput">f =
+  function_handle with value:
+    @(x,m)(3.33333).*(m+1e-10).^(0.3)-(-1.42857).*x.*(m+1e-10).^(-0.7)
+g =
+  function_handle with value:
+    @(x,m)(m+1e-10).^(-0.7)-x.*(m+1e-10).^(-1.7)
+lowerbnd =
+     0
+</pre><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Function Types for GCP
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="cp.html">CP Decompositions</a> 
+% &#62;&#62; <a href="gcp_opt_doc.html">GCP-OPT</a>
+% &#62;&#62; <a href="gcp_opt_gf_options_doc.html">Function Types for GCP</a>
+% </p>
+% </html>
+%
+% The GCP capability of the Tensor Toolbox allows the user to specify a fit
+% function. There are a number of ''standard'' choices that we provide via
+% the helper function |tt_gcp_fg_setup| function. These choices are
+% presented in detail below. Motivations and details for these choices can
+% be found in: 
+%
+% * D. Hong, T. G. Kolda, J. A. Duersch, Generalized Canonical
+%   Polyadic Tensor Decomposition, SIAM Review, 62:133-163, 2020,
+%   <https://doi.org/10.1137/18M1203626>
+%
+% These choices can be passed directly to gcp_opt via the 'type' option. To
+% test the options, call the hidden function:
+%
+% |[f,g,lowerbnd] = tt_gcp_fg_setup(type)|
+%
+% We discuss the choices for the type below.
+%% Gaussian (real-valued data)
+% This is indicated by specifying the type as either |'normal'| or
+% |'gaussian'|. This choice correspond to standard CP, which is implemented
+% in  |cp_als| and |cp_opt|. It is useful for continuous real-valued data
+% tensors. This choice specifies 
+% 
+% $$f(x,m) = (x-m)^2, \quad g(x,m) = 2(m-x), \quad \ell=-\infty$$
+% 
+
+[f,g,lowerbnd] = tt_gcp_fg_setup('normal')
+
+%% Poisson (count data)
+% This is indicated by specifying the type as either |'count'| or
+% |'poisson'|. This choice is useful for count data tensors, i.e.,
+% tensors that have only entries in {0,1,2,...}. This choice corresponds to
+% Poisson CP, which is implemente din |cp_apr|. This choice specifies  
+% 
+% $$f(x,m) = m - x \log(m + 10^{-10}), 
+% \quad g(x,m) = 1 - \frac{x}{m+10^{-10}}, 
+% \quad \ell=0$$
+% 
+% The quantity $10^{-10}$ is a fudge factor to avoid divide-by-zero errors.
+
+[f,g,lowerbnd] = tt_gcp_fg_setup('count')
+
+%% Poisson with Log Link (count data)
+% This is indicated by specifying the type as |'poisson-log'|. This choice
+% is useful for count data tensors, i.e., tensors that have only entries in
+% {0,1,2,...}.  This choice specifies    
+% 
+% $$f(x,m) = e^m - x m, 
+% \quad g(x,m) = e^m - x, 
+% \quad \ell=-\infty$$
+% 
+
+[f,g,lowerbnd] = tt_gcp_fg_setup('poisson-log')
+
+%% Bernoulli with Odds Link (binary data)
+% This is indicated by specifying the type as either |'binary'| or
+% |'bernoulli-odds'|. This choice is useful for binary data tensors, i.e.,
+% tensors that have only 0 or 1 entries. This choice specifies  
+% 
+% $$f(x,m) = \log(m+1) - x \log(m + 10^{-10}), 
+% \quad g(x,m) = \frac{1}{m+1} - \frac{x}{m+10^{-10}}, 
+% \quad \ell=0$$
+% 
+% The quantity $10^{-10}$ is a fudge factor to avoid divide-by-zero errors.
+
+[f,g,lowerbnd] = tt_gcp_fg_setup('binary')
+
+%% Bernoulli with Logit Link (binary data)
+% This is indicated by specifying the type as |'bernoulli-logit'|. This
+% choice is useful for binary data tensors, i.e., tensors that have only 0
+% or 1 entries. This choice specifies   
+% 
+% $$f(x,m) = \log(e^m+1) - x m, 
+% \quad g(x,m) = \frac{e^m}{e^m+1} - x, 
+% \quad \ell=-\infty$$
+% 
+
+[f,g,lowerbnd] = tt_gcp_fg_setup('bernoulli-logit')
+
+%% Rayleigh (real-valued data)
+% This is indicated by specifying the type |'rayleigh'|. This choice is
+% useful for nonnegative real-values data tensors, i.e., 
+% tensors that have only nonnegative. This choice specifies  
+% 
+% $$f(x,m) = 2 \log(m+10^{-10}) - \frac{\pi}{4} \frac{x}{(m + 10^{-10})^2}, 
+% \quad g(x,m) = \frac{1}{m+10^{-10}} - \frac{\pi}{2} \frac{x}{(m + 10^{-10})^3}, 
+% \quad \ell=0$$
+% 
+% The quantity $10^{-10}$ is a fudge factor to avoid divide-by-zero errors.
+
+[f,g,lowerbnd] = tt_gcp_fg_setup('rayleigh')
+
+%% Gamma (nonnegative real-valued data)
+% This is indicated by specifying the type |'gamma'|. This choice is
+% useful for nonnegative real-values data tensors, i.e., 
+% tensors that have only nonnegative. This choice specifies  
+% 
+% $$f(x,m) = \frac{x}{m+10^{-10}} + \log(m + 10^{-10}), 
+% \quad g(x,m) = \frac{-x}{(m+10^{-10})^2} - \frac{1}{m + 10^{-10}}, 
+% \quad \ell=0$$
+% 
+% The quantity $10^{-10}$ is a fudge factor to avoid divide-by-zero errors.
+
+[f,g,lowerbnd] = tt_gcp_fg_setup('gamma')
+
+%% Huber (nonnegative real-valued data)
+% This is indicated by specifying the type |'huber (DELTA)'|, where |DELTA|
+% is $\Delta$ in the equations below. This choice is useful for
+% nonnegative real-values data tensors, i.e., tensors that 
+% have only nonnegative. This choice specifies   
+% 
+% $$f(x,m) = \left\{ \begin{array}{ll}(x-m)^2 & \mbox{if } |x-m| \leq \Delta, \\ 
+% 2\Delta|x-m|-\Delta^2 & \mbox{otherwise}\end{array}\right., 
+% \quad
+% g(x,m) = \left\{ \begin{array}{ll}-2(x-m) & \mbox{if } |x-m| \leq \Delta, \\ 
+% 2\Delta\mbox{sgn}(x-m) & \mbox{otherwise}\end{array}\right., 
+% \quad
+% \ell = 0
+% $$
+
+[f,g,lowerbnd] = tt_gcp_fg_setup('huber (0.25)')
+
+%% Negative Binomial (count data)
+% This is indicated by specifying the type |'negative-binomial (r)'|, where |r|
+% is $r$ in the equations below. This choice is useful for
+% count data tensors. This choice specifies  
+% 
+% $$f(x,m) = (r+x) \log(1+m) - x \log(m+10^{-10}), 
+% \quad
+% g(x,m) = \frac{(r+x)}{1+m} - \frac{x}{m+10^{-10}}, 
+% \quad
+% \ell = 0
+% $$
+
+[f,g,lowerbnd] = tt_gcp_fg_setup('negative-binomial (4)')
+
+%% Beta (nonnegative real-valued data)
+% This is indicated by specifying the type |'beta (BETA)'|, where |BETA|
+% is $\beta$ in the equations below. This choice is useful for
+% nonnegative data tensors. Choices of $\beta=0$ or $\beta=1$ are not
+% allowed because these correspond to 'gamma' or 'rayleigh'. 
+% This choice specifies  
+% 
+% $$f(x,m) = \frac{ (m+10^{-10})^\beta }{\beta} - \frac{x(m+10^{-10})^{(\beta-1)} }{\beta-1}, 
+% \quad
+% g(x,m) = (m+10^{-10})^{(\beta-1)} - x(m+10^{-10})^{(\beta-2)}, 
+% \quad
+% \ell = 0
+% $$
+
+[f,g,lowerbnd] = tt_gcp_fg_setup('beta (0.3)')
+
+##### SOURCE END #####
+--></body></html>

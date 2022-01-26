@@ -1,0 +1,569 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Computing Tucker via the HOSVD</title><meta name="generator" content="MATLAB 9.4"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2021-01-13"><meta name="DC.source" content="hosvd_doc.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:90%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:12px; color:#000; line-height:140%; background:#fff none; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:2.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+.banner{ background-color:#15243c; text-align:center;}
+.navigate {font-size:0.8em; padding:0px; line-height:100%; }
+
+pre, code { font-size:14px; }
+tt { font-size: 1.0em; font-weight:bold; background:#f7f7f7; padding-right:5px; padding-left:5px }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:20px 0px 0px; border-top:1px dotted #878787; font-size:0.9em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; padding:0px 20px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="banner"><a href="index.html"><img src="Tensor-Toolbox-for-MATLAB-Banner.png"></a></div><div class="content"><h1>Computing Tucker via the HOSVD</h1><!--introduction--><p>
+<p class="navigate">
+&#62;&#62; <a href="index.html">Tensor Toolbox</a>
+&#62;&#62; <a href="tucker.html">Tucker Decompositions</a>
+&#62;&#62; <a href="hosvd_doc.html">HOSVD</a>
+</p>
+</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Higher-order Singular Value Decomposition (HOSVD) and Sequentially-truncased HOSVD (ST-HOSVD)</a></li><li><a href="#2">Simple example of usage</a></li><li><a href="#3">Generate a core with different accuracies for different sizes</a></li><li><a href="#5">Generate data tensor with core described above</a></li><li><a href="#6">Compute (full) HOSVD</a></li><li><a href="#7">Compute low-rank HOSVD approximation</a></li><li><a href="#9">Verbosity - Getting more or less information.</a></li><li><a href="#11">Specify the ranks</a></li><li><a href="#12">Specify the mode order</a></li><li><a href="#13">Generate bigger data tensor with core described above</a></li><li><a href="#14">ST-HOSVD compared to HOSVD</a></li></ul></div><h2 id="1">Higher-order Singular Value Decomposition (HOSVD) and Sequentially-truncased HOSVD (ST-HOSVD)</h2><p>The HOSVD computes a Tucker decomposition of a tensor via a simple process. For each mode k, it computes the r_k leading left singular values of the matrix unfolding and stores those as factor matrix U_k. Then it computes a <tt>ttm</tt> of the original tensor and all the factor matrices to yield the core of size r_1 x r_2 x ... x r_d. The core and factor matrices are used to form the <tt>ttensor</tt>. The values of r_k that lead to a good approximation can be computed automatically to yield a specified error tolerance; this is recommended and the default in our code. The ST-HOSVD is an improvement on the HOSVD that does a TTM in <i>each</i> mode before moving on to the next mode. This has the advantage of shrinking the tensor at each step and reducing subsequent computations. ST-HOSVD is the default in the <tt>hosvd</tt> code.</p><div><ul><li>L. R. Tucker, Some mathematical notes on three-mode factor analysis,   Psychometrika, 31:279-311, 1966, <a href="http://dx.doi.org/10.1007/BF02289464">http://dx.doi.org/10.1007/BF02289464</a></li><li>L. D. Lathauwer, B. D. Moor and J. Vandewalle, A multilinear singular   value decomposition, SIAM J. Matrix Analysis and Applications,   21(4):1253-1278, 2000, <a href="http://dx.doi.org/10.1137/S0895479896305696">http://dx.doi.org/10.1137/S0895479896305696</a></li><li>N. Vannieuwenhoven, R. Vandebril and K. Meerbergen, A New Truncation   Strategy for the Higher-Order Singular Value Decomposition, SIAM J.   Scientific Computing, 34(2):A1027-A1052, 2012,   <a href="http://dx.doi.org/10.1137/110836067">http://dx.doi.org/10.1137/110836067</a></li></ul></div><h2 id="2">Simple example of usage</h2><pre class="codeinput"><span class="comment">% Create random 50 x 40 x 30 tensor with 5 x 4 x 3 core</span>
+info = create_problem(<span class="string">'Type'</span>,<span class="string">'Tucker'</span>,<span class="string">'Num_Factors'</span>,[5 4 3],<span class="string">'Size'</span>,[50 40 30],<span class="string">'Noise'</span>,0.01);
+X = info.Data;
+
+<span class="comment">% Compute HOSVD with desired relative error = 0.1</span>
+T = hosvd(X,0.1);
+
+<span class="comment">% Check size of core</span>
+coresize = size(T.core)
+
+<span class="comment">% Check relative error</span>
+relerr = norm(X-full(T))/norm(X)
+</pre><pre class="codeoutput">Computing HOSVD...
+Size of core: 5 x 4 x 3
+||X-T||/||X|| = 0.00995852 &lt;=0.100000 (tol)
+
+coresize =
+     5     4     3
+relerr =
+    0.0100
+</pre><h2 id="3">Generate a core with different accuracies for different sizes</h2><p>We will create a core tensor that has is nearly block diagonal. The blocks are expontentially decreasing in norm, with the idea that we can pick off one block at a time as we increate the prescribed accuracy of the HOSVD. To do this, we use <tt>tenrandblk</tt>.</p><pre class="codeinput"><span class="comment">% Block sizes (need not be cubic). Number of rows is the number</span>
+<span class="comment">% of levels and number of columns is the order of the tensor.</span>
+bsz = [3 2 1; 2 2 2; 2 3 4];
+
+<span class="comment">% Squared norm of each block. Must be length L and sum to &lt;= 1</span>
+bsn = [.9 .09 .009]';
+
+<span class="comment">% Create core tensor with given block structure and norm 1</span>
+G = tenrandblk(bsz,bsn,true);
+</pre><pre class="codeoutput">Created block of size 3 x 2 x 1 with norm (0.948683)^2=0.900000
+Created block of size 2 x 2 x 2 with norm (0.300000)^2=0.090000
+Created block of size 2 x 3 x 4 with norm (0.094868)^2=0.009000
+Created tensor of size 7 x 7 x 7 with off-block-diaognal norm (0.031623)^2=0.001000
+</pre><pre class="codeinput">fprintf(<span class="string">'Size of G: %s\n'</span>, tt_size2str(size(G)));
+</pre><pre class="codeoutput">Size of G: 7 x 7 x 7
+</pre><h2 id="5">Generate data tensor with core described above</h2><p>We take the core G and embed into into a larger tensor X by using orthogonal transformations. The true rank of this tensor is equal to the size of G.</p><pre class="codeinput"><span class="comment">% Size of X</span>
+xsz = [20 20 20];
+
+<span class="comment">% Create orthogonal matrices</span>
+U = cell(3,1);
+<span class="keyword">for</span> k = 1:3
+    V = matrandorth(xsz(k));
+    U{k} = V(:,1:size(G,k));
+<span class="keyword">end</span>
+
+<span class="comment">% Create X</span>
+X = full(ttensor(G,U));
+
+<span class="comment">% The norm should be unchanged</span>
+fprintf(<span class="string">'||X||=%f\n'</span>,norm(X));
+</pre><pre class="codeoutput">||X||=1.000000
+</pre><h2 id="6">Compute (full) HOSVD</h2><p>We compute the ST-HOSVD using the <tt>hosvd</tt> method. We specify the tolerance to close to machine precision. Ideally, it finds a core that is the same size as G.</p><pre class="codeinput">fprintf(<span class="string">'ST-HOSVD...\n'</span>);
+T = hosvd(X,2*sqrt(eps));
+</pre><pre class="codeoutput">ST-HOSVD...
+Computing HOSVD...
+Size of core: 7 x 7 x 7
+||X-T||/||X|| = 8.3359e-15 &lt;=0.000000 (tol)
+
+</pre><h2 id="7">Compute low-rank HOSVD approximation</h2><p>The norm squared of the first two blocks of G is 0.99, so specifying an error of 1e-2 should yield a core of size 4 x 4 x 3.  However, the conservative nature of the algorithm means that it may pick something larger. We can compensate by specifying a larger tolerance.</p><pre class="codeinput"><span class="comment">% Using 1e-2 exactly is potentially too conservative...</span>
+fprintf(<span class="string">'Result with tol = sqrt(1e-2):\n'</span>);
+T = hosvd(X, sqrt(1e-2),<span class="string">'verbosity'</span>,1);
+
+<span class="comment">% But a small multiple (i.e., |ndims(X)|) usually works...</span>
+fprintf(<span class="string">'Result with tol = sqrt(3e-2):\n'</span>);
+T = hosvd(X, sqrt(3e-2),<span class="string">'verbosity'</span>,1);
+</pre><pre class="codeoutput">Result with tol = sqrt(1e-2):
+Computing HOSVD...
+Size of core: 5 x 5 x 5
+||X-T||/||X|| = 0.0517313 &lt;=0.100000 (tol)
+
+Result with tol = sqrt(3e-2):
+Computing HOSVD...
+Size of core: 3 x 3 x 3
+||X-T||/||X|| = 0.100034 &lt;=0.173205 (tol)
+
+</pre><p>Similarly, lhe norm squared of the first block of G is 0.9, so specifying an error of 1e-1 should result in a core of size 3 x 2 x 1.</p><pre class="codeinput"><span class="comment">% Using 1e-1 exactly is potentially too conservative...</span>
+fprintf(<span class="string">'Result with tol = sqrt(1e-1):\n'</span>);
+T = hosvd(X, sqrt(1e-1),<span class="string">'verbosity'</span>,1);
+
+<span class="comment">% But a small multiple (i.e., |ndims(X)|) usually works...</span>
+fprintf(<span class="string">'Result with tol = sqrt(3e-1):\n'</span>);
+T = hosvd(X, sqrt(3e-1),<span class="string">'verbosity'</span>,1);
+</pre><pre class="codeoutput">Result with tol = sqrt(1e-1):
+Computing HOSVD...
+Size of core: 2 x 2 x 2
+||X-T||/||X|| = 0.20788 &lt;=0.316228 (tol)
+
+Result with tol = sqrt(3e-1):
+Computing HOSVD...
+Size of core: 1 x 1 x 1
+||X-T||/||X|| = 0.316437 &lt;=0.547723 (tol)
+
+</pre><h2 id="9">Verbosity - Getting more or less information.</h2><p>Setting the verbosity to zero suppresses all output. Cranking up the verbosity gives some insight into the decision-making process...</p><pre class="codeinput"><span class="comment">% Example 1</span>
+T = hosvd(X, sqrt(3e-1),<span class="string">'verbosity'</span>,10);
+</pre><pre class="codeoutput">Computing HOSVD...
+||X||^2 = 1
+tol = 0.547723
+eigenvalue sum threshold = tol^2 ||X||^2 / d = 0.1
+Reverse cummulative sum of evals of Gram matrix:
+1: 1.0000 &lt;-- Cutoff
+2: 0.1000 
+3: 0.0331 
+4: 0.0097 
+5: 0.0034 
+6: 0.0004 
+7: 0.0001 
+8: -0.0000 
+9: -0.0000 
+10: -0.0000 
+11: -0.0000 
+12: -0.0000 
+13: -0.0000 
+14: -0.0000 
+15: -0.0000 
+16: -0.0000 
+17: -0.0000 
+18: -0.0000 
+19: -0.0000 
+20: -0.0000 
+Reverse cummulative sum of evals of Gram matrix:
+1: 0.9000 &lt;-- Cutoff
+2: 0.0002 
+3: 0.0001 
+4: 0.0000 
+5: 0.0000 
+6: 0.0000 
+7: 0.0000 
+8: -0.0000 
+9: -0.0000 
+10: -0.0000 
+11: -0.0000 
+12: -0.0000 
+13: -0.0000 
+14: -0.0000 
+15: -0.0000 
+16: -0.0000 
+17: -0.0000 
+18: -0.0000 
+19: -0.0000 
+20: -0.0000 
+Reverse cummulative sum of evals of Gram matrix:
+1: 0.8999 &lt;-- Cutoff
+2: -0.0000 
+3: -0.0000 
+4: -0.0000 
+5: -0.0000 
+6: -0.0000 
+7: -0.0000 
+8: -0.0000 
+9: -0.0000 
+10: -0.0000 
+11: -0.0000 
+12: -0.0000 
+13: -0.0000 
+14: -0.0000 
+15: -0.0000 
+16: -0.0000 
+17: -0.0000 
+18: -0.0000 
+19: -0.0000 
+20: -0.0000 
+Size of core: 1 x 1 x 1
+||X-T||/||X|| = 0.316437 &lt;=0.547723 (tol)
+
+</pre><p>Example 2</p><pre class="codeinput">T = hosvd(X, sqrt(3*eps),<span class="string">'verbosity'</span>,10);
+</pre><pre class="codeoutput">Computing HOSVD...
+||X||^2 = 1
+tol = 2.58096e-08
+eigenvalue sum threshold = tol^2 ||X||^2 / d = 2.22045e-16
+Reverse cummulative sum of evals of Gram matrix:
+1: 1.0000 
+2: 0.1000 
+3: 0.0331 
+4: 0.0097 
+5: 0.0034 
+6: 0.0004 
+7: 0.0001 &lt;-- Cutoff
+8: -0.0000 
+9: -0.0000 
+10: -0.0000 
+11: -0.0000 
+12: -0.0000 
+13: -0.0000 
+14: -0.0000 
+15: -0.0000 
+16: -0.0000 
+17: -0.0000 
+18: -0.0000 
+19: -0.0000 
+20: -0.0000 
+Reverse cummulative sum of evals of Gram matrix:
+1: 1.0000 
+2: 0.1000 
+3: 0.0336 
+4: 0.0097 
+5: 0.0044 
+6: 0.0013 
+7: 0.0003 &lt;-- Cutoff
+8: -0.0000 
+9: -0.0000 
+10: -0.0000 
+11: -0.0000 
+12: -0.0000 
+13: -0.0000 
+14: -0.0000 
+15: -0.0000 
+16: -0.0000 
+17: -0.0000 
+18: -0.0000 
+19: -0.0000 
+20: -0.0000 
+Reverse cummulative sum of evals of Gram matrix:
+1: 1.0000 
+2: 0.0998 
+3: 0.0331 
+4: 0.0095 
+5: 0.0049 
+6: 0.0017 
+7: 0.0001 &lt;-- Cutoff
+8: -0.0000 
+9: -0.0000 
+10: -0.0000 
+11: -0.0000 
+12: -0.0000 
+13: -0.0000 
+14: -0.0000 
+15: -0.0000 
+16: -0.0000 
+17: -0.0000 
+18: -0.0000 
+19: -0.0000 
+20: -0.0000 
+Size of core: 7 x 7 x 7
+||X-T||/||X|| = 8.3359e-15 &lt;=0.000000 (tol)
+
+</pre><h2 id="11">Specify the ranks</h2><p>If you know the rank  you want, you can specify it. But there's no guarantee that it will satisfy the specified tolerance. In such cases, the method will throw a warning.</p><pre class="codeinput"><span class="comment">% Rank is okay</span>
+T = hosvd(X,sqrt(3e-1),<span class="string">'ranks'</span>,bsz(1,:));
+
+<span class="comment">% Rank is too small for the specified error</span>
+T = hosvd(X,sqrt(3e-1),<span class="string">'ranks'</span>,[1 1 1]);
+
+<span class="comment">% But you can set the error to the tensor norm to make the warning go away</span>
+T = hosvd(X,norm(X),<span class="string">'ranks'</span>,[1 1 1]);
+</pre><pre class="codeoutput">Computing HOSVD...
+Size of core: 3 x 2 x 1
+||X-T||/||X|| = 0.316418 &lt;=0.547723 (tol)
+
+Computing HOSVD...
+Size of core: 1 x 1 x 1
+||X-T||/||X|| = 0.316437 &lt;=0.547723 (tol)
+
+Computing HOSVD...
+Size of core: 1 x 1 x 1
+||X-T||/||X|| = 0.316437 &lt;=1.000000 (tol)
+
+</pre><h2 id="12">Specify the mode order</h2><p>It's also possible to specify the order of the modes. The default is 1:ndims(X).</p><pre class="codeinput">T = hosvd(X,sqrt(3e-1),<span class="string">'dimorder'</span>,ndims(X):-1:1);
+</pre><pre class="codeoutput">Computing HOSVD...
+Size of core: 1 x 1 x 1
+||X-T||/||X|| = 0.316437 &lt;=0.547723 (tol)
+
+</pre><h2 id="13">Generate bigger data tensor with core described above</h2><p>Uses the same procedure as before, but now the size is bigger.</p><pre class="codeinput"><span class="comment">% Size of Y</span>
+ysz = [100 100 100];
+
+<span class="comment">% Create orthogonal matrices</span>
+U = cell(3,1);
+<span class="keyword">for</span> k = 1:3
+    V = matrandorth(ysz(k));
+    U{k} = V(:,1:size(G,k));
+<span class="keyword">end</span>
+
+<span class="comment">% Create Y</span>
+Y = full(ttensor(G,U));
+</pre><h2 id="14">ST-HOSVD compared to HOSVD</h2><p>The answers are essentially the same for the sequentially-truncated HOSVD and the HOSVD...</p><pre class="codeinput">fprintf(<span class="string">'ST-HOSVD...\n'</span>);
+T = hosvd(Y,2*sqrt(eps));
+fprintf(<span class="string">'HOSVD...\n'</span>);
+T = hosvd(Y,2*sqrt(eps),<span class="string">'sequential'</span>,false);
+</pre><pre class="codeoutput">ST-HOSVD...
+Computing HOSVD...
+Size of core: 7 x 7 x 7
+||X-T||/||X|| = 5.80269e-15 &lt;=0.000000 (tol)
+
+HOSVD...
+Computing HOSVD...
+Size of core: 7 x 7 x 7
+||X-T||/||X|| = 4.24284e-15 &lt;=0.000000 (tol)
+
+</pre><p>But ST-HOSVD may be slightly faster than HOSVD for larger tensors.</p><pre class="codeinput">fprintf(<span class="string">'Time for 10 runs of ST-HOSVD:\n'</span>);
+tic, <span class="keyword">for</span> i =1:10, T = hosvd(Y,2*sqrt(eps),<span class="string">'verbosity'</span>,0); <span class="keyword">end</span>; toc
+
+fprintf(<span class="string">'Time for 10 runs of HOSVD:\n'</span>);
+tic, <span class="keyword">for</span> i =1:10, T = hosvd(Y,2*sqrt(eps),<span class="string">'verbosity'</span>,0,<span class="string">'sequential'</span>,false); <span class="keyword">end</span>; toc
+</pre><pre class="codeoutput">Time for 10 runs of ST-HOSVD:
+Elapsed time is 0.359940 seconds.
+Time for 10 runs of HOSVD:
+Elapsed time is 0.547478 seconds.
+</pre><p class="footer">Tensor Toolbox for MATLAB: <a href="index.html">www.tensortoolbox.org</a>.</p></div><!--
+##### SOURCE BEGIN #####
+%% Computing Tucker via the HOSVD
+%
+% <html>
+% <p class="navigate">
+% &#62;&#62; <a href="index.html">Tensor Toolbox</a> 
+% &#62;&#62; <a href="tucker.html">Tucker Decompositions</a> 
+% &#62;&#62; <a href="hosvd_doc.html">HOSVD</a>
+% </p>
+% </html>
+%
+
+%% Higher-order Singular Value Decomposition (HOSVD) and Sequentially-truncased HOSVD (ST-HOSVD)
+% The HOSVD computes a Tucker decomposition of a tensor via a simple
+% process. For each mode k, it computes the r_k leading left singular
+% values of the matrix unfolding and stores those as factor matrix U_k. 
+% Then it computes a |ttm| of the original tensor and all the factor matrices to
+% yield the core of size r_1 x r_2 x ... x r_d. The core and factor
+% matrices are used to form the |ttensor|. 
+% The values of r_k that lead to a good approximation can be computed
+% automatically to yield a specified error tolerance; this is recommended
+% and the default in our code.
+% The ST-HOSVD is an improvement on the HOSVD that does a TTM in _each_ mode
+% before moving on to the next mode. This has the advantage of shrinking
+% the tensor at each step and reducing subsequent computations. ST-HOSVD is the
+% default in the |hosvd| code.
+%
+%
+% * L. R. Tucker, Some mathematical notes on three-mode factor analysis,
+%   Psychometrika, 31:279-311, 1966, http://dx.doi.org/10.1007/BF02289464
+% * L. D. Lathauwer, B. D. Moor and J. Vandewalle, A multilinear singular
+%   value decomposition, SIAM J. Matrix Analysis and Applications,
+%   21(4):1253-1278, 2000, http://dx.doi.org/10.1137/S0895479896305696  
+% * N. Vannieuwenhoven, R. Vandebril and K. Meerbergen, A New Truncation
+%   Strategy for the Higher-Order Singular Value Decomposition, SIAM J.
+%   Scientific Computing, 34(2):A1027-A1052, 2012,
+%   http://dx.doi.org/10.1137/110836067    
+%
+
+%% Simple example of usage
+
+% Create random 50 x 40 x 30 tensor with 5 x 4 x 3 core
+info = create_problem('Type','Tucker','Num_Factors',[5 4 3],'Size',[50 40 30],'Noise',0.01);
+X = info.Data;
+
+% Compute HOSVD with desired relative error = 0.1
+T = hosvd(X,0.1);
+
+% Check size of core
+coresize = size(T.core)
+
+% Check relative error
+relerr = norm(X-full(T))/norm(X)
+
+%% Generate a core with different accuracies for different sizes
+% We will create a core tensor that has is nearly block diagonal. The
+% blocks are expontentially decreasing in norm, with the idea that we can
+% pick off one block at a time as we increate the prescribed accuracy of
+% the HOSVD. To do this, we use |tenrandblk|.
+
+% Block sizes (need not be cubic). Number of rows is the number
+% of levels and number of columns is the order of the tensor.
+bsz = [3 2 1; 2 2 2; 2 3 4];
+
+% Squared norm of each block. Must be length L and sum to <= 1
+bsn = [.9 .09 .009]';
+
+% Create core tensor with given block structure and norm 1
+G = tenrandblk(bsz,bsn,true);
+
+%%
+fprintf('Size of G: %s\n', tt_size2str(size(G)));
+
+%% Generate data tensor with core described above
+% We take the core G and embed into into a larger tensor X by using
+% orthogonal transformations. The true rank of this tensor is equal to the
+% size of G.
+
+% Size of X
+xsz = [20 20 20];
+
+% Create orthogonal matrices
+U = cell(3,1);
+for k = 1:3
+    V = matrandorth(xsz(k));
+    U{k} = V(:,1:size(G,k));
+end
+
+% Create X
+X = full(ttensor(G,U));
+
+% The norm should be unchanged
+fprintf('||X||=%f\n',norm(X));
+
+%% Compute (full) HOSVD 
+% We compute the ST-HOSVD using the |hosvd| method. We specify the
+% tolerance to close to machine precision. Ideally, it finds a core that is
+% the same size as G. 
+
+fprintf('ST-HOSVD...\n');
+T = hosvd(X,2*sqrt(eps));
+
+%% Compute low-rank HOSVD approximation
+% The norm squared of the first two blocks of G is 0.99, so specifying an
+% error of 1e-2 should yield a core of size 4 x 4 x 3.  However, the
+% conservative nature of the algorithm means that it may pick something
+% larger. We can compensate by specifying a larger tolerance.
+
+% Using 1e-2 exactly is potentially too conservative...
+fprintf('Result with tol = sqrt(1e-2):\n');
+T = hosvd(X, sqrt(1e-2),'verbosity',1);
+
+% But a small multiple (i.e., |ndims(X)|) usually works...
+fprintf('Result with tol = sqrt(3e-2):\n');
+T = hosvd(X, sqrt(3e-2),'verbosity',1);
+
+%%
+% Similarly, lhe norm squared of the first block of G is 0.9, so specifying
+% an error of 1e-1 should result in a core of size 3 x 2 x 1.  
+
+% Using 1e-1 exactly is potentially too conservative...
+fprintf('Result with tol = sqrt(1e-1):\n');
+T = hosvd(X, sqrt(1e-1),'verbosity',1);
+
+% But a small multiple (i.e., |ndims(X)|) usually works...
+fprintf('Result with tol = sqrt(3e-1):\n');
+T = hosvd(X, sqrt(3e-1),'verbosity',1);
+
+%% Verbosity - Getting more or less information.
+% Setting the verbosity to zero suppresses all output.
+% Cranking up the verbosity gives some insight into the decision-making
+% process...
+
+% Example 1
+T = hosvd(X, sqrt(3e-1),'verbosity',10);
+
+%%
+% Example 2
+T = hosvd(X, sqrt(3*eps),'verbosity',10);
+
+%% Specify the ranks
+% If you know the rank  you want, you can specify it. But there's no
+% guarantee that it will satisfy the specified tolerance. In such cases,
+% the method will throw a warning.
+
+% Rank is okay
+T = hosvd(X,sqrt(3e-1),'ranks',bsz(1,:));
+
+% Rank is too small for the specified error
+T = hosvd(X,sqrt(3e-1),'ranks',[1 1 1]);
+
+% But you can set the error to the tensor norm to make the warning go away
+T = hosvd(X,norm(X),'ranks',[1 1 1]);
+
+%% Specify the mode order
+% It's also possible to specify the order of the modes. The default is
+% 1:ndims(X).
+T = hosvd(X,sqrt(3e-1),'dimorder',ndims(X):-1:1);
+
+%% Generate bigger data tensor with core described above
+% Uses the same procedure as before, but now the size is bigger.
+
+% Size of Y
+ysz = [100 100 100];
+
+% Create orthogonal matrices
+U = cell(3,1);
+for k = 1:3
+    V = matrandorth(ysz(k));
+    U{k} = V(:,1:size(G,k));
+end
+
+% Create Y
+Y = full(ttensor(G,U));
+
+%% ST-HOSVD compared to HOSVD
+% The answers are essentially the same for the sequentially-truncated HOSVD
+% and the HOSVD...
+
+fprintf('ST-HOSVD...\n');
+T = hosvd(Y,2*sqrt(eps));
+fprintf('HOSVD...\n');
+T = hosvd(Y,2*sqrt(eps),'sequential',false);
+
+%%
+% But ST-HOSVD may be slightly faster than HOSVD for larger tensors.
+
+fprintf('Time for 10 runs of ST-HOSVD:\n');
+tic, for i =1:10, T = hosvd(Y,2*sqrt(eps),'verbosity',0); end; toc
+
+fprintf('Time for 10 runs of HOSVD:\n');
+tic, for i =1:10, T = hosvd(Y,2*sqrt(eps),'verbosity',0,'sequential',false); end; toc
+
+
+
+##### SOURCE END #####
+--></body></html>
