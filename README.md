@@ -15,8 +15,7 @@ First do the following:
  * Run setpath to have access to SeismicLab codes, data and demos
  * Good luck
 
-The old SeismicLab software from 1997 was written to provide examples to undergraduates taking my. 
-courses. The old  repository is here: http://seismic-lab.physics.ualberta.ca/ and it is not mantain anymore. So if you want to use SeismicLab, please, downloading this version from GitHub. 
+The old SeismicLab software from 1997 was written to provide examples to undergraduates taking my courses. The old  repository is here: http://seismic-lab.physics.ualberta.ca/ and it is not mantain anymore. So if you want to use SeismicLab, please, downloading this version from GitHub. 
 
 
 
