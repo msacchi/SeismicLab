@@ -7,7 +7,7 @@
 
 
 ## SeismicLab
-### Matlab reserch tools to read, write and process seismic data
+### Matlab research tools to read, write and process seismic data
 
 First do the following:
 
