@@ -3,8 +3,8 @@
 
 First do the following:
 
- * Copy file ./SETPATH/setpah.m into your working directory and modify it.
- * Run setpath to have access to SeismicLab codes, data and demos. 
+ * Copy the file ./SETPATH/setpah.m into your working directory and modify it
+ * Run setpath to have access to SeismicLab codes, data and demos
  * Good luck
 
 The old SeismicLab software from 1997 was written to provide examples to undergraduates taking my. 
