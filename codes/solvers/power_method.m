@@ -27,7 +27,7 @@ function value = power_method(x0,Hop,PARAM);
     x = y/n;                               % x = y/|x|
     value = n;
 
-    % fprintf('%6.0f %10.4f\n',k-1,value);
+     fprintf('%6.0f %10.4f\n',k-1,value);
 
  end;
 

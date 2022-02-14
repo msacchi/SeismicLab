@@ -1,4 +1,4 @@
-%FX_DECON_DEMO: Demo for FX decon.
+%POCS_DEMO: Demo showing POCS reconstruction
 %
 %
 %     -------------------------------------------

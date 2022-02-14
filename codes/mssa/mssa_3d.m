@@ -86,7 +86,7 @@ function [DATA_f] = mssa_3d(DATA,dt,P,flow,fhigh,meth);
 % SVD deconcoposition with P largest singular values of Randomized SVD 
 
     if meth==1;     [U,S,V] = svds(M,P); Mout = U*S*V'; 
-   if  j==10;  s10 = diag(S); save('sing_10','s10'); end
+    if  j==10;  s10 = diag(S); save('sing_10','s10'); end
     if  j==20;  s20 = diag(S); save('sing_20','s20'); end
     if  j==30;  s30 = diag(S); save('sing_30','s30'); end
     if  j==40;  s40 = diag(S); save('sing_40','s40'); end
