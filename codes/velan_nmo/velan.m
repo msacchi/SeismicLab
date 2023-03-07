@@ -1,7 +1,7 @@
 function [S,tau,v] = velan(d,dt,h,vmin,vmax,nv,R,L);
 %VELAN: A program to compute velocity spectra.
 % 
-%  [S,tau,v] = velan(d,dt,h,vmin,vmav,nv,R,L);
+%  [S,tau,v] = velan(d,dt,h,vmin,vmax,nv,R,L);
 %
 %  IN   data:      data
 %       dt:        sampling interval in secs
