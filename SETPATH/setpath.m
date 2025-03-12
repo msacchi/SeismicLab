@@ -4,7 +4,7 @@
 % You need to modify Dir and DirD according to your system  
 % --------------------------------------------------------
  
-% For Windows, use the following 'D:\Plase_you_put_the_Programs'
+% For Windows, use the following 'D:\Place_you_put_the_Programs'
  
  Dir='/Users/msacchi/Dropbox/SeismicLab/codes/';
  DirD='/Users/msacchi/Dropbox/SeismicLab/';
